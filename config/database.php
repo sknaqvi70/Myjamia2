@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '10.2.0.15',
-	'username' => 'JMI',
-	'password' => 'JKW6055',
+	'hostname' => '',
+	'username' => '',
+	'password' => '',
 	'database' => 'misdb',
 	'dbdriver' => 'oci8',
 	'dbprefix' => '',
