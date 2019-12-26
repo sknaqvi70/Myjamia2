@@ -22,6 +22,7 @@ class Myjamia extends CI_Controller {
 	{
 	//	$this->load->model('Test');
 	//$this->load->view('welcome_jmi');
+	echo "Hello";
 	$this->load->view('info');
 	}
 }
