@@ -22,7 +22,7 @@ class Myjamia extends CI_Controller {
 	{
 	//	$this->load->model('Test');
 	//$this->load->view('welcome_jmi');
-	echo "Hello";
+	echo "Hello, how are you";
 	$this->load->view('info');
 	}
 }
