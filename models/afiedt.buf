@@ -1,0 +1,2 @@
+update mj_user_type set mj_user_type_name = 'Pensioner/Retired' where MJ_User_Type_Id = 5
+/
