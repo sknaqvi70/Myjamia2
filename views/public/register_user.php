@@ -26,43 +26,51 @@
 
 <!-- Show Page Banner -->
 <div class="row">
+  <div class="col-sm-12">
    <!-- m6 l6"> -->
-           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo1.jpg" class="responsive-img" style="padding-top: 5px !important;">
-           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo2.jpg" class="responsive-img" style="padding-top: 5px !important; align-items: center;">
+           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo1.jpg" class="responsive-img center-block" style="padding-top: 5px !important;">
+           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo2.jpg" class="responsive-img center-block" style="padding-top: 5px !important; align-items: center;">
+           
+</div>
  
 </div>
 
 <!-- Show Menu Bar -->
 
 <div class="row">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <a class="navbar-brand" href="#">MyJamia</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <div class="col-sm-12">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">MyJamia</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="  navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-  <div class="collapse navbar-collapse" id="navbarColor01">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">JMI Portals</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-    </form>
-</div>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">JMI Portals</a>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
+  </div>
 </div>
 <br><br>
 
 <!-- Show User Registration Form -->
 <div class="row">
+   <div class="col-sm-3"></div>
+  <div class="col-sm-6">
   <?php echo form_open('/Welcome/register_user'); ?>
     <fieldset>
       <legend>User Registration Form</legend>
@@ -73,8 +81,8 @@
       </div>
   
       <div class="form-group"> 
-        <?php echo form_input(['name'=>'frm_MJ_User_Login','class'=>'form-control', 'id'=>'frm_id_MJ_User_Login','placeholder'=>'Your ID (Student ID/Employee ID', 'value'=>set_value('frm_MJ_User_Login')]); 
-         echo form_error('frm_MJ_User_Login');?>
+        <?php echo form_input(['name'=>'MJ_UR_ID_NO','class'=>'form-control', 'id'=>'id_MJ_UR_ID_NO','placeholder'=>'Your ID (Student ID/Employee ID', 'value'=>set_value('MJ_UR_ID_NO')]); 
+         echo form_error('MJ_UR_ID_NO');?>
       </div>
   
       <div class="form-group"> 
@@ -93,6 +101,8 @@
     </fieldset>
   </form>
   </div>
+   <div class="col-sm-3"></div>
+</div>
 
 </div>
 

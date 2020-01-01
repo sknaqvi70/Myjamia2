@@ -20,6 +20,7 @@ class Myjamia extends CI_Controller {
 	 */
 	public function index()
 	{
+		phpinfo();
 	//	$this->load->model('Test');
 	//$this->load->view('welcome_jmi');
 	$this->load->helper("url");
@@ -30,7 +31,7 @@ class Myjamia extends CI_Controller {
 	list($day, $month, $year)=explode("/",$str);
 	
 	if (strpos($str,".") == true) {
-		echo "Bad date: Point is notallowed.";
+		echo "Bad date: Point is not allowed.";
 	}
 	else {
 		if (is_numeric($day) == 1 && is_numeric($month) == 1 & is_numeric($year) == 1) {

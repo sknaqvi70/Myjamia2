@@ -22,6 +22,7 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->helper('html');
 		$this->load->helper('form');
+
 		$this->load->view('/public/user_login');
 	}
 
@@ -57,22 +58,19 @@ class Welcome extends CI_Controller {
 			$this->load->Library('form_validation');
 			$this->load->helper('html');
 			$this->load->helper('form');
-
 			//Set Validation Rules
 			
 			// 1 UserType must be Selected
 			$this->form_validation->set_rules('frm_MJ_User_Type','User Type','required|is_natural_no_zero');
 
 			// 2 User ID cannot be blank 
-			$this->form_validation->set_rules('frm_MJ_User_Login','ID Number','required|alpha_numeric|max_length[10]');
+			$this->load->database();
+			$this->form_validation->set_rules('MJ_UR_ID_NO','ID Number','required|alpha_numeric|max_length[10]|is_unique[MJ_USER_REGISTRATION.MJ_UR_ID_NO]');
 
 			//3 User Name is required
-			$this->form_validation->set_rules('frm_MJ_User_Name','Password','required|alpha_numeric');
+			$this->form_validation->set_rules('frm_MJ_User_Name','User Name','required|alpha_numeric_spaces|max_length[50]');
 
-			//4 DOB is required
-
-			//$dt = $this->input->post('frm_MJ_User_DOB'); 
-
+			//4 Valid DOB is required
 			$this->form_validation->set_rules('frm_MJ_User_DOB','Date of Birth','required|callback_checkDateFormat');
 
 			//Set Error Delimeter
@@ -81,7 +79,8 @@ class Welcome extends CI_Controller {
 			
 			if ($this->form_validation->run() == FALSE)
 	                {		
-	               
+	               if(validation_errors()) echo validation_errors(); 
+
 	               	//Prepare User Type List
 					$this->load->model('UserModel','UM');
 					$data['UserTypeList'] = $this->UM->GetUserTypeList(); 
@@ -89,13 +88,15 @@ class Welcome extends CI_Controller {
 	                }
 	                else
 	                {
-	        		echo "success";
-	        	}
-			
+	        		$data['msg'] = $this->register_user_in_db();
+	        		$this->load->view('/public/register_user',$data);
+	                }
+
 
 	}
 
 
+	//This function Checks Users Authorisation
 	function Check_User_Authorization() {		
 			
 			//Set Validation Rules
@@ -123,6 +124,23 @@ class Welcome extends CI_Controller {
 
 	                    echo 'Successful. Username = '. $UserName . "   Password = ".$Password;
 	                }
+	}
+
+//This function attempts to register user in db
+	public function register_user_in_db() {
+
+		//Check if User is already registered
+		$this->load->model('UserModel','UM');
+		$this->UM->RegisterUser(
+			$this->input->post('frm_MJ_User_Type'),
+			$this->input->post('MJ_UR_ID_NO'),
+			$this->input->post('frm_MJ_User_Name'),
+			$this->input->post('frm_MJ_User_DOB')
+		);
+		
+		//If User is already registered, return suitable message.
+
+		//
 	}
 
 	// Check date format, if input date is valid return TRUE else returned FALSE.
@@ -158,5 +176,4 @@ class Welcome extends CI_Controller {
 			}
 
 	}
-
 }
