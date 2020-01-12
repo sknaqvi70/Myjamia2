@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class UserModel extends CI_MODEL {
 	
-
 	public function GetUserTypeList(){
 	
 		$this->load->database();
@@ -18,7 +17,6 @@ class UserModel extends CI_MODEL {
         	$UTList[$UserType->MJ_USER_TYPE_ID] = $UserType->MJ_USER_TYPE_NAME; 
     
     	return $UTList;
-
 	}
 
 	public function RegisterUser($MJ_User_Type, $MJ_User_ID, $MJ_User_Name,     
@@ -62,31 +60,40 @@ class UserModel extends CI_MODEL {
 		//Find User Type
 		$this->load->database();
 		
-		$this->db->select('MJ_UR_USER_TYPE, MJ_USER_EMAIL');
-		$this->db->where('MJ_UR_ID_NO',$UID);
-		$query = $this->db->get('MJ_USER_REGISTRATION');
+		$this->db->select('MJ_USERID');
+		$this->db->where('MJ_USER_LOGIN',$UID);
+		$this->db->where('MJ_USER_ACCOUNT_STATUS','');
 
-		if($query->num_rows() == 1) {
-			$data = array(
-				'MJ_USERID'			=> 	$this->getNewUserId(),	
-	 			'MJ_USER_TYPE'		=>	$query->row()->MJ_UR_USER_TYPE,		
-	 			'MJ_USER_LOGIN'		=>	$UID,
-				'MJ_USER_PASSWORD'	=>	$Password,
-				'MJ_ID_NO'			=>	$UID,
-				'MJ_REG_EMAIL'		=>	$query->row()->MJ_USER_EMAIL,
-				//'MJ_USER_REG_DATE'	
-				//'MJ_USER_EXPIRY_DATE'
-				'MJ_USER_ACCOUNT_STATUS'	=>	'A' //Active
-				);
-			$this->db->insert('MJ_USER_MST', $data);
-			return 'OK';
+		$query = $this->db->get('MJ_USER_MST');
+		if(!($query->result() == null || $query->result()->num_rows() == 0))
+		{	
+			$this->db->select('MJ_UR_USER_TYPE, MJ_USER_EMAIL');
+			$this->db->where('MJ_UR_ID_NO',$UID);
+			//
+			//AND CHECK THAT NO RECORD EXISTS IN MJ_USER_ACCOUNT_STATUS WITH STATUS AS A
+			$query = $this->db->get('MJ_USER_REGISTRATION');
+
+			if($query->num_rows() == 1) {
+				$data = array(
+					'MJ_USERID'					=> 	$this->getNewUserId(),	
+		 			'MJ_USER_TYPE'				=>	$query->row()->MJ_UR_USER_TYPE,		
+		 			'MJ_USER_LOGIN'				=>	$UID,
+					'MJ_USER_PASSWORD'			=>	$Password,
+					'MJ_ID_NO'					=>	$UID,
+					'MJ_REG_EMAIL'				=>	$query->row()->MJ_USER_EMAIL,
+					//'MJ_USER_REG_DATE'	
+					//'MJ_USER_EXPIRY_DATE'
+					'MJ_USER_ACCOUNT_STATUS'	=>	'A' //Active
+					);
+				$this->db->insert('MJ_USER_MST', $data);
+				return 'OK';
+			}
+			else
+				return 'Failed';
 		}
-		else
-			return 'Failed';
+		return 'Duplicate';
 	}
 	
-
-
 	//This function validates the Registration Informaion provided by the User. The following Checks //are applied:
 	//	1.	There exists an email Id attached to the User Account
 	//	2.	Date of Birth of the employee with given id matches with the User DOB
@@ -108,7 +115,7 @@ class UserModel extends CI_MODEL {
 				if($User_EMail == '')
 					$msg = "No Email Id found associted with your profile. Pl. get your email updated in CIT";
 				else {
-					if ($result->ENAME == strtoupper(str_replace(' ', '', $MJ_User_Name)))	{
+					if (strtoupper(str_replace(' ', '', $result->ENAME ))== strtoupper(str_replace(' ', '', $MJ_User_Name)))	{
 						//Chhck if DOB Matches
 						if($result->EMPDOB != $MJ_User_DOB) 
 							$msg = "Your date of birth does nat match with our record.";		
@@ -136,7 +143,38 @@ class UserModel extends CI_MODEL {
 		     return $row->MJ_UR_ID + 1;
 	}
 
+	//Get User Profile. The function fetches UserName, UserType from 
+	//the database. 
+	public function getUserType($UserId) {
 
+		$this->db->select('MJ_USER_TYPE');
+		$this->db->from('MJ_USER_MST');
+		$this->db->where('MJ_USER_LOGIN',$UserId);
+		
+		$query = $this->db->get();
+
+		if($query->num_rows() > 0) 
+				return $query->row()->MJ_USER_TYPE;
+			else
+				return '-1'; //Error	
+	}
+
+	//This function fectches User (EMployee Type) Name
+	public function getEmpName($UserId) {
+
+		$this->db->select('EMP_FORENAME, EMP_MIDDLENAME, EMP_SURNAME ');
+		$this->db->from('EMP_MST');
+		$this->db->where('EMP_ID',$UserId);
+		 
+		$query = $this->db->get();
+
+		if($query->num_rows() > 0) 
+				return 	$query->row()->EMP_FORENAME . ' ' .
+						$query->row()->EMP_MIDDLENAME . ' ' .
+						$query->row()->EMP_SURNAME;
+			else
+				return '-1'; //Error	
+	} 
 	//This function Finds New User Id from MJ_User_Mst table
 	public function getNewUserId(){
 
@@ -172,7 +210,6 @@ class UserModel extends CI_MODEL {
 			
 		else
 			return 0;
-
 	}
 
 	//This function checks, if User is authrised to use the system
@@ -195,6 +232,17 @@ class UserModel extends CI_MODEL {
 				return 'DNE'; //Does not exists
 	}
 
+	//This function Updates User Password
+	public function updatePassword($UID, $Password){
 
+		//Find User Type
+		$this->load->database();
+		
+		$this->db->set('MJ_USER_PASSWORD', $Password);
+		$this->db->where('MJ_USER_LOGIN', $UID);
+		$this->db->update('MJ_USER_MST');
+
+		//return $this->db->last_query();
+	}
 }
 ?>

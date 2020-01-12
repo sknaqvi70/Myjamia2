@@ -18,8 +18,7 @@ class Welcome extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index()
-	{
+	public function index() {
 
 		$data['message'] = 'Welcome to MyJamia Portal!';
 		$data['messageType'] = 'I';
@@ -34,7 +33,9 @@ class Welcome extends CI_Controller {
 			
 			if ($AccountStatus == 'OK') {
 	            //Authorised User
-				$this->load->view('/auth/dashboard');
+	            $this->PrepareUserSession();
+	            unset($_POST['frm_Btn_Submit']);
+				return redirect('auth/dashboard');
 	         }
 	        else {
 		        if ($AccountStatus == 'E') //Expired
@@ -49,21 +50,22 @@ class Welcome extends CI_Controller {
 		        $this->load->view('/public/user_login',$data);
 		    }
 	    }
-		else {
+		elseif ($this->input->post('frm_Btn_Submit') == 'New User Registration') {
 			//Prepare User Type List
 			$this->load->model('UserModel','UM');
 			$data['UserTypeList'] = $this->UM->GetUserTypeList(); 
 			$data['message'] = '';
 			$this->load->view('/public/register_user',$data);
 		}	
-	}
+		else
+			redirect(base_url());
+		}
 
 
 	// This function performs following fucnctions:
 	// 1. 	Validate data receveid from register_user form 
 	// 2. 	Store User Registration Data
 	// 3. 	Sends an Email for EMail Account Verification
-
 	public function register_user() {
 
 			
@@ -126,15 +128,15 @@ class Welcome extends CI_Controller {
 	// This function performs following fucnctions:
 	// 1. 	Validates data receveid from SetUserPassword View 
 	// 2. 	Sends an Email for EMail Account Verification
-
 	public function set_account_password() {
 
+			$PWD = $this->input->post('MJ_USER_PASSWORD');
 			//Set Validation Rules
 			// 1 Password cannot be empty
 			$this->form_validation->set_rules('MJ_USER_PASSWORD','Password','required|min_length[6]|max_length[20]');
 
 			// 2 Retyped Password cannot be empty
-			$this->form_validation->set_rules('MJ_USER_PASSWORD_RETRY','Password','required|min_length[6]|max_length[20]|callback_checkPasswordsMatch');
+			$this->form_validation->set_rules('MJ_USER_PASSWORD_RETRY','Password','required|min_length[6]|max_length[20]|callback_checkPasswordsMatch['.$PWD.']');
 
 			//Set Error Delimeter
 
@@ -163,7 +165,13 @@ class Welcome extends CI_Controller {
 					$data['messageType'] = 'S';
 					$this->load->view('/public/user_login',$data);
 				}
-				else {
+				elseif ($data['message'] == 'Duplicate') {
+					$data['message'] = 'Account already exists!';
+					$data['messageType'] = 'D';
+					$this->load->view('/public/SetAccountPassword',$data);
+				}
+				else
+				{
 					$data['message'] = 'Cannot create MyJamia Account. Please contact FTK-CIT.';
 					$data['messageType'] = 'D';
 					$this->load->view('/public/SetAccountPassword',$data);
@@ -174,7 +182,7 @@ class Welcome extends CI_Controller {
 	}
 
 	//This function verifies that User has access to the email account.
-	//Function is invoved by the user by clicking the URL sent to him/her in teh email.
+	//Function is invoked by the user by clicking the URL sent to him/her in the email.
 	public function verifyAccount() {
 
 		//Get Value of UserId from URL
@@ -187,6 +195,8 @@ class Welcome extends CI_Controller {
 		$data['VerificationResult'] = $this->UM->VerifyEMailAccount($UID, $RText);
 		$data['UID'] = $UID;
 
+		$data['message'] = 'Please set your password';
+		$data['messageType'] = 'I';
 		// 	$VerificationResult == 1  	=>  Passed verification
 		//	$VerificationResult == -1 	=>	Account already created
 		//	$VerificationResult == 0 	=>	Verification failed
@@ -225,8 +235,33 @@ class Welcome extends CI_Controller {
 	                }
 	}
 			
+	//This function prepares User Session
+	function PrepareUserSession(){
+		
+		$UserID = $this->input->post('frm_MJ_User_Login');
+
+		$this->load->model('UserModel', 'UM');
+		$UserType =  $this->UM->getUserType($UserID);
+
+		if ($UserType == 2) {//User is employee
+			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
+
+		}
+		$this->load->model('MenuModel');
+		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
+
+		$sessionData = array(
+			'login'		=> $UserID,
+        	'username'  => $UserName,
+        	'menu' 		=> $UserMenu
+		);
+
+		$this->session->set_userdata($sessionData);
+	}	
 	
-	
+
+	//----------------- SUPPORT FUNCTIONS ---------------------
+
 	// Check date format, if input date is valid return TRUE else returned FALSE.
 	public function checkDateFormat($str) {
 		
@@ -261,9 +296,10 @@ class Welcome extends CI_Controller {
 	}
 
 	// Check that Passwords are same 
-	public function checkPasswordsMatch($str) {
+	public function checkPasswordsMatch($str, $str2) {
 
-		if ($str == $this->input->post('MJ_USER_PASSWORD'))
+		//if ($str == $this->input->post('MJ_USER_PASSWORD'))
+		if ($str == $str2)
 			return true;
 		else {
 				$this->form_validation->set_message('checkPasswordsMatch', 'Passwords do not match!'); 

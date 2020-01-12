@@ -57,7 +57,7 @@
   <?php echo form_open('/Welcome/set_account_password'); ?>
     <fieldset>
       <legend>Set Password</legend>
-      <?php if ($message <> '') 
+      <?php if ($message <> '' && $messageType <> 'I') 
                 echo '<div class="alert  alert-danger">';
               else {
                 echo '<div class="alert alert-info">'  ;  
