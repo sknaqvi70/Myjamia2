@@ -157,7 +157,7 @@ class Welcome extends CI_Controller {
 	       		$this->load->model('UserModel','UM');
 				$data['message']  = $this->UM->AddUser(
 						$this->input->post('UID'),
-						$this->input->post('MJ_USER_PASSWORD'),
+						$this->input->post('MJ_USER_PASSWORD')
 				);
 				if ($data['message'] == 'OK') {
 				
@@ -251,9 +251,10 @@ class Welcome extends CI_Controller {
 		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
 
 		$sessionData = array(
-			'login'		=> $UserID,
-        	'username'  => $UserName,
-        	'menu' 		=> $UserMenu
+			'login'		=> 	$UserID,
+        	'username'  => 	$UserName,
+        	'usertype'	=>	$UserType
+        	'menu' 		=> 	$UserMenu
 		);
 
 		$this->session->set_userdata($sessionData);
