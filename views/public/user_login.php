@@ -82,7 +82,7 @@
 
             </div>
             <?php echo form_submit(['name'=>'frm_Btn_Submit','value'=>'Sign in','class'=>'btn btn-primary']); ?>
-            <?php echo form_submit(['name'=>'frm_Btn_Register_User','value'=>'New User Registration','class'=>'btn btn-secondary']); ?>
+            <?php echo form_submit(['name'=>'frm_Btn_Submit','value'=>'New User Registration','class'=>'btn btn-secondary']); ?>
           </fieldset>
           <br/>
       </form>

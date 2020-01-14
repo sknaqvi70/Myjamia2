@@ -19,7 +19,6 @@ class Welcome extends CI_Controller {
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
 	public function index() {
-
 		$data['message'] = 'Welcome to MyJamia Portal!';
 		$data['messageType'] = 'I';
 		$this->load->view('/public/user_login',$data);
@@ -34,8 +33,8 @@ class Welcome extends CI_Controller {
 			if ($AccountStatus == 'OK') {
 	            //Authorised User
 	            $this->PrepareUserSession();
-	            unset($_POST['frm_Btn_Submit']);
-				return redirect('auth/dashboard');
+		    return redirect('auth/dashboard');
+
 	         }
 	        else {
 		        if ($AccountStatus == 'E') //Expired
@@ -253,7 +252,7 @@ class Welcome extends CI_Controller {
 		$sessionData = array(
 			'login'		=> 	$UserID,
         	'username'  => 	$UserName,
-        	'usertype'	=>	$UserType
+        	'usertype'	=>	$UserType,
         	'menu' 		=> 	$UserMenu
 		);
 
