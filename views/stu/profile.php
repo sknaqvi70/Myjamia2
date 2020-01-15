@@ -1,5 +1,4 @@
-<?php $header_path = __DIR__.'/../auth/header.php'; 
-          require $header_path; ?>
+<?php require __DIR__.'/../auth/header.php';?>
 <br/>
     <div class="col-sm-8 text-left"> 
       <div class="panel panel-info">
@@ -156,5 +155,4 @@
       </div>
       </div>  
     </div>
-    <?php $footer_path = __DIR__.'/../auth/footer.php'; 
-          require $footer_path; ?>
+    <?php require __DIR__.'/../auth/footer.php' ?>
