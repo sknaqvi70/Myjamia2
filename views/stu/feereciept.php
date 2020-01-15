@@ -1,4 +1,6 @@
-<?php include 'C:\xampp\htdocs\CI\application\views\auth\header.php';?>
+<?php $header_path = __DIR__.'/../auth/header.php'; 
+          require $header_path; ?>
+
 <br/>
     <div class="col-sm-8 text-left"> 
       <div class="panel panel-info">
@@ -73,4 +75,5 @@
       </div>
       </div>  
     </div>
-<?php include 'C:\xampp\htdocs\CI\application\views\auth\footer.php';?>
+    <?php $footer_path = __DIR__.'/../auth/footer.php'; 
+          require $footer_path; ?>

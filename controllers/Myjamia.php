@@ -47,4 +47,8 @@ class Myjamia extends CI_Controller {
 	
 }
 
+public function test() {
+	echo "here". $_SESSION['login'];
+}
+
 }
