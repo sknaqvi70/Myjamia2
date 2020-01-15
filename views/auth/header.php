@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>MyJamia Self Service Portal</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="<?= base_url(); ?>application/assets/images/jamia.ico" type="image/ico"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -100,9 +101,17 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
         <span class="glyphicon glyphicon-user"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="http://jmi.ac.in">Profile&nbsp;<span class="glyphicon glyphicon-info-sign"></span></li></a>
-              <li><a data-toggle='modal' href='#changePasswordModal'>Change Password&nbsp;<span class="glyphicon glyphicon-pencil"></span></li></a>
-              <li><a href=<?= base_url('auth/user_logout'); ?>>Logout&nbsp;<span class="glyphicon glyphicon-log-out"></span></li></a></li>
+          
+          <li><a href="<?= base_url('Student/profile');?>">Profile&nbsp;
+              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+          
+          <li><a data-toggle='modal' href='#changePasswordModal'>Change Password&nbsp;
+              <span class="glyphicon glyphicon-pencil"></span>
+          </li></a>
+          <li><a href=<?= base_url('auth/user_logout'); ?>>Logout&nbsp;
+              <span class="glyphicon glyphicon-log-out"></span>
+          </li></a>
+        </li>
         </ul> 
       </li>
       </ul>
@@ -146,8 +155,8 @@
                 <div id='collapse$i' class='panel-collapse collapse in'>
                   <div class='panel-body'>";
           }
-        else {
-          echo "<p>".$menuItem->MJ_MENU_TEXT."</p>";
+        else { //URL added by raquib
+          echo "<a href=".base_url().$menuItem->MJ_MENU_URL."><p>".$menuItem->MJ_MENU_TEXT."</p></a>";
         } 
         
         }

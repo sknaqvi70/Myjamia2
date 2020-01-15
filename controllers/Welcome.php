@@ -242,6 +242,10 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserType =  $this->UM->getUserType($UserID);
 
+		if ($UserType == 1) {//User is student added by raquib
+			$UserName = $this->UM->getStuName($UserID);
+
+		}
 		if ($UserType == 2) {//User is employee
 			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
 

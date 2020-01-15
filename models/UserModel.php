@@ -159,6 +159,22 @@ class UserModel extends CI_MODEL {
 				return '-1'; //Error	
 	}
 
+	//This function fectches User (Student Type) Name added by Raquib
+	public function getStuName($UserId) {
+
+		$this->db->select('STU_FNAME, STU_MNAME, STU_LNAME');
+		$this->db->from('STU_MST');
+		$this->db->where('STU_ID',$UserId);
+		 
+		$query = $this->db->get();
+
+		if($query->num_rows() > 0) 
+				return 	$query->row()->STU_FNAME . ' ' .
+						$query->row()->STU_MNAME . ' ' .
+						$query->row()->STU_LNAME;
+			else
+				return '-1'; //Error	
+	} 
 	//This function fectches User (EMployee Type) Name
 	public function getEmpName($UserId) {
 
