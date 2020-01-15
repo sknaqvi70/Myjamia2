@@ -15,7 +15,7 @@ class Student extends CI_Controller {
 	public function profile(){
 		$UserId= $_SESSION['login'];
 		$data['stu_dtl']=$this->stu->stu_info($UserId);
-		$this->load->view('stu/Profile', $data);
+		$this->load->view('stu/profile', $data);
 	}
 	//this function used for fetch details of program fee paid to display
 	public function feereciept(){	
