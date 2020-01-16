@@ -182,8 +182,10 @@ class StudentModel extends CI_Model {
 		$depid=$this->session->userdata('STU_DEPT');
 		$sessid=$this->session->userdata('STU_SES_ID'); 
 		$ssmid= $this->session->userdata('STU_SSM_ID'); 
-		$start_date='01-'.$postData.'-2019';
-		$end_date='30-'.$postData.'-2019';
+		$year= SUBSTR($sessid,0,4);
+		$start_date='01-'.$postData.'-'.$year;
+		$last_day= date('t',strtotime($start_date));
+		$end_date=$last_day.'-'.$postData.'-'.$year;
 		$this->db->order_by('SBD_PAPER', 'ASC');          			
 		$this->db->select('COURSE_NAME(RRD_SSM_ID) COURSE,ATD_SBD_ID PAPER_CODE,SBD_PAPER, NVL(SUM(NVL(ATD_NO_CLASSES,0)),0) TOTAL_CLASSES,NVL(SUM(NVL(AND_CLASS_ATTEND,0)),0) ATTEND,ROUND(( NVL(SUM(NVL(AND_CLASS_ATTEND, 0)), 0)/NVL(SUM(NVL(ATD_NO_CLASSES, 0)), 0))*100,2) PER');
 		$this->db->from('RE_RGN_DTL R');
