@@ -53,7 +53,7 @@ class Student extends CI_Controller {
             $this->pdf->render();
             ob_end_clean();
             ob_start();
-            $this->pdf->stream("".$SFD_FRECP_NO.".pdf",array('Attachment' =>0));            
+            $this->pdf->stream("".$SFD_FRECP_NO.".pdf",array('Attachment' =>1));            
 		}
 	}
 
@@ -64,5 +64,36 @@ class Student extends CI_Controller {
 		$this->load->view('stu/feepayment', $data);
 		
 	}
+	//this function used for to get semester/year of student and redirect to Attendence page
+	public function attendance(){
+		$UserId= $_SESSION['login'];			
+		$data['semester'] = $this->stu->getSemester($UserId);			
+		$this->load->view('stu/Attendance', $data);
+	}
+
+	//this function used for to get session on the basis of semester/year of student
+	public function getSession(){     
+		$UserId= $_SESSION['login'];
+    	$postData = $this->input->post('v_semester');    
+    	$data = $this->stu->getSess($postData,$UserId);        
+    	echo json_encode($data); 
+  	}
+
+  	//this function used for to get Month on the basis of session
+  	public function getMonths(){ 
+    	// POST data 
+  		$postData = $this->input->post('v_session');
+     	// get data 
+    	$data = $this->stu->getMonths($postData);
+    	echo json_encode($data); 
+  	}
+
+  	//this function used for to get attendance of the student
+  	public function getStuAttendance(){
+  		$UserId= $_SESSION['login'];
+  		$postData = $this->input->post('v_month');
+		$data=$this->stu->getStuAttendance($postData, $UserId);
+		echo json_encode($data);
+  	}
 }
 ?>
