@@ -20,11 +20,14 @@ class StudentModel extends CI_Model {
 		$this->db->where('STU_ADMIN_WITHDRAWAL','N');
 		$query = $this->db->get();		
 		foreach($query->result() as $row){
-    		if ($row->STU_ID==$UserId) {    			
-			$this->session->set_userdata('STU_SES_ID', $row->STU_SES_ID);
-			$this->session->set_userdata('STU_DEPT', $row->STU_DEPT);
-            $this->session->set_userdata('STU_SSM_ID', $row->STU_SSM_ID);
-            $this->session->set_userdata('SSM_ID', $row->SSM_ID);
+    		if ($row->STU_ID==$UserId) {  
+    		$sessionData = array(
+			'STU_SES_ID'=> 	$row->STU_SES_ID,
+        	'STU_DEPT'  => 	$row->STU_DEPT,
+        	'STU_SSM_ID'=>	$row->STU_SSM_ID,
+        	'SSM_ID'	=> 	$row->SSM_ID
+			);
+		$this->session->set_userdata($sessionData);
 			}	
 		}
 		return $query->result();			
@@ -32,11 +35,10 @@ class StudentModel extends CI_Model {
 	//this function for fetch details of fee paid to download fee receipts
 	public function getFeeReceipt($UserId)	{
 		$id=$this->session->userdata('MJ_ID_NO');
-		$this->db->select('course_name(SFD_SSM_ID) COURSE,SFD_RECP_NO, SFD_CHQ_NO,SFD_BANK,SFD_CHQ_AMT,SFD_CHQ_DT,SFD_LAST_FEE_SUB_DATE LAST_DT,SFD_PAY_MODE');		
+		$this->db->select('course_name(SFD_SSM_ID) COURSE,SFD_RECP_NO, SFD_CHQ_NO,SFD_BANK,SFD_CHQ_AMT,SFD_CHQ_DT,SFD_LAST_FEE_SUB_DATE LAST_DT,SFD_PAY_MODE');	
 		$this->db->join('RE_RGN_DTL R','R.RRD_RECEIPT_NO=A.SFD_RECP_NO');
 		$this->db->where(['RRD_STU_ID'=>$UserId]);
 		$query = $this->db->get('STU_FEE_DTL A');
-
 		return $query->result();
 	}
 
@@ -122,8 +124,7 @@ class StudentModel extends CI_Model {
 		$this->db->where('SFD_PAY_DONE','N');
 		$this->db->where(array('SFD_HOS_ID'=> NULL));
 		$query = $this->db->get('STU_FEE_DTL A');
-		return $query->result();
-		
+		return $query->result();		
 	}
 
 	//this function used for to get semester of the student
@@ -140,16 +141,18 @@ class StudentModel extends CI_Model {
     	$response = $q->result_array();
     	return $response;
   	}
+
   	//this function used for to get session of the student
   	public function getSess($postData, $UserId){
         $ssmid= $this->session->userdata('SSM_ID');
-        $res=$this->db->query("SELECT CSG_ID 
-                    from RE_RGN_DTL R,COURSE_SUB_GROUPS C,SCHEME_TERM S
+        $res=$this->db->query("SELECT C.CSG_ID 
+                    FROM RE_RGN_DTL R,COURSE_SUB_GROUPS C,SCHEME_TERM S
                     WHERE C.CSG_SSM_ID=R.RRD_SSM_ID
                     AND R.RRD_SSM_ID=S.SSM_ID
-                    AND R.RRD_STU_ID='$UserId'
-                    AND SSM_SCH_ID = '$ssmid'
-                    AND SSM_YEAR_SEMNO = '$postData'")->result();                        		
+                    AND R.RRD_STU_ID= '$UserId'
+                    AND S.SSM_SCH_ID = '$ssmid'
+                    AND S.SSM_YEAR_SEMNO = '$postData'")->result();
+        
        	$str = "";
        	foreach ($res as $record)
        	$str .= $record->CSG_ID . ", "; 
@@ -159,9 +162,10 @@ class StudentModel extends CI_Model {
 					AND AND_ATD_ID=ATD_ID
 					AND AND_STU_ID='$UserId'
 					AND A.ATD_CSG_ID IN (".rtrim($str,", ").")
-        			ORDER BY 3 DESC")->result();                                
-    	return $response;
+        			ORDER BY 3 DESC")->result();
+        return $response;
   	}
+  	
   	//this function used for to get Month on the basis of session
   	public function getMonths($postData){
     	$response = array(); 
@@ -197,7 +201,6 @@ class StudentModel extends CI_Model {
 		$this->db->group_by(array("RRD_DEP_ID","RRD_SSM_ID","RRD_REG_EX","RRD_STU_ID","ATD_SBD_ID","ATD_CSG_ID","DEP_DESC","SBD_PAPER")); 
 		$q = $this->db->get();				
 		$response = $q->result_array();
-
     	return $response;	
 	}
 	

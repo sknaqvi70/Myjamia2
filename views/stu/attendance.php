@@ -113,8 +113,7 @@
             });
           });
           $('#attmonth').change(function(){
-            var v_month = $(this).val();
-            var t_classes = 0;
+            var v_month = $(this).val();            
             // AJAX request
             $.ajax({
                     url:'<?=base_url()?>/Student/getStuAttendance',
