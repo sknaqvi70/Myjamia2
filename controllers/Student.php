@@ -96,7 +96,7 @@ class Student extends CI_Controller {
   		$SsmId = $_SESSION['ssmid'];
   		$Depid = $_SESSION['depid'];
   		$SesId = $_SESSION['sesid'];
-  		$postData = 'AUG'; //$this->input->post('v_month');
+  		$postData = $this->input->post('v_month');
 		$data=$this->stu->getStuAttendance($postData, $UserId, $SsmId, $Depid, $SesId);
 		echo json_encode($data);
   	}
