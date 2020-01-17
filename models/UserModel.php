@@ -260,5 +260,20 @@ class UserModel extends CI_MODEL {
 
 		//return $this->db->last_query();
 	}
+	// this function is used for fetch ssmid , dep id frm database
+	public function getStuData($UserId){	          			
+		$this->db->select('A.STU_SES_ID,A.STU_SSM_ID,A.STU_DEPT');
+		$this->db->from('STU_MST A');
+		$this->db->join('MJ_USER_MST B', 'B.MJ_ID_NO=A.STU_ID');
+		$this->db->join('DEP_MST C', 'A.STU_DEPT= C.DEP_ID ');
+		$this->db->where('MJ_USER_ACCOUNT_STATUS','A');
+		$this->db->where(['A.STU_ID'=>$UserId]);
+		$this->db->where('STU_ADMIN_WITHDRAWAL','N');
+		$query = $this->db->get();		
+		if($query->num_rows() > 0) 
+				return $query->result();
+			else
+				return '-1'; //Error		
+	}
 }
 ?>

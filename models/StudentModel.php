@@ -19,22 +19,10 @@ class StudentModel extends CI_Model {
 		$this->db->where(['A.STU_ID'=>$UserId]);
 		$this->db->where('STU_ADMIN_WITHDRAWAL','N');
 		$query = $this->db->get();		
-		foreach($query->result() as $row){
-    		if ($row->STU_ID==$UserId) {  
-    		$sessionData = array(
-			'STU_SES_ID'=> 	$row->STU_SES_ID,
-        	'STU_DEPT'  => 	$row->STU_DEPT,
-        	'STU_SSM_ID'=>	$row->STU_SSM_ID,
-        	'SSM_ID'	=> 	$row->SSM_ID
-			);
-		$this->session->set_userdata($sessionData);
-			}	
-		}
 		return $query->result();			
 	}
 	//this function for fetch details of fee paid to download fee receipts
 	public function getFeeReceipt($UserId)	{
-		$id=$this->session->userdata('MJ_ID_NO');
 		$this->db->select('course_name(SFD_SSM_ID) COURSE,SFD_RECP_NO, SFD_CHQ_NO,SFD_BANK,SFD_CHQ_AMT,SFD_CHQ_DT,SFD_LAST_FEE_SUB_DATE LAST_DT,SFD_PAY_MODE');	
 		$this->db->join('RE_RGN_DTL R','R.RRD_RECEIPT_NO=A.SFD_RECP_NO');
 		$this->db->where(['RRD_STU_ID'=>$UserId]);
@@ -43,8 +31,7 @@ class StudentModel extends CI_Model {
 	}
 
 	//this function used for fetch sigle fee details to view and print
-	public function fetch_single_fee_details($SFD_FRECP_NO,$UserId){
-		$id=$this->session->userdata('MJ_ID_NO');
+	public function fetch_single_fee_details($SFD_FRECP_NO,$UserId){	
 		//counter fee details		
 		$where = "SFD_PAY_MODE is  NOT NULL";
 		$this->db->select('course_name(SFD_SSM_ID) COURSE,SFD_RECP_NO,RRD_STU_ID,STU_NAME(RRD_STU_ID) SNAME,STU_FATHER_NAME,SFD_CHQ_NO CHQ_NO,SFD_BANK BANK_NAME,SFD_CHQ_AMT,SFD_CHQ_DT,SFD_LAST_FEE_SUB_DATE LAST_DT,SFD_PAY_MODE BANK_PAY_MODE,SFD_PAY_DONE');
@@ -128,61 +115,59 @@ class StudentModel extends CI_Model {
 	}
 
 	//this function used for to get semester of the student
-	public function getSemester($UserId){
+	public function getSemester($UserId, $SsmId){
     	$response = array();
      	// Select record
-    	$ssmid=$this->session->userdata('SSM_ID');
+    	$ssmid=substr($SsmId,0,8);
 		$this->db->order_by('SSM_YEAR_SEMNO', 'ASC');          			
 		$this->db->select('SSM_YEAR_SEMNO,YEAR_NAME('."'$ssmid'".',SSM_YEAR_SEMNO) YEAR_SEM');
 		$this->db->join('RE_RGN_DTL R','R.RRD_SSM_ID=S.SSM_ID');
 		$this->db->from('SCHEME_TERM S');
 		$this->db->where(['RRD_STU_ID'=>$UserId]);
-		$q = $this->db->get();		
+		$q = $this->db->get();				
     	$response = $q->result_array();
     	return $response;
   	}
 
   	//this function used for to get session of the student
-  	public function getSess($postData, $UserId){
-        $ssmid= $this->session->userdata('SSM_ID');
+  	public function getSess($postData, $UserId, $SsmId){
+        $ssmid=substr($SsmId,0,8);
         $res=$this->db->query("SELECT C.CSG_ID 
                     FROM RE_RGN_DTL R,COURSE_SUB_GROUPS C,SCHEME_TERM S
                     WHERE C.CSG_SSM_ID=R.RRD_SSM_ID
                     AND R.RRD_SSM_ID=S.SSM_ID
                     AND R.RRD_STU_ID= '$UserId'
                     AND S.SSM_SCH_ID = '$ssmid'
-                    AND S.SSM_YEAR_SEMNO = '$postData'")->result();
-        
+                    AND S.SSM_YEAR_SEMNO = '$postData'")->result();        
        	$str = "";
        	foreach ($res as $record)
-       	$str .= $record->CSG_ID . ", "; 
+       	$str .= $record->CSG_ID . ", ";        
        	$response=$this->db->query("SELECT DISTINCT A.ATD_SES_ID, SES_NAME(A.ATD_SES_ID) SESDESC,
-					S.SES_START_DT,SUBSTR(A.ATD_SES_ID,6) SEM_TYPE FROM SESSION_MST S, ATTENDANCE A,ATTENDANCE_DTL B
+					S.SES_START_DT FROM SESSION_MST S, ATTENDANCE A,ATTENDANCE_DTL B
 					WHERE ATD_SES_ID = SES_ID
 					AND AND_ATD_ID=ATD_ID
 					AND AND_STU_ID='$UserId'
 					AND A.ATD_CSG_ID IN (".rtrim($str,", ").")
-        			ORDER BY 3 DESC")->result();
-        return $response;
+        			ORDER BY SES_START_DT DESC")->result();         			
+        return $response;        
   	}
   	
   	//this function used for to get Month on the basis of session
   	public function getMonths($postData){
-    	$response = array(); 
+  		$this->session->set_userdata('sesid', $postData);
+  		$Sesid=substr($postData,5);
+    	$response = array();    	    	 
     	// Select record
     	$this->db->select('SM_ID,SM_DESC');
-    	$this->db->where('SM_SEM_TYPE', $postData);
-    	$q = $this->db->get('SESSION_MONTH');
+    	$this->db->where('SM_SEM_TYPE', $Sesid);
+    	$q = $this->db->get('SESSION_MONTH');    	     	   	
     	$response = $q->result_array();
     	return $response;
   	}
 
   	//this function used for to get attendance of the student
-  	public function getStuAttendance($postData, $UserId){
-		$depid=$this->session->userdata('STU_DEPT');
-		$sessid=$this->session->userdata('STU_SES_ID'); 
-		$ssmid= $this->session->userdata('STU_SSM_ID'); 
-		$year= SUBSTR($sessid,0,4);
+  	public function getStuAttendance($postData, $UserId, $SsmId, $Depid, $SesId){
+  		$year= SUBSTR($SesId,0,4);
 		$start_date='01-'.$postData.'-'.$year;
 		$last_day= date('t',strtotime($start_date));
 		$end_date=$last_day.'-'.$postData.'-'.$year;
@@ -194,14 +179,14 @@ class StudentModel extends CI_Model {
 		$this->db->join('DEP_MST D', 'D.DEP_ID=R.RRD_DEP_ID');
 		$this->db->join('SUBJECT_PAPERS E', 'A.ATD_SBD_ID = E.SBD_ID');
 		$this->db->where(['RRD_STU_ID'=>$UserId]);
-		$this->db->where(['RRD_SES_ID' =>$sessid]);
+		$this->db->where(['RRD_SES_ID' =>$SesId]);
 		$this->db->where(['AND_STU_ID'=>$UserId]);
-		$this->db->where(['RRD_SSM_ID'=>$ssmid]);
-		$this->db->where(['RRD_DEP_ID'=>$depid]);
+		$this->db->where(['RRD_SSM_ID'=>$SsmId]);
+		$this->db->where(['RRD_DEP_ID'=>$Depid]);
 		$this->db->where('A.ATD_FROM_DT BETWEEN '."'$start_date'". ' and '.  "'$end_date'".'');
 		$this->db->where('A.ATD_TO_DT BETWEEN '. "'$start_date'". ' and '. "'$end_date'".'');
 		$this->db->group_by(array("RRD_DEP_ID","RRD_SSM_ID","RRD_REG_EX","RRD_STU_ID","ATD_SBD_ID","ATD_CSG_ID","DEP_DESC","SBD_PAPER")); 
-		$q = $this->db->get();				
+		$q = $this->db->get();
 		$response = $q->result_array();
     	return $response;	
 	}

@@ -85,7 +85,7 @@
                     $('#attsession').find('option').not(':first').remove();
                     // Add options
                     $.each(response,function(index,data){
-                    $('#attsession').append('<option value="'+data['SEM_TYPE']+'">'+data['SESDESC']+'</option>');
+                    $('#attsession').append('<option value="'+data['ATD_SES_ID']+'">'+data['SESDESC']+'</option>');
                     });
                     }
                   });

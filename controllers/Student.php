@@ -66,16 +66,18 @@ class Student extends CI_Controller {
 	}
 	//this function used for to get semester/year of student and redirect to Attendence page
 	public function attendance(){
-		$UserId= $_SESSION['login'];			
-		$data['semester'] = $this->stu->getSemester($UserId);			
+		$UserId= $_SESSION['login'];
+		$SsmId= $_SESSION['ssmid'];			
+		$data['semester'] = $this->stu->getSemester($UserId, $SsmId);			
 		$this->load->view('stu/Attendance', $data);
 	}
 
 	//this function used for to get session on the basis of semester/year of student
 	public function getSession(){     
 		$UserId= $_SESSION['login'];
+		$SsmId= $_SESSION['ssmid'];
     	$postData = $this->input->post('v_semester');    
-    	$data = $this->stu->getSess($postData,$UserId);        
+    	$data = $this->stu->getSess($postData,$UserId,$SsmId);        
     	echo json_encode($data); 
   	}
 
@@ -91,8 +93,11 @@ class Student extends CI_Controller {
   	//this function used for to get attendance of the student
   	public function getStuAttendance(){
   		$UserId= $_SESSION['login'];
-  		$postData = $this->input->post('v_month');
-		$data=$this->stu->getStuAttendance($postData, $UserId);
+  		$SsmId = $_SESSION['ssmid'];
+  		$Depid = $_SESSION['depid'];
+  		$SesId = $_SESSION['sesid'];
+  		$postData = 'AUG'; //$this->input->post('v_month');
+		$data=$this->stu->getStuAttendance($postData, $UserId, $SsmId, $Depid, $SesId);
 		echo json_encode($data);
   	}
 }

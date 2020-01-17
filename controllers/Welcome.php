@@ -241,6 +241,13 @@ class Welcome extends CI_Controller {
 
 		$this->load->model('UserModel', 'UM');
 		$UserType =  $this->UM->getUserType($UserID);
+		//this is used for to set ssm id and dep id
+		$UserData =  $this->UM->getStuData($UserID);
+		foreach($UserData as $udata):
+    		$SsmId= $udata->STU_SSM_ID;
+    		$DepId= $udata->STU_DEPT;
+    		$SesId= $udata->STU_SES_ID;
+		endforeach;
 
 		if ($UserType == 1) {//User is student added by raquib
 			$UserName = $this->UM->getStuName($UserID);
@@ -257,7 +264,9 @@ class Welcome extends CI_Controller {
 			'login'		=> 	$UserID,
         	'username'  => 	$UserName,
         	'usertype'	=>	$UserType,
-        	'menu' 		=> 	$UserMenu
+        	'menu' 		=> 	$UserMenu,
+        	'ssmid'		=>	$SsmId,
+        	'depid'		=>	$DepId
 		);
 
 		$this->session->set_userdata($sessionData);
