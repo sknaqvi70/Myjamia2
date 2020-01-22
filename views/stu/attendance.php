@@ -37,14 +37,13 @@
                  </select>
               </td>          
             </tr>    
-            </table> 
-             
+            </table>              
             <!-- Image loader -->
-            <div id='loader' style='display: none;text-align: center;'>
-              <img src='<?= base_url(); ?>application/assets/images/Spinner-Preloader.gif' width='100px' height='100px'>
-            </div><br> <br>
+            <div id='loader'>
+              <img src='<?= base_url(); ?>application/assets/images/Spinner-Preloader.gif' width='250px' height='250px'>
+            </div><br> 
             <!-- Image END loader -->
-            <table class="table table-striped table-bordered table-hover" align="center" style="font-size:15px; font-family:Calibri;">
+            <table class="table table-striped table-bordered table-hover" align="center" style="font-size:15px; font-family:Calibri;border: 2px solid black;border-color: coral">
             <thead>    
               <tr>
                 <th>Paper Code</th>
@@ -107,7 +106,7 @@
 
                     // Add options
                     $.each(response,function(index,data){
-                    $('#attmonth').append('<option value="'+data['SM_ID']+'">'+data['SM_DESC']+'</option>');
+                    $('#attmonth').append('<option value="'+data['MJ_SM_ID']+'">'+data['MJ_SM_DESC']+'</option>');
                     });
                     }
             });
@@ -139,9 +138,21 @@
             });
           });
         });
-        </script>       
+        </script>  
+         <!---------- CSS for loading time waiting gif ------------->
+        <style type="text/css">
+        #loader{
+                position:fixed;
+                display: none;
+                margin-top:-10px;
+                margin-left:-150px;
+                top:50%;
+                left:50%;
+                text-align:center;                
+              }
+        </style> 
+        <!---------- end loading time waiting gif ------------->    
       </div> 
-
       <!---------- end ------------->  
     </div>
     <?php require __DIR__.'/../auth/footer.php'; ?>

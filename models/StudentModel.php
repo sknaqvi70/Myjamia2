@@ -155,12 +155,12 @@ class StudentModel extends CI_Model {
   	//this function used for to get Month on the basis of session
   	public function getMonths($postData){
   		$this->session->set_userdata('sesid', $postData);
-  		$Sesid=substr($postData,5);
-    	$response = array();    	    	 
+  		$Sesid=substr($postData,4);
+  		$response = array();    	    	 
     	// Select record
-    	$this->db->select('SM_ID,SM_DESC');
-    	$this->db->where('SM_SEM_TYPE', $Sesid);
-    	$q = $this->db->get('SESSION_MONTH');    	     	   	
+    	$this->db->select('MJ_SM_ID,MJ_SM_DESC');
+    	$this->db->where('MJ_SM_SEM_TYPE', $Sesid);
+    	$q = $this->db->get('MJ_SESSION_MONTH');    	     	   	
     	$response = $q->result_array();
     	return $response;
   	}
@@ -190,7 +190,32 @@ class StudentModel extends CI_Model {
 		$response = $q->result_array();
     	return $response;	
 	}
+	/*public function getStuTotAtt($postData, $UserId, $SsmId, $Depid, $SesId){
+  		$year= SUBSTR($SesId,0,4);
+		$start_date='01-'.$postData.'-'.$year;
+		$last_day= date('t',strtotime($start_date));
+		$end_date=$last_day.'-'.$postData.'-'.$year;
+		$this->db->order_by('SBD_PAPER', 'ASC');          			
+		$this->db->select('SUM(NVL(SUM(NVL(ATD_NO_CLASSES, 0)), 0)) TOT_CLASSES,SUM(NVL(SUM(NVL(AND_CLASS_ATTEND, 0)), 0)) TOT_ATTEND,ROUND(( NVL(SUM(NVL(AND_CLASS_ATTEND, 0)), 0)/NVL(SUM(NVL(ATD_NO_CLASSES, 0)), 0))*100, 2) TOT_PER');
+		$this->db->from('RE_RGN_DTL R');
+		$this->db->join('ATTENDANCE A', 'A.ATD_SES_ID = R.RRD_SES_ID');
+		$this->db->join('ATTENDANCE_DTL C', 'C.AND_ATD_ID = A.ATD_ID');
+		$this->db->join('DEP_MST D', 'D.DEP_ID=R.RRD_DEP_ID');
+		$this->db->join('SUBJECT_PAPERS E', 'A.ATD_SBD_ID = E.SBD_ID');
+		$this->db->where(['RRD_STU_ID'=>$UserId]);
+		$this->db->where(['RRD_SES_ID' =>$SesId]);
+		$this->db->where(['AND_STU_ID'=>$UserId]);
+		$this->db->where(['RRD_SSM_ID'=>$SsmId]);
+		$this->db->where(['RRD_DEP_ID'=>$Depid]);
+		$this->db->where('A.ATD_FROM_DT BETWEEN '."'$start_date'". ' and '.  "'$end_date'".'');
+		$this->db->where('A.ATD_TO_DT BETWEEN '. "'$start_date'". ' and '. "'$end_date'".'');
+		$this->db->group_by(array("AND_CLASS_ATTEND","ATD_NO_CLASSES")); 
+		$q = $this->db->get();
+		$response = $q->result_array();
+    	return $response;	
+	}
 	
+*/
 
 }
 ?>

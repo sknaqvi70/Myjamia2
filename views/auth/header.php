@@ -101,10 +101,22 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
         <span class="glyphicon glyphicon-user"></span></a>
         <ul class="dropdown-menu">
-          
+
+          <!-- checking the user type added by Raquib  -->
+         <?php if($_SESSION['usertype'] == 1) { ?> <!-- for student user -->
           <li><a href="<?= base_url('Student/profile');?>">Profile&nbsp;
               <span class="glyphicon glyphicon-info-sign"></span></li></a>
-          
+          <?php }if($_SESSION['usertype'] == 2){ ?> <!-- for Employee User -->
+          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+          <?php }if($_SESSION['usertype'] == 3){ ?> <!-- for Contractual User -->
+          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+          <?php }if ($_SESSION['usertype'] == 4) { ?> <!-- for Pensioner/Retired User -->
+          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+          <?php } ?>  
+          <!-- End -->
           <li><a data-toggle='modal' href='#changePasswordModal'>Change Password&nbsp;
               <span class="glyphicon glyphicon-pencil"></span>
           </li></a>
