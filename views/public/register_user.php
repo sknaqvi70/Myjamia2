@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Welcome to MyJamia Portal</title>
+  <link rel="shortcut icon" href="<?= base_url(); ?>application/assets/images/jamia.ico" type="image/ico"/>
 	   <?php echo link_tag('/application/assets/css/bootstrap.min.css'); ?>
      
       <!-- Scripts for usingDatepicker Widget Begins Here -->

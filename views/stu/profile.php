@@ -27,7 +27,7 @@
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Student Id:</span></td>
-              <td colspan="2"><h4 style="font-weight: bold;"><?php echo strtoupper("$v_sdtl->STU_ID") ?></h4></td>
+              <td><span style=" font-weight: bold;font-size: 18px;color: green;"><?php echo $v_sdtl->STU_ID ?></span></td>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Name</span></td>

@@ -190,6 +190,7 @@ class StudentModel extends CI_Model {
 		$response = $q->result_array();
     	return $response;	
 	}
+
 	/*public function getStuTotAtt($postData, $UserId, $SsmId, $Depid, $SesId){
   		$year= SUBSTR($SesId,0,4);
 		$start_date='01-'.$postData.'-'.$year;
@@ -213,9 +214,9 @@ class StudentModel extends CI_Model {
 		$q = $this->db->get();
 		$response = $q->result_array();
     	return $response;	
-	}
+	}*/
 	
-*/
+
 
 }
 ?>

@@ -241,12 +241,12 @@ class Welcome extends CI_Controller {
 
 		$this->load->model('UserModel', 'UM');
 		$UserType =  $this->UM->getUserType($UserID);
+		$UserEmail =  $this->UM->getEmail($UserID);
 		//this is used for to set ssm id and dep id
 		$UserData =  $this->UM->getStuData($UserID);
 		foreach($UserData as $udata):
     		$SsmId= $udata->STU_SSM_ID;
     		$DepId= $udata->STU_DEPT;
-    		$SesId= $udata->STU_SES_ID;
 		endforeach;
 
 		if ($UserType == 1) {//User is student added by raquib
@@ -257,12 +257,25 @@ class Welcome extends CI_Controller {
 			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
 
 		}
+		if ($UserType == 3) {//User is Contractual added by Raquib
+			$UserName = $this->UM->getEmpName($UserID);
+
+		}
+		if ($UserType == 4) {//User is Alumnus added by raquib
+			$UserName = $this->UM->getEmpName($UserID);
+
+		}
+		if ($UserType == 5) {//User is Pensioner/Retired added by raquib
+			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
+
+		}
 		$this->load->model('MenuModel');
 		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
 
 		$sessionData = array(
 			'login'		=> 	$UserID,
         	'username'  => 	$UserName,
+        	'useremail' => 	$UserEmail,
         	'usertype'	=>	$UserType,
         	'menu' 		=> 	$UserMenu,
         	'ssmid'		=>	$SsmId,
