@@ -127,38 +127,37 @@ class Complaint extends CI_Controller {
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body><center>
             <p style="font-size:25px; font-family:Calibri;"><strong>JAMIA MILLIA ISLAMIA</strong></p>
-            <p style="font-size:20px; font-family:Calibri;">Complaint Acknowledgement</p>
-            <br>
-          	</center>';
+            <p style="font-size:20px; font-family:Calibri;">Complaint Acknowledgement</p></center>';
+        /*$emailContaint .= '<img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
         $emailContaint .='Dear Sir/Madam,<br>'.
-						'With refrence to Your Complaint, this is to aknowledged you that the registration of your Complaint/Service request as per details given below:<br>';
-		$emailContaint .='<table width="80%" border="0" cellpadding="5" cellspacing="10">
+						'With refrence to Your Complaint, this is to aknowledged you that the registration of your Complaint/Service request as per details given below:<br><br>';
+		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
 						<tr>
-					  		<td ><strong>Ticket No. :</strong></td><td>'.$TicketNo.'</std>
+					  		<td ><strong>&nbsp;&nbsp;Ticket No. :</strong></td><td>'.$TicketNo.'</std>
 					  	</tr>
 					  	<tr>
-					  		<td ><strong>Contact Person Name :</strong></td><td>'.$CM_USER_NANE.'</td>
+					  		<td ><strong>&nbsp;&nbsp;Contact Person Name :</strong></td><td>'.$CM_USER_NANE.'</td>
 						</tr>
 						<tr>
-							<td><strong>Department : </b></strong><td>'.$deptdesc.'<td>
+							<td><strong>&nbsp;&nbsp;Department : </b></strong><td>'.$deptdesc.'<td>
 						</tr>
 						<tr>
-							<td><strong>Complaint Type :</strong></td><td>'.$CM_COMPLAINT_TYPE_DESC.'</td>
+							<td><strong>&nbsp;&nbsp;Complaint Type :</strong></td><td>'.$CM_COMPLAINT_TYPE_DESC.'</td>
 						</tr>
 						<tr>
-							<td><strong>Complaint Sub Type : </strong></td>
+							<td><strong>&nbsp;&nbsp;Complaint Sub Type : </strong></td>
 							<td>'.$CM_COMPLAINT_SUB_TYPE_DESC.'</td>					  		
 						</tr>
 						<tr>
-							<td ><strong>Complaint Description :</strong></td>
+							<td ><strong>&nbsp;&nbsp;Complaint Description :</strong></td>
 							<td>'.$CM_COMPLAINT_DESC.'</td>							  		
 						</tr>
 						<tr>
-							<td><strong>Complaint Location :</strong></td>
+							<td><strong>&nbsp;&nbsp;Complaint Location :</strong></td>
 							<td>'.$CM_USER_LOCATION.'</td>							  		
 						</tr>
 						<tr>
-							<td><strong>Contact Number :</strong></td>
+							<td><strong>&nbsp;&nbsp;Contact Number :</strong></td>
 							<td>'.$CM_USER_MOBILE.'</td>							  		
 						</tr>
 						</table>';
