@@ -158,6 +158,21 @@ class UserModel extends CI_MODEL {
 			else
 				return '-1'; //Error	
 	}
+	//Get User Profile. The function fetches User Email from 
+	//the database. added by raquib
+	public function getEmail($UserId) {
+
+		$this->db->select('MJ_REG_EMAIL');
+		$this->db->from('MJ_USER_MST');
+		$this->db->where('MJ_USER_LOGIN',$UserId);
+		
+		$query = $this->db->get();
+
+		if($query->num_rows() > 0) 
+				return $query->row()->MJ_REG_EMAIL;
+			else
+				return '-1'; //Error	
+	}
 
 	//This function fectches User (Student Type) Name added by Raquib
 	public function getStuName($UserId) {
@@ -260,9 +275,9 @@ class UserModel extends CI_MODEL {
 
 		//return $this->db->last_query();
 	}
-	// this function is used for fetch ssmid , dep id frm database
+	// this function is used for fetch ssmid , dep id frm database added by raquib
 	public function getStuData($UserId){	          			
-		$this->db->select('A.STU_SES_ID,A.STU_SSM_ID,A.STU_DEPT');
+		$this->db->select('A.STU_SES_ID,A.STU_SSM_ID,A.STU_DEPT,C.DEP_DESC DEPTNAME');
 		$this->db->from('STU_MST A');
 		$this->db->join('MJ_USER_MST B', 'B.MJ_ID_NO=A.STU_ID');
 		$this->db->join('DEP_MST C', 'A.STU_DEPT= C.DEP_ID ');
@@ -270,6 +285,20 @@ class UserModel extends CI_MODEL {
 		$this->db->where(['A.STU_ID'=>$UserId]);
 		$this->db->where('STU_ADMIN_WITHDRAWAL','N');
 		$query = $this->db->get();		
+		if($query->num_rows() > 0) 
+				return $query->result();
+			else
+				return '-1'; //Error		
+	}
+
+	// this function is used for fetch employee data from database added by raquib
+	public function getEmpData($UserId){	          			
+		$this->db->select('A.EMP_DEPARTMENT,C.DEP_DESC');
+		$this->db->from('EMP_MST A');
+		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
+		$this->db->where(['A.EMP_ID'=>'EMP\\'.$UserId]);
+		$query = $this->db->get();	
+		$str = $this->db->last_query();
 		if($query->num_rows() > 0) 
 				return $query->result();
 			else

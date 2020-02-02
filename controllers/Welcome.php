@@ -242,12 +242,25 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserType =  $this->UM->getUserType($UserID);
 		$UserEmail =  $this->UM->getEmail($UserID);
-		//this is used for to set ssm id and dep id
-		$UserData =  $this->UM->getStuData($UserID);
-		foreach($UserData as $udata):
-    		$SsmId= $udata->STU_SSM_ID;
-    		$DepId= $udata->STU_DEPT;
-		endforeach;
+
+		if ($UserType == 1) {//User is student added by raquib
+			//this is used for to set ssm id and dep id
+			$StuUserData =  $this->UM->getStuData($UserID);
+			foreach($StuUserData as $sudata):
+    		$SsmId= $sudata->STU_SSM_ID;
+    		$DepId= $sudata->STU_DEPT;
+    		$DepDesc=$sudata->DEPTNAME;
+			endforeach;
+		}
+		if ($UserType == 2) {//User is employee
+			//this is used for to set employee mobile number and dep id added by raquib
+			$EmpUserData =  $this->UM->getEmpData($UserID);
+			foreach($EmpUserData as $eudata):
+    		$EmpDepId= $eudata->EMP_DEPARTMENT;
+    		$EmpDepDesc= $eudata->DEP_DESC;
+			endforeach;
+		}
+		
 
 		if ($UserType == 1) {//User is student added by raquib
 			$UserName = $this->UM->getStuName($UserID);
@@ -279,7 +292,10 @@ class Welcome extends CI_Controller {
         	'usertype'	=>	$UserType,
         	'menu' 		=> 	$UserMenu,
         	'ssmid'		=>	$SsmId,
-        	'depid'		=>	$DepId
+        	'depid'		=>	$DepId,
+        	'depdesc'	=>	$DepDesc,
+        	'empdepid'	=>	$EmpDepId,
+        	'empdepdesc'=>	$EmpDepDesc
 		);
 
 		$this->session->set_userdata($sessionData);
