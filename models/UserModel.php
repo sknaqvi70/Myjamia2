@@ -6,9 +6,10 @@ class UserModel extends CI_MODEL {
 	public function GetUserTypeList(){
 	
 		$this->load->database();
-
+		$where ="MJ_USER_TYPE_ID !=6";
 		$this->db->select('MJ_USER_TYPE_ID, MJ_USER_TYPE_NAME');
 		$this->db->order_by('MJ_USER_TYPE_NAME','ASC');
+		$this->db->where($where);
 		$query = $this->db->get('MJ_USER_TYPE');
 
 		$UTList[0] = 'Select User Type';
@@ -205,6 +206,25 @@ class UserModel extends CI_MODEL {
 						$query->row()->EMP_SURNAME;
 			else
 				return '-1'; //Error	
+	} 
+	//This function fectches User (EMployee Type) Name added by raquib
+	public function getAdminName($UserId) {
+
+		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME');
+		$this->db->where('EMP_ID','EMP\\'.$UserId);		 
+		$query1 = $this->db->get_compiled_select('EMP_MST');
+		    		
+		$this->db->select('CMM_DESC ADMINNAME');
+		$this->db->where('CMM_ID',$UserId);		 
+		$query2 = $this->db->get_compiled_select('COMPANY_MST A');
+		$str = $this->db->last_query();
+  		    		
+		$query = $this->db->query($query1 . ' UNION ' . $query2);
+		
+		if($query->num_rows() > 0) 
+				return 	$query->row()->ADMINNAME;
+			else
+				return '-1'; //Error			
 	} 
 	//This function Finds New User Id from MJ_User_Mst table
 	public function getNewUserId(){

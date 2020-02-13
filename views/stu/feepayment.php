@@ -29,9 +29,10 @@
                 <td><?php echo $sfp->SFD_RECP_NO ?></td>
                 <td><?php echo $sfp->SFD_CHQ_AMT. "/-" ?></td>
                 <td><?php echo $sfp->LAST_DT ?></td>
-                <?php $last_date=$sfp->LAST_DT; $current_date=date('d-m-y'); if($current_date<=$last_date) {?>
+                <?php $last_date=$sfp->LAST_DT; $current_date=date('d-m-y'); 
+                if($current_date >  $last_date) {?>
                 <td>
-                   <a target="_blank" href="http://14.139.62.116/JOLF/Students/Students/getStudentFeeDetailsAction? " class="btn btn-sm btn-info">Pay</a>
+                   <a target="_blank" href="http://14.139.62.116/JOLF/Students/Students/getStudentFeeDetailsAction? " class="btn btn-sm btn-info"> Pay</a>
                 </td>
               <?php }else{?>
                 <td>

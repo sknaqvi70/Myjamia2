@@ -6,7 +6,7 @@ class ComplaintModel extends CI_Model {
 		parent::__construct();
 		$this->load->database();		
 	}
-
+	//this function is use to fetch complaint category
 	public function getComplaintCat($UserType){
     	$response = array();
     	$where="MJ_CSC_NO is NULL";
@@ -23,7 +23,7 @@ class ComplaintModel extends CI_Model {
         	$CTList[$ComplaintType->CC_NO] = $ComplaintType->CC_NAME;     
     	return $CTList;
   	}
-
+  	//this function is use to fetch complaint sub category
   	public function getComplaintSubCat($postData,$UserType){
     	$response = array();
      	// Select record
@@ -38,7 +38,7 @@ class ComplaintModel extends CI_Model {
     	return $response;
   	}
 
-  	//this function is to insert complaint
+  	//this function is to insert complaint into complaint_mst table and when check_fts_based is N then it also inserted complaint into FILE_MST and FILE_MV_DTL table
   	public function RegisterComplaint($dept,$UserId,$CM_COMPLAINT_TYPE,$CM_COMPLAINT_SUB_TYPE,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_NANE,$CM_USER_MOBILE,$CM_USER_EMAIL,&$VerificationString,&$TicketNo,&$FtsNo){
   		//current date of register
   		$reg_date=date('d-m-Y');
@@ -229,13 +229,7 @@ class ComplaintModel extends CI_Model {
 	}
 
 	// this function fine PBNo from table file_mv_dtl
-	public function getPBNO($dept){
-		/*$this->db->select_max(to_number(substr('FMD_PB_NO', instr('FMD_PB_NO','-')+1)));
-		$this->db->where('FMD_SENDER_DEPT',$dept);
-		$query = $this->db->get('FILE_MV_DTL');
-  		$row = $query->row();
-		if (isset($row))
-		     return $row->CSC_NAME;*/
+	public function getPBNO($dept){	
 
 		$response=$this->db->query("SELECT max(to_number(substr(FMD_PB_NO, instr(FMD_PB_NO,'-')+1))) PBNO 
 					FROM FILE_MV_DTL
@@ -243,9 +237,7 @@ class ComplaintModel extends CI_Model {
 					")->row(); 
 
         if (isset($response))
-		return $response->PBNO;        
-
-		 /*Select max(to_number(substr(FMD_PB_NO, instr(FMD_PB_NO,'-')+1))) PBNO from FILE_MV_DTL where FMD_SENDER_DEPT = :$dept*/
+		return $response->PBNO;    
 	}
 }
 ?>

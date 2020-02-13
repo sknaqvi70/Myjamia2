@@ -101,7 +101,7 @@ class Complaint extends CI_Controller {
 					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
 					}
 					$this->session->set_flashdata('message',$data);
-					redirect('Complaint/complaintRegistration');
+					redirect('Complaint/complaintRegistration');					
 					
 				}
 				}
@@ -125,18 +125,16 @@ class Complaint extends CI_Controller {
 		$subject = 'MyJamia Complaint Registration.';
 		$from = 'kazim.jmi@gmail.com';
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
-		$emailContaint ='<!DOCTYPE><html><head></head><body><center>
-            <p style="font-size:25px; font-family:Calibri;"><strong>JAMIA MILLIA ISLAMIA</strong></p>
-            <p style="font-size:20px; font-family:Calibri;">Complaint Acknowledgement</p></center>';
-        /*$emailContaint .= '<img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
-        $emailContaint .='Dear Sir/Madam,<br>'.
-						'With refrence to Your Complaint, this is to aknowledged you that the registration of your Complaint/Service request as per details given below:<br><br>';
+		$emailContaint ='<!DOCTYPE><html><head></head><body>';
+        /*$emailContaint .= '<center><img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
+        $emailContaint .='Dear Sir/Madam,<br><br>'.
+						'With refrence to Your Complaint, this is to aknowledge the registration of your Complaint/Service request as per details given below:<br><br>';
 		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
 						<tr>
 					  		<td ><strong>&nbsp;&nbsp;Ticket No. :</strong></td><td>'.$TicketNo.'</std>
 					  	</tr>
 					  	<tr>
-					  		<td ><strong>&nbsp;&nbsp;Contact Person Name :</strong></td><td>'.$CM_USER_NANE.'</td>
+					  		<td ><strong>&nbsp;&nbsp;Complained Person :</strong></td><td>'.$CM_USER_NANE.'</td>
 						</tr>
 						<tr>
 							<td><strong>&nbsp;&nbsp;Department : </b></strong><td>'.$deptdesc.'<td>
@@ -157,7 +155,7 @@ class Complaint extends CI_Controller {
 							<td>'.$CM_USER_LOCATION.'</td>							  		
 						</tr>
 						<tr>
-							<td><strong>&nbsp;&nbsp;Contact Number :</strong></td>
+							<td><strong>&nbsp;&nbsp;Complained Contact No :</strong></td>
 							<td>'.$CM_USER_MOBILE.'</td>							  		
 						</tr>
 						</table>';
@@ -168,6 +166,7 @@ class Complaint extends CI_Controller {
 		$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b>	
 			</body></html>";
 		}
+		$emailContaint .= include 'footer.php';
 
 		$config['protocol']			='smtp';
 		$config['smtp_host']		='ssl://smtp.googlemail.com';

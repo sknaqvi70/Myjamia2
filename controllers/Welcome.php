@@ -33,8 +33,12 @@ class Welcome extends CI_Controller {
 			if ($AccountStatus == 'OK') {
 	            //Authorised User
 	            $this->PrepareUserSession();
-		    return redirect('auth/dashboard');
-
+	           	$UserType= $_SESSION['usertype'];
+	           	if($UserType == 6){
+	           		return redirect('Admin/dashboard');
+	           	}else{
+		    		return redirect('auth/dashboard');
+		    	}
 	         }
 	        else {
 		        if ($AccountStatus == 'E') //Expired
@@ -280,6 +284,10 @@ class Welcome extends CI_Controller {
 		}
 		if ($UserType == 5) {//User is Pensioner/Retired added by raquib
 			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
+
+		}
+		if ($UserType == 6) {//User is Admin added by raquib
+			$UserName = $this->UM->getAdminName($UserID);
 
 		}
 		$this->load->model('MenuModel');

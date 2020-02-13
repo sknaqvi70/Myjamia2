@@ -90,12 +90,16 @@ class StudentModel extends CI_Model {
                     <td valign="top" align="left">'.$v_spdtl->BANK_NAME.'</td>
                   </tr>
 
-                  <tr>
-                    <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;Pay Status: </strong></td>
-                    <td valign="top" align="left">'.$v_spdtl->SFD_PAY_DONE.'</td>
-                    <td valign="top" align="left"><strong>&nbsp;&nbsp;Bank Refrence No:</strong></td>
+                   <tr>
+                    <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;Pay Status: </strong></td>';
+                    if ($v_spdtl->SFD_PAY_DONE == 'Y') {
+                    	$output .='<td valign="top" align="left">Paid</td>';
+                    }else{
+                    	$output .='<td valign="top" align="left">Not Paid</td>';
+                    }                    
+                    $output .='<td valign="top" align="left"><strong>&nbsp;&nbsp;Bank Refrence No:</strong></td>
                     <td valign="top" align="left">'.$v_spdtl->CHQ_NO.'</td>
-                  </tr>
+                  </tr>                 
                 </tbody>
               ';
 		 	} 

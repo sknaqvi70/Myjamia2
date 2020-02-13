@@ -46,7 +46,11 @@
               <td colspan="2"><?php echo strtoupper("$v_sdtl->STU_HUSBAND_NAME") ?></td>
             </tr>
               <td><span style=" font-weight: bold;">Gender </span></td>
-              <td colspan="2"><?php echo strtoupper("$v_sdtl->STU_SEX") ?></td>
+              <?php if ($v_sdtl->STU_SEX == 'M') { ?>
+                <td colspan="2">Male</td>
+              <?php } else {?>
+              <td colspan="2">Female</td>
+            <?php } ?>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Blood Group </span></td>
