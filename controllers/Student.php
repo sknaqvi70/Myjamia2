@@ -101,5 +101,10 @@ class Student extends CI_Controller {
 		//$data=$this->stu->getStuTotAtt($postData, $UserId, $SsmId, $Depid, $SesId);
 		echo json_encode($data);
   	}
+
+  	// this function used for feedback
+  	public function feedback(){
+  		$this->load->view('stu/Feedback');
+  	}
 }
 ?>

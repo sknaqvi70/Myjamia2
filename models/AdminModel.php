@@ -9,21 +9,25 @@ class AdminModel extends CI_Model {
 
 	public function getYear(){
 		$cyear="TO_CHAR(CM_COMPLAINT_DATE, 'YYYY')";
+		$cyear_desc="TO_CHAR(CM_COMPLAINT_DATE, 'YYYY') DESC";
 		$this->db->select(''.$cyear.' YEAR');
-		$this->db->from('COMPLAINT_MST');
 		$this->db->group_by($cyear);
-		$this->db->order_by(''.$cyear.'');
-		return $this->db->get();			
+		$this->db->order_by(''.$cyear_desc.'');
+		$data = $this->db->get('COMPLAINT_MST');
+		$YrList[0] = 'Select Year';      	
+      	foreach($data->result() as $v_Year) 
+        	$YrList[$v_Year->YEAR] = $v_Year->YEAR;     
+    	return $YrList; 			
 	}
 
 	public function getOpenComplaint(){
-		$where = "CM_COMPLAINT_STATUS IN ('R','O')";
+		$where = "CM_COMPLAINT_STATUS IN ('R')";
 		$this->db->order_by('CM_COMPLAINT_DATE', 'ASC');
         $this->db->select('count(*) OPEN_COMPLAINT');
 		$this->db->from('COMPLAINT_MST');
 		$this->db->where('CM_COMPLAINT_CATEGORY',1);
 		$this->db->where($where);
-		$query = $this->db->get();
+		$query = $this->db->get();		
 		if($query->num_rows() > 0) 
 				return $query->row()->OPEN_COMPLAINT;
 			else
@@ -31,7 +35,7 @@ class AdminModel extends CI_Model {
 	}
 
 	public function getHoldComplaint(){
-		$where = "CM_COMPLAINT_STATUS IN ('P')";
+		$where = "CM_COMPLAINT_STATUS IN ('H')";
 		$this->db->order_by('CM_COMPLAINT_DATE', 'ASC');
         $this->db->select('count(*) PENDING_COMPLAINT');
 		$this->db->from('COMPLAINT_MST');
@@ -59,31 +63,27 @@ class AdminModel extends CI_Model {
 	}
 
 	public function getTotalComplaint(){
+		$where = "CM_COMPLAINT_STATUS NOT IN ('O')";
 		$this->db->order_by('CM_COMPLAINT_DATE', 'ASC');
         $this->db->select('count(*) TOTAL_COMPLAINT');
 		$this->db->from('COMPLAINT_MST');
 		$this->db->where('CM_COMPLAINT_CATEGORY',1);
+		$this->db->where($where);
 		$query = $this->db->get();
 		if($query->num_rows() > 0) 
 				return $query->row()->TOTAL_COMPLAINT;
 			else
 				return '0'; //Error	
 	}
-
-	/*public function fetch_total_comp($cyear){
-		$query = $this->db->query("SELECT TO_CHAR(CM_COMPLAINT_DATE, 'MM') MONTHS,COUNT(*) COMPLAINTS FROM COMPLAINT_MST WHERE CM_COMPLAINT_CATEGORY=1 AND TO_CHAR(CM_COMPLAINT_DATE, 'YYYY') = '".$cyear."' GROUP BY TO_CHAR(CM_COMPLAINT_DATE, 'MM') ORDER BY TO_CHAR(CM_COMPLAINT_DATE, 'MM')");
-		return $query;
-	}*/
 	
 	
-	public function getOpenComplaints(){ 
-		$where = "CM_COMPLAINT_STATUS IN ('R','O')";         			
+	public function getOpenComplaints(){          			
 		$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,					A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
 		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');		
 		$this->db->where('A.CM_COMPLAINT_CATEGORY',1);
-		$this->db->where($where);
+		$this->db->where('A.CM_COMPLAINT_STATUS','R');
 		$this->db->order_by('CM_NO', 'DESC');
 		$query = $this->db->get();		
 		return $query->result();			
@@ -113,12 +113,14 @@ class AdminModel extends CI_Model {
 		return $query->result();			
 	}
 
-	public function getTotalNoComplaints(){	          			
+	public function getTotalNoComplaints(){	     
+		$where = "CM_COMPLAINT_STATUS NOT IN ('O')";     			
 		$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,					A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
 		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');		
 		$this->db->where('A.CM_COMPLAINT_CATEGORY',1);
+		$this->db->where($where);
 		$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query = $this->db->get();		
 		return $query->result();			
@@ -192,4 +194,58 @@ class AdminModel extends CI_Model {
 
 	}
 
+	public function AssignCompalintStatus($cmno, $emp_to_assign, $cm_priority ){
+
+		$reg_date=date('d-m-Y');
+
+		$AssignmentNo = $this->get_New_CAD_NO();
+		
+		if (strlen($emp_to_assign) == 10) { 
+		// when complaint assign to regular employee this else condition run
+			$data = array(
+		    'MJ_CAD_ID' 					=>  $AssignmentNo,
+		    'MJ_CAD_CM_NO' 					=> 	$cmno,
+		    'MJ_CAD_EMP_ID' 				=> 	$emp_to_assign,
+		    'MJ_CAD_CMM_ID' 				=> 	'',
+		    'MJ_CAD_ASSIGN_DATE' 			=> 	$reg_date,
+		    'MJ_CAD_COMPLAINT_STATUS'		=>	'Assigned',	// Assign to Engineer
+		    'MJ_CAD_CLOSED_DATE' 			=>	'',
+		    'MJ_CAD_PRIORITY'				=>	$cm_priority
+			);			
+			$result = $this->db->insert('MJ_COMPLAINT_ASSIGN_DTL', $data);			
+		}
+		else // when complaint assign to contractor employee this else condition run
+		{
+			$data = array(
+		    'MJ_CAD_ID' 					=>  $AssignmentNo,
+		    'MJ_CAD_CM_NO' 					=> 	$cmno,
+		    'MJ_CAD_EMP_ID' 				=> 	'',
+		    'MJ_CAD_CMM_ID' 				=> 	$emp_to_assign,
+		    'MJ_CAD_ASSIGN_DATE' 			=> 	$reg_date,
+		    'MJ_CAD_COMPLAINT_STATUS'		=>	'Assigned',	// Assign to Engineer
+		    'MJ_CAD_CLOSED_DATE' 			=>	'',
+		    'MJ_CAD_PRIORITY'				=>	$cm_priority
+			);			
+			$result = $this->db->insert('MJ_COMPLAINT_ASSIGN_DTL', $data);			
+		}	
+
+		if ($result) {
+			$status = 'P'; // P== Pending at Engineer
+			$this->db->set('CM_COMPLAINT_STATUS', $status);
+			$this->db->where('CM_NO', $cmno);
+			$this->db->update('COMPLAINT_MST');			
+		}
+		return $result;
+	}
+
+	//This function Finds New COMPLAINT ASSIGN Id from MJ_COMPLAINT_ASSIGN_DTL table
+	public function get_New_CAD_NO(){
+
+		$this->db->select_max('MJ_CAD_ID');
+		$query = $this->db->get('MJ_COMPLAINT_ASSIGN_DTL'); 
+		$row = $query->row();
+
+		if (isset($row))
+		     return $row->MJ_CAD_ID + 1;
+	}
 }

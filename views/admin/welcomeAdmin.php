@@ -9,18 +9,14 @@
                     <h4>Year Wise Complaints Status</h4>
                 </div>
                 <div class="col-md-3">
-                    <select name="year" id="year" class="form-control">
-                        <?php foreach ($year_list->result_array() as $row) {
-                        echo '<option value="'.$row["YEAR"].'">'.$row["YEAR"].'</option>';
-                        }
-                        ?>
-                    </select>
+                    <?php echo form_dropdown('CM_YEAR', $year_list, set_value('CM_YEAR'),'class="form-control" id="id_CM_YEAR"'); 
+                    ?>
                 </div>                
             </div>
         </div>
         <div class="panel-body">
             <div style="width: 1000px; height: 100px;">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($open)) { ?>  
             <a class="btn btn-info" href="<?php echo base_url() ?>Admin/complaintStatus#open_no_comp">
                 <span style="font-size: 30px;"></span>
@@ -30,7 +26,7 @@
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($hold)) { ?>
-            <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#pending_no_comp">
+            <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
                 <span   style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $hold ?></font></strong> 
                 <br>&nbsp;&nbsp;<font size="4">On Hold Complaints</font>
@@ -60,6 +56,10 @@
         </div>        
     </div>
 </div>
+
+<!---------- Start Ajax for fetch value ------------->
+            
+
 <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     google.charts.load('current', {packages:['corechart', 'bar']});
@@ -113,7 +113,7 @@
             }
         });
     }
-</script> -->
+</script> 
 <script src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript">  
 $(function () { 
@@ -154,7 +154,7 @@ $(function () {
     });
 });
   
-</script>
+</script> -->
  
 
  <?php require __DIR__.'/../auth/footer.php'; ?>

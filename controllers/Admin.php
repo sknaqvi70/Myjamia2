@@ -35,11 +35,12 @@ class Admin extends CI_Controller {
 	public function dashboard() {
 		$data['year_list']=$this->admin->getYear();
 		$data['open']=$this->admin->getOpenComplaint();
+		//$data['pending']=$this->admin->getPendingComplaint();
 		$data['hold']=$this->admin->getHoldComplaint();
 		$data['closed']=$this->admin->getClosedComplaint();
 	 	$data['total']=$this->admin->getTotalComplaint();
 
-	 	$query = $this->db->query("SELECT COUNT(*) as COUNT FROM COMPLAINT_MST WHERE CM_COMPLAINT_CATEGORY=1
+	 	/*$query = $this->db->query("SELECT COUNT(*) as COUNT FROM COMPLAINT_MST WHERE CM_COMPLAINT_CATEGORY=1
 					GROUP BY TO_CHAR(CM_COMPLAINT_DATE, 'YYYY') ORDER BY TO_CHAR(CM_COMPLAINT_DATE, 'YYYY')"); 
         $data['total_data'] = json_encode(array_column($query->result(), 'COUNT'),JSON_NUMERIC_CHECK);
 
@@ -50,7 +51,7 @@ class Admin extends CI_Controller {
         $data['hold_data'] = json_encode(array_column($query->result(), 'COUNT'),JSON_NUMERIC_CHECK);
 
         $query = $this->db->query("SELECT COUNT(*) as COUNT FROM COMPLAINT_MST WHERE CM_COMPLAINT_CATEGORY=1 and CM_COMPLAINT_STATUS = 'C' GROUP BY TO_CHAR(CM_COMPLAINT_DATE, 'YYYY') ORDER BY TO_CHAR(CM_COMPLAINT_DATE, 'YYYY')"); 
-        $data['closed_data'] = json_encode(array_column($query->result(), 'COUNT'),JSON_NUMERIC_CHECK);
+        $data['closed_data'] = json_encode(array_column($query->result(), 'COUNT'),JSON_NUMERIC_CHECK);*/
 
 
 		$this->load->view('admin/welcomeAdmin', $data);	
@@ -81,7 +82,7 @@ class Admin extends CI_Controller {
 	}
 
 	// This function use for to fetch single data to view in details
-	public function totalComplaint(){
+	public function viewComplaintDetails(){
 		$cmData = $this->input->post('v_cm_no');
 		if(isset($cmData) and !empty($cmData)){
 		$data['single_comp']=$this->admin->getSingleComplaintDetails($cmData);
@@ -95,55 +96,50 @@ class Admin extends CI_Controller {
 		if(isset($cmData) and !empty($cmData)){
 		$data['single_comp']=$this->admin->getSingleComplaintDetails($cmData);
 		$data['UserList']=$this->admin->getAssignDetails($cmData);
-		$this->form_validation->set_rules('frm_MJ_User','Employee name required for assign complaint','required');
-
-		//Set Error Delimeter
-
-		$this->form_validation->set_error_delimiters("<p class='text-danger'>",'</p>');
-		if ($this->form_validation->run() == FALSE) {		               
-	     		
-				$this->load->view('admin/assignComplaint',$data);
-
-	        }
-
 		$this->load->view('admin/assignComplaint', $data);
 		}
 	}
 
 	//this function is use for insert assign details
 	public function complaintAssignTo(){
-		// 1 Contact Person Name cannot be blank
-		$this->form_validation->set_rules('CM_NO','required');
 
-		// 2 E-Mail Id cannot be blank 			
-		$this->form_validation->set_rules('CM_COMPLAINT_TEXT','required');
+		//Show Screen data
+		$cmno 	= $this->input->post('CM_NO');
+		$cm_priority 	= $this->input->post('frm_Complaint_Priority');
+		$emp_to_assign 	= $this->input->post('frm_MJ_User');
+		
+		// 1 Employee must be select
+		$this->form_validation->set_rules('frm_MJ_User','Employee','required|min_length[5]|max_length[10]');
+		// 1 Priority must be select
+		$this->form_validation->set_rules('frm_Complaint_Priority','Priority','required');		
 
-		//3 Mobile Number cannot be blank
-		$this->form_validation->set_rules('DEP_DESC','required');
+		if ($this->form_validation->run() == FALSE) {		
+			//if(validation_errors()) echo validation_errors(); 
+	        $array = array(
+		        'error'							=> 	true,
+		        'frm_MJ_User_Error'				=>	form_error('frm_MJ_User'),
+		        'frm_Complaint_priority_Error'	=>	form_error('frm_Complaint_Priority'),
+		        'message' 						=>	'Please review your data.'
+		       	);
+			}
+	        else {
 
-		//4 Complaint Location cannot be blank
-		$this->form_validation->set_rules('CM_COMPLAINT_LOCATION','required');
-
-		//5 Complaint Type must be Selected
-		$this->form_validation->set_rules('CM_COMPLAINT_CONTACT_PERSON','required');
-
-		//6 Complaint Sub Type must be Selected
-		$this->form_validation->set_rules('CM_COMPLAINT_CONTACT_MOBILE','required');
-
-		//7 Brief Description of Complaint is required
-		$this->form_validation->set_rules('frm_MJ_User','Employee name required for assign complaint','required');
-
-		//Set Error Delimeter
-
-		$this->form_validation->set_error_delimiters("<p class='text-danger'>",'</p>');
-
-		//$data['UserList']=$this->admin->getAssignDetails($cmData);
-		if ($this->form_validation->run() == FALSE) {		               
-	     		
-				$this->load->view('admin/assignComplaint',$data);
-
-	        }
-
+	        	$data['insert']  = $this->admin->AssignCompalintStatus($cmno,$emp_to_assign, $cm_priority );
+	        	if ($data['insert'] == 'OK') {
+		        	$array = array(
+		        	'success'		=>	true,
+		        	'message' 		=>	'Complaint Assigned Successfully'
+		        );
+		        }
+		        else
+		        {
+		        	$array = array(
+		        	'error'							=> 	true,
+		        	'message' 						=>	'Complaint not Assigned!'
+		       		);
+		        } 
+	        }	        
+	        echo json_encode($array);	
 	} 
 
 }

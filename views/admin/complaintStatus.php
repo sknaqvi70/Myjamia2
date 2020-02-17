@@ -80,7 +80,7 @@ $(document).ready(function() {
               </td>
               <td>
                 <center>
-                  <input type="button" class="btn btn-info btn-sm edit_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
+                  <input type="button" class="btn btn-info btn-sm assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
                   <input type="button" class="btn btn-info btn-sm closed_data" value="CLose" id="<?php echo $v_open->CM_NO; ?>">
                   <input type="button" class="btn btn-info btn-sm hold_data" value="Put on Hold" id="<?php echo $v_open->CM_NO; ?>">
                 </center>
@@ -211,12 +211,11 @@ $(document).ready(function() {
             <div class="panel-heading" style="text-align: center;"><h3>Complaints Details</h3></div>
          </div>
        <div class="modal-body">
-        <!-- Place to print the fetched phone -->
          <div id="view_result"></div>
        </div>
        </div>
        <div class="modal-footer">
-         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal" id="modal-btn">Close</button>
        </div>
      </div>
    </div>
@@ -233,7 +232,7 @@ $(document).ready(function() {
                 // Start AJAX function
                 $.ajax({
                  // Path for controller function which fetches selected phone data
-                    url: "<?php echo base_url() ?>Admin/totalComplaint",
+                    url: "<?php echo base_url() ?>Admin/viewComplaintDetails",
                     // Method of getting data
                     method: "POST",
                     // Data is sent to the server
@@ -258,7 +257,7 @@ $(document).ready(function() {
          // Initiate DataTable function comes with plugin
          $('#dataTable').DataTable();
          // Start jQuery click function to view Bootstrap modal when view info button is clicked
-            $('.edit_data').click(function(){
+            $('.assign_data').click(function(){
              // Get the id of selected phone and assign it in a variable called phoneData
                 var v_cm_no = $(this).attr('id');
                 // Start AJAX function
@@ -277,8 +276,13 @@ $(document).ready(function() {
                         // Display the Bootstrap modal
                         $('#complaintModal').modal('show');
                     }
+                    
              });
              // End AJAX function
+             // when modal form close parent page will refreshed
+             $('#complaintModal').on('hidden.bs.modal', function () {
+                location.reload();
+              });
          });
      });  
 </script>
