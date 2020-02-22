@@ -40,8 +40,11 @@ $(document).ready(function() {
             <a href="#open_no_comp" class="nav-link" data-toggle="tab">Open Complaints</a>
           </li>
           <li class="nav-item">
-            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending at</a>
+            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending at Engineer</a>
           </li>
+          <!-- <li class="nav-item">
+            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Accepted by Engineer</a>
+          </li> -->
           <li class="nav-item">
             <a href="#on_hold_comp" class="nav-link" data-toggle="tab">On Hold Complaints</a>
           </li>
@@ -76,11 +79,11 @@ $(document).ready(function() {
               <td><?php echo $no ?></td>
               <td><?php echo $v_open->CSC_NAME ?></td>
               <td><?php echo $v_open->CM_COMPLAINT_CONTACT_PERSON ?></td>
-              <td><center><input type="button" class="btn btn-info btn-sm view_data" value="View" id="<?php echo $v_open->CM_NO; ?>"></center>
+              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="View" id="<?php echo $v_open->CM_NO; ?>"></center>
               </td>
               <td>
                 <center>
-                  <input type="button" class="btn btn-info btn-sm assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
+                  <input type="button" class="btn btn-sm btn-info assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
                   <input type="button" class="btn btn-info btn-sm closed_data" value="CLose" id="<?php echo $v_open->CM_NO; ?>">
                   <input type="button" class="btn btn-info btn-sm hold_data" value="Put on Hold" id="<?php echo $v_open->CM_NO; ?>">
                 </center>
@@ -120,7 +123,7 @@ $(document).ready(function() {
                 <td><?php echo $v_pending->CSC_NAME ?></td>
                 <td><?php echo $v_pending->CM_COMPLAINT_CONTACT_PERSON ?></td>
                 <td><?php echo $v_pending->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-info btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
                 </td>
                 <td>                  
                   <a href="" class="btn btn-sm btn-info">CLose</a>
@@ -132,8 +135,39 @@ $(document).ready(function() {
             <?php } ?>
         </div>
         <div class="tab-pane fade" id="on_hold_comp">
-            <h4 class="mt-2">On Hold complaint</h4>
-            
+            <h4 class="mt-2">Total Number of On Hold complaint</h4>
+            <?php if(isset($hold_comp)) {?>
+            <table id="pending_comp" class="table table-striped table-bordered">
+              <thead>    
+              <tr>
+                <th>S.No</th>
+                <th>Complaint Type</th>
+                <th>Complainant Name </th>
+                <th>Complainant Mobile No</th>
+                <th class="text-center">View</th>
+                <th class="text-center">Action</th>
+              </tr>
+              </thead>
+              <?php
+              $no = 0;
+              foreach ($hold_comp as $v_hold):
+              $no++;
+              ?>           
+              <tr>
+                <td><?php echo $no ?></td>
+                <td><?php echo $v_hold->CSC_NAME ?></td>
+                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_PERSON ?></td>
+                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_MOBILE ?></td>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_hold->CM_NO; ?>"></center>
+                </td>
+                <td>                  
+                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                </td>
+              </tr>
+              <?php endforeach; ?>           
+              </tbody>
+            </table>
+            <?php } ?>           
         </div>
         <div class="tab-pane fade" id="Closed_no_comp">
             <h4 class="mt-2">Total Number of Closed Complaint</h4>
@@ -158,7 +192,7 @@ $(document).ready(function() {
                 <td><?php echo $v_closed->CSC_NAME ?></td>
                 <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_PERSON ?></td>
                 <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-info btn-sm view_data" value="View" id="<?php echo $v_closed->CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_closed->CM_NO; ?>"></center>
                 </td>
                 
               </tr>
@@ -189,7 +223,7 @@ $(document).ready(function() {
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_tot->CSC_NAME ?></td>
                 <td><?php echo $v_tot->DEP_DESC ?></td>
-                <td><center><input type="button" class="btn btn-info btn-sm view_data" value="View" id="<?php echo $v_tot->CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_tot->CM_NO; ?>"></center>
                 </td>                
               </tr>
               <?php endforeach; ?>           

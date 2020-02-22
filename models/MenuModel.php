@@ -15,6 +15,7 @@ class MenuModel extends CI_MODEL {
 		$this->db->where('A.MJ_USER_TYPE',$UserType); //added by raquib
 		$this->db->join('MJ_MENU_MST B', 'A.MJ_MENU_PARENT_ID = B.MJ_MENUID AND A.MJ_TAG = B.MJ_TAG' );
 		$query = $this->db->get();
+		
 		if($query->num_rows() > 0) 
 			return $query->result();
 		else

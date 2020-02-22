@@ -83,9 +83,9 @@
         method:   "POST",
         data:     $(this).serialize(),
         dataType: "json",
-        /*beforeSend: function(){
+        beforeSend: function(){
             $('#id_frm_Btn_Submit').attr('disabled','disabled');
-        },*/
+        },
         success: function(data) {         
         $('#success_message').html(data.message);
          if (data.error) {            
@@ -93,7 +93,7 @@
               $('#frm_MJ_User_Error').html(data.frm_MJ_User_Error);
             } 
             else {
-              $('#frm_MJ_User_Error').html('gfhfh');
+              $('#frm_MJ_User_Error').html('');
             }
             if (data.frm_Complaint_priority_Error != ''){
               $('#frm_Complaint_priority_Error').html(data.frm_Complaint_priority_Error);

@@ -3,7 +3,7 @@
 <div class="col-sm-8 text-left"> 
     <h1>Dashboard</h1>
     <div class="panel panel-info">
-        <div class="panel-heading">
+    	<div class="panel-heading">
             <div class="row">
                 <div class="col-md-10">
                     <?php $C_date = date('d-m-Y'); ?>
@@ -17,36 +17,36 @@
         </div>
         <div class="panel-body">
             <div style="width: 1000px; height: 100px;">
-                &nbsp;&nbsp;&nbsp;&nbsp;
-            <?php if (isset($open)) { ?>  
+                &nbsp;&nbsp;&nbsp;
+            <?php if (isset($pending_comp)) { ?>  
             <a class="btn btn-info" href="<?php echo base_url() ?>Admin/complaintStatus#open_no_comp">
                 <span style="font-size: 30px;"></span>
-                <strong><font size="8"><?php echo $open ?></font></strong>       
-                <br>&nbsp;&nbsp;<font size="4">Open Complaints</font>
+                <strong><font size="8"><?php echo $pending_comp ?></font></strong>       
+                <br>&nbsp;&nbsp;<font size="4">Pending for Accept</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <?php if (isset($hold)) { ?>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if (isset($accepted_comp)) { ?>
             <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
                 <span   style="font-size: 30px;"></span>
-                <strong><font size="8"><?php echo $hold ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">On Hold Complaints</font>
+                <strong><font size="8"><?php echo $accepted_comp ?></font></strong> 
+                <br>&nbsp;&nbsp;<font size="4">Accepted Complaints</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <?php if (isset($closed)) { ?> 
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if (isset($closed_comp)) { ?> 
             <a class="btn btn-success" href="<?php echo base_url() ?>Admin/complaintStatus#closed_no_comp">
                 <span    style="font-size: 30px;"></span>
-                <strong><font size="8"><?php echo $closed ?></font></strong> 
+                <strong><font size="8"><?php echo $closed_comp ?></font></strong> 
                 <br>&nbsp;&nbsp;<font size="4">Closed Complaints</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <?php if (isset($total)) { ?>  
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if (isset($total_assigned)) { ?>  
             <a class="btn btn-primary " href="<?php echo base_url() ?>Admin/complaintStatus#tot_no_comp">
                 <span      style="font-size: 30px;"></span>
-                <strong><font size="8"><?php echo $total ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">Total Complaint</font>
+                <strong><font size="8"><?php echo $total_assigned ?></font></strong> 
+                <br>&nbsp;&nbsp;<font size="4">Total Assigned</font>
             </a>
             <?php } ?>
             </div><br><br>
@@ -55,10 +55,10 @@
         <div class="panel-body">
         <?php
             $dataPoints = array(
-            array("label"=> "Open Complaints", "y"=> $open),
-            array("label"=> "Pending Complaints at Engineer", "y"=> $pending),
-            array("label"=> "On Hold Complaints", "y"=> $hold),
-            array("label"=> "Closed Complaints", "y"=> $closed),
+            array("label"=> "Pending for Accept", "y"=> $pending_comp),
+            array("label"=> "Accepted Complaints", "y"=> $accepted_comp),
+            //array("label"=> "On Hold Complaints", "y"=> $hold),
+            array("label"=> "Closed Complaints", "y"=> $closed_comp),
             //array("label"=> "Total Complaints", "y"=> $pending)
             );    
         ?>
@@ -68,7 +68,7 @@
             animationEnabled: true,
             exportEnabled: true, 
             title:{
-                    text: "Total Complaints - <?php echo $total ?>"
+                    text: "Total Complaints Assigned - <?php echo $total_assigned ?>"
             },
             data: [{
                 type: "pie",
@@ -86,55 +86,10 @@
 
         <div id="chartContainer" style="height: 370px; width: 100%;"></div>
         <script src="<?= base_url(); ?>application/assets/js/canvasjs.min.js"></script>
-        </div>        
-    </div>
+        </div>          
+    </div>        
 </div>
 
-<!---------- Start Ajax for fetch value ------------->
-            
 
-<!-- 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript">  
-$(function () { 
-  
-    var data_total = <?php echo $total_data; ?>;
-    var data_open = <?php echo $opend_data; ?>;
-    var data_hold = <?php echo $hold_data; ?>;
-    var data_closed = <?php echo $closed_data; ?>;
-  
-    $('#chart_area').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Complaints Year Wise Data'
-        },
-        xAxis: {
-            categories: ['2019', '2020']
-        },
-        yAxis: {
-            title: {
-                text: 'No of Complaints'
-            }
-        },
-        series: [{
-            name: 'Open Complaints',
-            data: data_open
-        }, {
-            name: 'Total Complaints',
-            data: data_total
-        }, {
-            name: 'Closed Complaints',
-            data: data_closed
-        }, {
-            name: 'Put on Hold Complaints',
-            data: data_hold
-        }]
-    });
-});
-  
-</script> -->
- 
 
  <?php require __DIR__.'/../auth/footer.php'; ?>

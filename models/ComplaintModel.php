@@ -51,21 +51,67 @@ class ComplaintModel extends CI_Model {
 		$check_fts_based = $this->check_fts_status($CM_COMPLAINT_SUB_TYPE);
 
 		if($check_fts_based == 'N'){ //this function is to insert complaint without FTS number
-		$data = array(
-		    'CM_NO' 						=>  $TicketNo,
-		    'CM_DEP_ID' 					=> 	$dept,
-		    'CM_EMP_ID' 					=> 	$UserId,
-		    'CM_COMPLAINT_CATEGORY' 		=> 	$CM_COMPLAINT_TYPE,
-		    'CM_COMPLAINT_SUB_CATEGORY' 	=> 	$CM_COMPLAINT_SUB_TYPE,
-		    'CM_COMPLAINT_TEXT'				=>	$CM_COMPLAINT_DESC,
-		    'CM_COMPLAINT_LOCATION' 		=>	$CM_USER_LOCATION,
-		    'CM_COMPLAINT_CONTACT_PERSON' 	=> 	$CM_USER_NANE,
-		    'CM_COMPLAINT_CONTACT_MOBILE' 	=> 	$CM_USER_MOBILE,
-		    'CM_COMPLAINT_CONTACT_EMAIL' 	=> 	$CM_USER_EMAIL,
-		    'CM_COMPLAINT_FTS_NO' 			=> 	'',
-		    'CM_COMPLAINT_STATUS'			=>	'R',
-		    'VERIFICATIONSTRING' 			=>	$VerificationString,
-		    'CM_COMPLAINT_DATE'				=>	$reg_date
+			if (strlen($UserId) == 10) { //checking user
+			$data = array(
+		    	'CM_NO' 						=>  $TicketNo,
+		    	'CM_DEP_ID' 					=> 	$dept,
+		    	'CM_EMP_ID' 					=> 	$UserId,
+		    	'CM_COMPLAINT_CATEGORY' 		=> 	$CM_COMPLAINT_TYPE,
+		    	'CM_COMPLAINT_SUB_CATEGORY' 	=> 	$CM_COMPLAINT_SUB_TYPE,
+		    	'CM_COMPLAINT_TEXT'				=>	$CM_COMPLAINT_DESC,
+		    	'CM_COMPLAINT_LOCATION' 		=>	$CM_USER_LOCATION,
+		    	'CM_COMPLAINT_CONTACT_PERSON' 	=> 	$CM_USER_NANE,
+		    	'CM_COMPLAINT_CONTACT_MOBILE' 	=> 	$CM_USER_MOBILE,
+		    	'CM_COMPLAINT_CONTACT_EMAIL' 	=> 	$CM_USER_EMAIL,
+		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
+		    	'CM_COMPLAINT_STATUS'			=>	'R',
+		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
+		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	'CM_STU_ID'						=>	'',
+		    	'CM_CMM_ID'						=>	''
+			);
+			
+			$result = $this->db->insert('COMPLAINT_MST', $data);
+
+			}elseif (strlen($UserId) == 6) {
+			$data = array(
+		    	'CM_NO' 						=>  $TicketNo,
+		    	'CM_DEP_ID' 					=> 	$dept,
+		    	'CM_EMP_ID' 					=> 	'',
+		    	'CM_COMPLAINT_CATEGORY' 		=> 	$CM_COMPLAINT_TYPE,
+		    	'CM_COMPLAINT_SUB_CATEGORY' 	=> 	$CM_COMPLAINT_SUB_TYPE,
+		    	'CM_COMPLAINT_TEXT'				=>	$CM_COMPLAINT_DESC,
+		    	'CM_COMPLAINT_LOCATION' 		=>	$CM_USER_LOCATION,
+		    	'CM_COMPLAINT_CONTACT_PERSON' 	=> 	$CM_USER_NANE,
+		    	'CM_COMPLAINT_CONTACT_MOBILE' 	=> 	$CM_USER_MOBILE,
+		    	'CM_COMPLAINT_CONTACT_EMAIL' 	=> 	$CM_USER_EMAIL,
+		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
+		    	'CM_COMPLAINT_STATUS'			=>	'R',
+		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
+		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	'CM_STU_ID'						=>	'',
+		    	'CM_CMM_ID'						=>	$UserId
+			);
+			
+			$result = $this->db->insert('COMPLAINT_MST', $data);
+			}else
+			$data = array(
+		    	'CM_NO' 						=>  $TicketNo,
+		    	'CM_DEP_ID' 					=> 	$dept,
+		    	'CM_EMP_ID' 					=> 	'',
+		    	'CM_COMPLAINT_CATEGORY' 		=> 	$CM_COMPLAINT_TYPE,
+		    	'CM_COMPLAINT_SUB_CATEGORY' 	=> 	$CM_COMPLAINT_SUB_TYPE,
+		    	'CM_COMPLAINT_TEXT'				=>	$CM_COMPLAINT_DESC,
+		    	'CM_COMPLAINT_LOCATION' 		=>	$CM_USER_LOCATION,
+		    	'CM_COMPLAINT_CONTACT_PERSON' 	=> 	$CM_USER_NANE,
+		    	'CM_COMPLAINT_CONTACT_MOBILE' 	=> 	$CM_USER_MOBILE,
+		    	'CM_COMPLAINT_CONTACT_EMAIL' 	=> 	$CM_USER_EMAIL,
+		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
+		    	'CM_COMPLAINT_STATUS'			=>	'R',
+		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
+		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	'CM_STU_ID'						=>	$UserId,
+		    	'CM_CMM_ID'						=>	''
 			);
 			
 			$result = $this->db->insert('COMPLAINT_MST', $data);
@@ -131,16 +177,16 @@ class ComplaintModel extends CI_Model {
         		if ($CM_COMPLAINT_TYPE == 1) {
         				$ADDRESSED_TO		= 'Hony. Director, FTK-CIT';
         				$RECD_DEP			= 'ADCIT';
-        				$RECV_DT		= $reg_date;
-        				$RECEIVER_ID	= 'BCOFTS';
-        				$ACTUAL_RECV	= 'BCOFTS';
+        				$RECV_DT			= $reg_date;
+        				$RECEIVER_ID		= 'BCOFTS';
+        				$ACTUAL_RECV		= 'BCOFTS';
         			}else
         			{
         				$ADDRESSED_TO		= 'Professor Incharge, B&C';
         				$RECD_DEP			= 'ADBAC';
-        				$RECV_DT		= $reg_date;
-        				$RECEIVER_ID	= 'BCOFTS';
-        				$ACTUAL_RECV	= 'BCOFTS';
+        				$RECV_DT			= $reg_date;
+        				$RECEIVER_ID		= 'BCOFTS';
+        				$ACTUAL_RECV		= 'BCOFTS';
         			}
         		
         		$data_view = array(
@@ -227,6 +273,29 @@ class ComplaintModel extends CI_Model {
 		if (isset($row))
 		     return $row->CSC_NAME;
 	}
+
+	// This function find departmental email id for from email id
+	public function fetch_cc_email_id($CM_COMPLAINT_TYPE){
+		$this->db->distinct('DEP_EMAIL');
+		$this->db->select('DEP_EMAIL');
+		$this->db->join('MJ_USER_COMP_TYPE_AUTH M','M.MJ_UCTA_DEPID=A.DEP_ID');
+		$this->db->where('M.MJ_CC_NO',$CM_COMPLAINT_TYPE);
+		$query = $this->db->get('ALL_DEP_MST A');
+  		$row = $query->row();
+		if (isset($row))
+		     return $row->DEP_EMAIL;
+	}
+
+	// This function find complaint sub type desc from complaint_category table
+	public function fetch_from_email_id($CM_COMPLAINT_SUB_TYPE){
+		$this->db->select('EMAILCC');
+		$this->db->where('CSC_NO',$CM_COMPLAINT_SUB_TYPE);
+		$query = $this->db->get('COMPLAINT_SUB_CATEGORY');
+  		$row = $query->row();
+		if (isset($row))
+		     return $row->EMAILCC;
+	}
+
 
 	// this function fine PBNo from table file_mv_dtl
 	public function getPBNO($dept){	

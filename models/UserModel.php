@@ -6,10 +6,10 @@ class UserModel extends CI_MODEL {
 	public function GetUserTypeList(){
 	
 		$this->load->database();
-		$where ="MJ_USER_TYPE_ID !=6";
+		//$where ="MJ_USER_TYPE_ID !=6";
 		$this->db->select('MJ_USER_TYPE_ID, MJ_USER_TYPE_NAME');
 		$this->db->order_by('MJ_USER_TYPE_NAME','ASC');
-		$this->db->where($where);
+		$this->db->where('MJ_USER_ROLE', 'G'); //ADDED BY RAQUIB
 		$query = $this->db->get('MJ_USER_TYPE');
 
 		$UTList[0] = 'Select User Type';
@@ -144,18 +144,46 @@ class UserModel extends CI_MODEL {
 		     return $row->MJ_UR_ID + 1;
 	}
 
+	//Get User Profile. The function fetches UserType from 
+	//the database. Added By Raquib
+	public function getUser($User) {
+
+		$this->db->select('MJ_ID_NO');
+		$this->db->from('MJ_USER_MST');
+		$this->db->where('MJ_USER_LOGIN',$User);		
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->MJ_ID_NO;
+			else
+				return '-1'; //Error	
+	}
+
 	//Get User Profile. The function fetches UserName, UserType from 
 	//the database. 
-	public function getUserType($UserId) {
+	public function getUserType($UserId, $User) {
 
 		$this->db->select('MJ_USER_TYPE');
 		$this->db->from('MJ_USER_MST');
-		$this->db->where('MJ_USER_LOGIN',$UserId);
+		$this->db->where('MJ_USER_LOGIN',$User);
+		$this->db->where('MJ_ID_NO',$UserId);	//added by raquib		
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->MJ_USER_TYPE;
+			else
+				return '-1'; //Error	
+	}
+	//Get User Profile. The function fetches UserRole from MJ_User_Type Table
+	//Added by Raquib. 
+	public function getUserRole($UserType) {
+
+		$this->db->select('MJ_USER_ROLE');
+		$this->db->from('MJ_USER_TYPE');
+		$this->db->where('MJ_USER_TYPE_ID',$UserType);
 		
 		$query = $this->db->get();
 
 		if($query->num_rows() > 0) 
-				return $query->row()->MJ_USER_TYPE;
+				return $query->row()->MJ_USER_ROLE;
 			else
 				return '-1'; //Error	
 	}
@@ -174,25 +202,9 @@ class UserModel extends CI_MODEL {
 			else
 				return '-1'; //Error	
 	}
-
-	//This function fectches User (Student Type) Name added by Raquib
-	public function getStuName($UserId) {
-
-		$this->db->select('STU_FNAME, STU_MNAME, STU_LNAME');
-		$this->db->from('STU_MST');
-		$this->db->where('STU_ID',$UserId);
-		 
-		$query = $this->db->get();
-
-		if($query->num_rows() > 0) 
-				return 	$query->row()->STU_FNAME . ' ' .
-						$query->row()->STU_MNAME . ' ' .
-						$query->row()->STU_LNAME;
-			else
-				return '-1'; //Error	
-	} 
-	//This function fectches User (EMployee Type) Name
-	public function getEmpName($UserId) {
+ 
+	//This function fectches User (EMployee Type) Name commented by raquib
+	/*public function getEmpName($UserId) {
 
 		$this->db->select('EMP_FORENAME, EMP_MIDDLENAME, EMP_SURNAME ');
 		$this->db->from('EMP_MST');
@@ -206,8 +218,38 @@ class UserModel extends CI_MODEL {
 						$query->row()->EMP_SURNAME;
 			else
 				return '-1'; //Error	
+	}*/ 
+	//This function fectches User (Contract Employee Type) Name added by raquib
+	public function getContEmpName($UserId) {
+
+		$this->db->select('CMM_DESC');
+		$this->db->from('COMPANY_MST');
+		$this->db->where('CMM_ID',$UserId);		 
+		$query = $this->db->get();		
+		if($query->num_rows() > 0) 
+				return 	$query->row()->CMM_DESC;
+			else
+				return '-1'; //Error			
 	} 
-	//This function fectches User (EMployee Type) Name added by raquib
+
+	//This function fectches User (Alumni Type) Name
+	public function getAlumniName($UserId) {
+
+		$this->db->select('STU_FNAME, STU_MNAME, STU_LNAME ');
+		$this->db->from('STU_MST');
+		$this->db->where('STU_ID',$UserId);
+		 
+		$query = $this->db->get();
+
+		if($query->num_rows() > 0) 
+				return 	$query->row()->STU_FNAME . ' ' .
+						$query->row()->STU_MNAME . ' ' .
+						$query->row()->STU_LNAME;
+			else
+				return '-1'; //Error	
+	}
+
+	//This function fectches User ( User Type 6,7,8,9) Name added by raquib
 	public function getAdminName($UserId) {
 
 		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME');
@@ -270,7 +312,6 @@ class UserModel extends CI_MODEL {
 		$this->db->select('MJ_USER_ACCOUNT_STATUS');
 		$this->db->where('MJ_USER_LOGIN',$UserName);
 		$this->db->where('MJ_USER_PASSWORD',$Password);
-
 		$query = $this->db->get('MJ_USER_MST');
 
 		if($query->num_rows() > 0) {
@@ -297,7 +338,7 @@ class UserModel extends CI_MODEL {
 	}
 	// this function is used for fetch ssmid , dep id frm database added by raquib
 	public function getStuData($UserId){	          			
-		$this->db->select('A.STU_SES_ID,A.STU_SSM_ID,A.STU_DEPT,C.DEP_DESC DEPTNAME');
+		$this->db->select('STU_NAME(STU_ID) STUNAME,A.STU_SES_ID,A.STU_SSM_ID,A.STU_DEPT,C.DEP_DESC DEPTNAME');
 		$this->db->from('STU_MST A');
 		$this->db->join('MJ_USER_MST B', 'B.MJ_ID_NO=A.STU_ID');
 		$this->db->join('DEP_MST C', 'A.STU_DEPT= C.DEP_ID ');
@@ -313,7 +354,7 @@ class UserModel extends CI_MODEL {
 
 	// this function is used for fetch employee data from database added by raquib
 	public function getEmpData($UserId){	          			
-		$this->db->select('A.EMP_DEPARTMENT,C.DEP_DESC');
+		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,A.EMP_DEPARTMENT,C.DEP_DESC');
 		$this->db->from('EMP_MST A');
 		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
 		$this->db->where(['A.EMP_ID'=>'EMP\\'.$UserId]);

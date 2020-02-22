@@ -28,15 +28,17 @@ class Welcome extends CI_Controller {
 	public function user_login() {
 
 		if ($this->input->post('frm_Btn_Submit') == 'Sign in') {
+			
 			$AccountStatus = $this->Check_User_Authorization(); 
 			
 			if ($AccountStatus == 'OK') {
 	            //Authorised User
 	            $this->PrepareUserSession();
-	           	$UserType= $_SESSION['usertype'];
-	           	if($UserType == 6){
+	            //added by raquib
+	           	$UserRole= $_SESSION['userrole'];
+	           	if($UserRole == 'A' ||$UserRole == 'T'){ 
 	           		return redirect('Admin/dashboard');
-	           	}else{
+	           	}else{	           		
 		    		return redirect('auth/dashboard');
 		    	}
 	         }
@@ -241,52 +243,37 @@ class Welcome extends CI_Controller {
 	//This function prepares User Session
 	function PrepareUserSession(){
 		
-		$UserID = $this->input->post('frm_MJ_User_Login');
+		$User = $this->input->post('frm_MJ_User_Login');
 
 		$this->load->model('UserModel', 'UM');
-		$UserType =  $this->UM->getUserType($UserID);
-		$UserEmail =  $this->UM->getEmail($UserID);
+		$UserID =  $this->UM->getUser($User); //added by raquib
+		$UserType =  $this->UM->getUserType($UserID, $User);
+		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
+		$UserEmail =  $this->UM->getEmail($UserID); //added by raquib
 
-		if ($UserType == 1) {//User is student added by raquib
-			//this is used for to set ssm id and dep id
+		// this if condition added by raquib
+		if ($UserType == 1 || $UserType == 4) {//User is student and Alimni
 			$StuUserData =  $this->UM->getStuData($UserID);
 			foreach($StuUserData as $sudata):
+			$UserName=$sudata->STUNAME;
     		$SsmId= $sudata->STU_SSM_ID;
     		$DepId= $sudata->STU_DEPT;
     		$DepDesc=$sudata->DEPTNAME;
 			endforeach;
 		}
-		if ($UserType == 2) {//User is employee
-			//this is used for to set employee mobile number and dep id added by raquib
+		elseif ($UserType == 2 || $UserType == 5) {//User is employee and Pensioner
 			$EmpUserData =  $this->UM->getEmpData($UserID);
 			foreach($EmpUserData as $eudata):
+			$UserName= $eudata->EMPNAME;
     		$EmpDepId= $eudata->EMP_DEPARTMENT;
     		$EmpDepDesc= $eudata->DEP_DESC;
 			endforeach;
-		}
-		
-
-		if ($UserType == 1) {//User is student added by raquib
-			$UserName = $this->UM->getStuName($UserID);
 
 		}
-		if ($UserType == 2) {//User is employee
-			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
+		elseif ($UserType == 3) {//User is Contractual added by Raquib
+			$UserName = $this->UM->getContEmpName($UserID);
 
-		}
-		if ($UserType == 3) {//User is Contractual added by Raquib
-			$UserName = $this->UM->getEmpName($UserID);
-
-		}
-		if ($UserType == 4) {//User is Alumnus added by raquib
-			$UserName = $this->UM->getEmpName($UserID);
-
-		}
-		if ($UserType == 5) {//User is Pensioner/Retired added by raquib
-			$UserName = $this->UM->getEmpName('EMP\\'.$UserID);
-
-		}
-		if ($UserType == 6) {//User is Admin added by raquib
+		}else{ //added by raquib
 			$UserName = $this->UM->getAdminName($UserID);
 
 		}
@@ -298,6 +285,7 @@ class Welcome extends CI_Controller {
         	'username'  => 	$UserName,
         	'useremail' => 	$UserEmail,
         	'usertype'	=>	$UserType,
+        	'userrole'	=>	$UserRole,
         	'menu' 		=> 	$UserMenu,
         	'ssmid'		=>	$SsmId,
         	'depid'		=>	$DepId,

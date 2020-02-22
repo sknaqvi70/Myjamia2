@@ -94,7 +94,11 @@ class Complaint extends CI_Controller {
 
 					$CM_COMPLAINT_SUB_TYPE_DESC= $this->CM->fetch_complaint_sub_type_desc($CM_COMPLAINT_SUB_TYPE);
 
-					$this->SendMailToUser($CM_USER_EMAIL,$TicketNo,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo);
+					$cc_emailid = $this->CM->fetch_cc_email_id($CM_COMPLAINT_TYPE);
+
+					$from_emailid = $this->CM->fetch_from_email_id($CM_COMPLAINT_SUB_TYPE);
+
+					$this->SendMailToUser($CM_USER_EMAIL,$TicketNo,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$from_emailid,$cc_emailid);
 					if ($FtsNo) {
 					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.' And FTS Number is '.$FtsNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
 					}else{
@@ -118,16 +122,17 @@ class Complaint extends CI_Controller {
     	echo json_encode($data); 
 	}
 
-	function SendMailToUser($CM_USER_EMAIL,$TicketNo,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo){
+	function SendMailToUser($CM_USER_EMAIL,$TicketNo,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$from_emailid,$cc_emailid){
 		
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$subject = 'MyJamia Complaint Registration.';
-		$from = 'kazim.jmi@gmail.com';
+		$from = $from_emailid;
+		$cc = $cc_emailid;
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';
         /*$emailContaint .= '<center><img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
-        $emailContaint .='Dear Sir/Madam,<br><br>'.
+        $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
 						'With refrence to Your Complaint, this is to aknowledge the registration of your Complaint/Service request as per details given below:<br><br>';
 		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
 						<tr>
@@ -166,15 +171,15 @@ class Complaint extends CI_Controller {
 		$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b>	
 			</body></html>";
 		}
-		$emailContaint .= include 'footer.php';
+		
 
 		$config['protocol']			='smtp';
 		$config['smtp_host']		='ssl://smtp.googlemail.com';
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='kazim.jmi@gmail.com';
-		$config['smtp_pass']		='Sknc@1234';
+		$config['smtp_user']		='raquib4u@gmail.com';
+		$config['smtp_pass']		='Raquib*88';
 
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
@@ -185,6 +190,7 @@ class Complaint extends CI_Controller {
 		$this->email->set_mailtype("html");
 		$this->email->from($from, 'Additional Director, CIT');
 		$this->email->to($to);
+		$this->email->cc($cc);
 		//$this->email->cc($ccmail);
 		$this->email->subject($subject);
 		$this->email->message($emailContaint);
