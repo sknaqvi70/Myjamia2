@@ -18,60 +18,57 @@ $(document).ready(function(){
   $("#myTab li:eq(0) a").tab('show'); // show 2nd tab on page load
 });
 $(document).ready(function() {
-    $('#open_comp').DataTable();
-} );
-$(document).ready(function() {
     $('#pending_accept_comp').DataTable();
 } );
 $(document).ready(function() {
-    $('#pending_comp').DataTable();
+    $('#accept_comp').DataTable();
+} );
+$(document).ready(function() {
+    $('#hold_compt').DataTable();
 } );
 $(document).ready(function() {
     $('#closed_comp').DataTable();
 } );
 $(document).ready(function() {
-    $('#tot_comp').DataTable();
+    $('#tot_assigned').DataTable();
 } );
 </script>
 
 <div class="col-sm-8 text-left"> 
   <div class="panel panel-info">
     <div class="panel-heading" style="text-align: center;"><h3>Complaints Status</h3></div>
+    <?php if($error = $this->session->flashdata('msg')){ ?>
+      <h3 class="text-success"><?php echo  $error; ?></h3>
+    <?php } ?>
       <div class="bs-example">
         <ul class="nav nav-tabs" id="myTab">
           <li class="nav-item">
-            <a href="#open_no_comp" class="nav-link" data-toggle="tab">Open Complaints</a>
+            <a href="#pending_accept" class="nav-link" data-toggle="tab">Pending For Acceptance</a>
           </li>
           <li class="nav-item">
-            <a href="#pending_for_accept" class="nav-link" data-toggle="tab">Pending for Accept</a>
+            <a href="#accepted_comp" class="nav-link" data-toggle="tab">Accepted Complaints</a>
           </li>
           <li class="nav-item">
-            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending at Engineer</a>
-          </li>
-          <!-- <li class="nav-item">
-            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Accepted by Engineer</a>
-          </li> -->
-          <li class="nav-item">
-            <a href="#on_hold_comp" class="nav-link" data-toggle="tab">On Hold Complaints</a>
+            <a href="#hold_comp" class="nav-link" data-toggle="tab">On Hold Complaints</a>
           </li>
           <li class="nav-item">
-            <a href="#Closed_no_comp" class="nav-link" data-toggle="tab">Closed Complaints</a>
+            <a href="#closed_compt" class="nav-link" data-toggle="tab">Closed Complaints</a>
           </li>
           <li class="nav-item">
-            <a href="#tot_no_comp" class="nav-link" data-toggle="tab">Total Complaints</a>
+            <a href="#tot_no_assigned" class="nav-link" data-toggle="tab">Total Assigned</a>
           </li>
         </ul>
         <div class="tab-content table-responsive">
-        <div class="tab-pane fade" id="open_no_comp">
-            <h4 class="mt-2">Total Number of Open complaint.</h4>
-        <?php if(isset($open_no_comp)) {?> 
-        <table id="open_comp" class="table table-striped table-bordered">
+        <div class="tab-pane fade" id="pending_accept">
+            <h4 class="mt-2">Total Number of complaints for Acceptance.</h4>
+        <?php if(isset($pending_accept)) {?> 
+        <table id="pending_accept_comp" class="table table-striped table-bordered">
         <thead style="font-size:15px;">    
             <tr>
               <th>S.No</th>
               <th>Complaint No</th>
               <th>Complainant Type </th>
-              <th>Complainant Date </th>
+              <th>Complainant Assign date </th>
               <th class="text-center">View</th>
               <th class="text-center">Action</th>
             </tr>
@@ -79,22 +76,46 @@ $(document).ready(function() {
           <tbody> 
           <?php
               $no = 0;
-              foreach ($open_no_comp as $v_open):
+              foreach ($pending_accept as $v_pending):
               $no++;
             ?>           
             <tr>
               <td><?php echo $no ?></td>
-              <td><?php echo $v_open->CM_NO ?></td>
-              <td><?php echo $v_open->CSC_NAME ?></td>
-              <td><?php echo $v_open->CM_COMPLAINT_DATE ?></td>
-              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="View" id="<?php echo $v_open->CM_NO; ?>"></center>
+              <td><?php echo $v_pending->MJ_CAD_CM_NO ?></td>
+              <td><?php echo $v_pending->CSC_NAME ?></td>
+              <td><?php echo $v_pending->MJ_CAD_ASSIGN_DATE ?></td>
+              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="View" id="<?php echo $v_pending->MJ_CAD_CM_NO; ?>"></center>
               </td>
               <td>
                 <center>
-                  <input type="button" class="btn btn-sm btn-info assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
-                  <input type="button" class="btn btn-info btn-sm closed_data" value="CLose" id="<?php echo $v_open->CM_NO; ?>">
-                  <input type="button" class="btn btn-info btn-sm hold_data" value="Put on Hold" id="<?php echo $v_open->CM_NO; ?>">
+                  <!-- <input type="button" class="btn btn-sm btn-danger assign_data" value="REQUEST FOR ACCEPT" id="<?php echo $v_open->MJ_CAD_CM_NO; ?>"> -->
+                  <button class="btn btn-danger hr_acceptance" uid="<?php echo $v_pending->MJ_CAD_CM_NO; ?>">REQUEST FOR ACCEPT</button>
                 </center>
+                <script type="text/javascript">
+                  $(document).on('click','.hr_acceptance',function(){
+                  var id = $(this).attr('uid');
+                  $('#user_id').val(id);
+                  $('#modal_popup').modal({backdrop: 'static', keyboard: true, show: true});
+                  });
+              </script>
+              <div class="modal modal-danger fade" id="modal_popup">
+                <div class="modal-dialog modal-sm">
+                <!-- create form to change user status -->
+                <form action="<?php echo base_url(); ?>Admin/hr_acceptance" method="post"> 
+                <div class="modal-content">
+                  <div class="modal-header" style="height: 150px;">
+                  <h4 style="margin-top: 50px;text-align: center;">Are you sure, do you Accept this Complaint?</h4>
+                  <!-- getting value in hidden field with the hep of ID's -->
+                  <input type="hidden" name="id" id="user_id" value="">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">No</button>
+                    <button type="submit" name="submit" class="btn btn-success">Yes</button>
+                  </div>
+                </div>
+                </form>
+                </div>
+              </div>
               </td>
               <!-- <td>
                 <a href="" class="btn btn-sm btn-info">Assign</a>
@@ -107,31 +128,31 @@ $(document).ready(function() {
           </table>
           <?php } ?>          
         </div>
-        <div class="tab-pane fade" id="pending_no_comp">
-            <h4 class="mt-2">Total Number of Pending complaint</h4>
-            <?php if(isset($pending_no_comp)) {?>
-            <table id="pending_comp" class="table table-striped table-bordered">
+        <div class="tab-pane fade" id="accepted_comp">
+            <h4 class="mt-2">Total Number of Accepted complaints</h4>
+            <?php if(isset($accepted_comp)) {?>
+            <table id="accept_comp" class="table table-striped table-bordered">
               <thead>    
               <tr>
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
-                <th>Pending At</th>
+                <th>Complainant Assign date</th>
                 <th class="text-center">View</th>
                 <th class="text-center">Action</th>
               </tr>
               </thead>
               <?php
               $no = 0;
-              foreach ($pending_no_comp as $v_pending):
+              foreach ($accepted_comp as $v_accepted):
               $no++;
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
-                <td><?php echo $v_pending->CM_NO ?></td>
-                <td><?php echo $v_pending->CSC_NAME ?></td>
-                <td><?php echo $v_pending->EMPNAME ?></td>              
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
+                <td><?php echo $v_accepted->MJ_CAD_CM_NO ?></td>
+                <td><?php echo $v_accepted->CSC_NAME ?></td>
+                <td><?php echo $v_accepted->MJ_CAD_ASSIGN_DATE ?></td>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->MJ_CAD_CM_NO; ?>"></center>
                 </td>
                 <td>                  
                   <a href="" class="btn btn-sm btn-info">CLose</a>
@@ -142,45 +163,10 @@ $(document).ready(function() {
             </table>
             <?php } ?>
         </div>
-        <div class="tab-pane fade" id="pending_for_accept">
-            <h4 class="mt-2">Total Number of Pending complaint</h4>
-            <?php if(isset($pending_for_accept)) {?>
-            <table id="pending_accept_comp" class="table table-striped table-bordered">
-              <thead>    
-              <tr>
-                <th>S.No</th>
-                <th>Complaint No</th>
-                <th>Complainant Type </th>
-                <th>Pending At</th>
-                <th class="text-center">View</th>
-                <th class="text-center">Action</th>
-              </tr>
-              </thead>
-              <?php
-              $no = 0;
-              foreach ($pending_for_accept as $v_pending):
-              $no++;
-              ?>           
-              <tr>
-                <td><?php echo $no ?></td>
-                <td><?php echo $v_pending->CM_NO ?></td>
-                <td><?php echo $v_pending->CSC_NAME ?></td>
-                <td><?php echo $v_pending->EMPNAME ?></td>              
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
-                </td>
-                <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
-                </td>
-              </tr>
-              <?php endforeach; ?>           
-              </tbody>
-            </table>
-            <?php } ?>
-        </div>
-        <div class="tab-pane fade" id="on_hold_comp">
-            <h4 class="mt-2">Total Number of On Hold complaint</h4>
+        <div class="tab-pane fade" id="hold_comp">
+            <h4 class="mt-2">Total Number of On Hold complaints</h4>
             <?php if(isset($hold_comp)) {?>
-            <table id="pending_comp" class="table table-striped table-bordered">
+            <table id="hold_compt" class="table table-striped table-bordered">
               <thead>    
               <tr>
                 <th>S.No</th>
@@ -212,8 +198,8 @@ $(document).ready(function() {
             </table>
             <?php } ?>           
         </div>
-        <div class="tab-pane fade" id="Closed_no_comp">
-            <h4 class="mt-2">Total Number of Closed Complaint</h4>
+        <div class="tab-pane fade" id="closed_compt">
+            <h4 class="mt-2">Total Number of Closed Complaints</h4>
             <?php if(isset($closed_no_comp)) {?>
             <table id="closed_comp" class="table table-striped table-bordered">
               <thead>    
@@ -244,31 +230,31 @@ $(document).ready(function() {
             </table>
             <?php } ?>
         </div>
-        <div class="tab-pane fade" id="tot_no_comp">
-            <h4 class="mt-2">Total Number of complaint</h4>
-            <?php if(isset($tot_no_comp)) {?>
-            <table id="tot_comp" class="table table-striped table-bordered">
+        <div class="tab-pane fade" id="tot_no_assigned">
+            <h4 class="mt-2">Total Number of Assigned Complaints</h4>
+            <?php if(isset($tot_no_assigned)) {?>
+            <table id="tot_assigned" class="table table-striped table-bordered">
               <thead>    
               <tr>
                 <th>S.No</th>
                 <th>Complaint No</th>
-                <th>Complaint Type</th>
-                <th>Complaint Department </th>
+                <th>Complaint Type </th>
+                <th>Date of Assign </th>
                 <th class="text-center">View</th>
               </tr>
               </thead>
               <tbody> 
               <?php
               $no = 0;
-              foreach ($tot_no_comp as $v_tot):
+              foreach ($tot_no_assigned as $v_tot):
               $no++;
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
-                <td><?php echo $v_tot->CM_NO ?></td>
+                <td><?php echo $v_tot->MJ_CAD_CM_NO ?></td>
                 <td><?php echo $v_tot->CSC_NAME ?></td>
-                <td><?php echo $v_tot->DEP_DESC ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_tot->CM_NO; ?>"></center>
+                <td><?php echo $v_tot->MJ_CAD_ASSIGN_DATE ?></td>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_tot->MJ_CAD_CM_NO; ?>"></center>
                 </td>                
               </tr>
               <?php endforeach; ?>           

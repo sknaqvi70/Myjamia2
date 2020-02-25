@@ -274,7 +274,13 @@ class Welcome extends CI_Controller {
 			$UserName = $this->UM->getContEmpName($UserID);
 
 		}else{ //added by raquib
-			$UserName = $this->UM->getAdminName($UserID);
+			$AdminUserData = $this->UM->getAdminName($UserID);
+			foreach($AdminUserData as $audata):
+			$UserName= $audata->ADMINNAME;
+    		$AdminDepId= $audata->DEPID;
+    		//$EmpDepDesc= $audata->DEP_DESC;
+			endforeach;
+
 
 		}
 		$this->load->model('MenuModel');
@@ -291,7 +297,8 @@ class Welcome extends CI_Controller {
         	'depid'		=>	$DepId,
         	'depdesc'	=>	$DepDesc,
         	'empdepid'	=>	$EmpDepId,
-        	'empdepdesc'=>	$EmpDepDesc
+        	'empdepdesc'=>	$EmpDepDesc,
+        	'admindepid'=>	$AdminDepId
 		);
 
 		$this->session->set_userdata($sessionData);

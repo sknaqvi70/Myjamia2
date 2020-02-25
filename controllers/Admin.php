@@ -34,11 +34,17 @@ class Admin extends CI_Controller {
 
 	public function dashboard() {
 		$UserRole= $_SESSION['userrole'];
-		if ($UserRole == 'A') {
-			$data['year_list']	=$this->admin->getYear();
-			$DepId 				= 'ADCIT'; //$_SESSION['login'];
+		if ($UserRole == 'A') {			
+			/*$data['year_list']	=$this->admin->getYear();
+			$Complaint_year		= $this->input->post('CM_YEAR');
+			if ($Complaint_year == '') {
+				$Current_year = date('Y');
+			}else{
+				$Current_year = $this->input->post('CM_YEAR');
+			}*/
+			$DepId 				= $_SESSION['admindepid'];
 			$UserType			= $_SESSION['usertype'];
-			$cc_no 				=$this->admin->fetch_cc_no($DepId);
+			$cc_no 				=$this->admin->fetch_cc_no($UserType, $DepId);
 			$data['open']		=$this->admin->getOpenComplaint($cc_no, $UserType);
 			$data['pending']	=$this->admin->getPendingComplaint($cc_no, $UserType);
 			$data['hold']		=$this->admin->getHoldComplaint($cc_no, $UserType);
@@ -48,19 +54,20 @@ class Admin extends CI_Controller {
 		}else{
 			$UserId 					= $_SESSION['login'];
 			$data['pending_comp']		= $this->admin->getPendingForAccept($UserId);
-			$data['accepted_comp']		= '1'; //$this->admin->getPendingComplaint($cc_no);
-			$data['closed_comp']		= '1'; //$this->admin->getClosedComplaint($cc_no);
-	 		$data['total_assigned']		= '3'; //$this->admin->getTotalComplaint($cc_no);
+			$data['accepted_comp']		= $this->admin->getAcceptedComplaint($UserId);;
+			$data['closed_comp']		= '0'; //$this->admin->getClosedComplaint($cc_no);
+	 		$data['total_assigned']		= $this->admin->getTotalAssign($UserId);
 		$this->load->view('admin/welcomeHR', $data);
 		}
 		
 	}
 
 	public function complaintStatus(){
-		$DepId 						= 'ADCIT'; //$_SESSION['login'];
+		$DepId 				= $_SESSION['admindepid'];
 		$UserType					= $_SESSION['usertype'];
-		$cc_no 						=$this->admin->fetch_cc_no($DepId);
+		$cc_no 						=$this->admin->fetch_cc_no($UserType,$DepId);
 		$data['open_no_comp']		=$this->admin->getOpenComplaints($cc_no, $UserType);
+        $data['pending_for_accept']	=$this->admin->getPendingAtEngineer($cc_no, $UserType);
         $data['pending_no_comp']	=$this->admin->getPendingComplaints($cc_no, $UserType);
         $data['hold_comp']			=$this->admin->getHoldComplaints($cc_no, $UserType);
         $data['closed_no_comp']		=$this->admin->getClosedComplaints($cc_no, $UserType);
@@ -72,7 +79,10 @@ class Admin extends CI_Controller {
 	public function viewComplaintDetails(){
 		$cmData = $this->input->post('v_cm_no');
 		if(isset($cmData) and !empty($cmData)){
-		$data['single_comp']=$this->admin->getSingleComplaintDetails($cmData);
+		$DepId 					= $_SESSION['admindepid'];
+		$UserType				= $_SESSION['usertype'];
+		$cc_no 					=$this->admin->fetch_cc_no($UserType,$DepId);
+		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
 		$this->load->view('admin/viewComplaint', $data);
 		}
 	}
@@ -81,8 +91,11 @@ class Admin extends CI_Controller {
 	public function AsignComplaints(){
 		$cmData = $this->input->post('v_cm_no');
 		if(isset($cmData) and !empty($cmData)){
-		$data['single_comp']=$this->admin->getSingleComplaintDetails($cmData);
-		$data['UserList']=$this->admin->getAssignDetails($cmData);
+		$DepId 					= $_SESSION['admindepid'];	
+		$UserType				= $_SESSION['usertype'];
+		$cc_no 					=$this->admin->fetch_cc_no($UserType, $DepId);
+		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
+		$data['UserList']		=$this->admin->getAssignDetails($cmData);
 		$this->load->view('admin/assignComplaint', $data);
 		}
 	}
@@ -113,7 +126,10 @@ class Admin extends CI_Controller {
 
 	        	$data['insert']  = $this->admin->AssignCompalintStatus($cmno,$emp_to_assign, $cm_priority );
 	        	if ($data['insert'] == 'OK') {
-	        	$ComplaintData= $this->admin->getSingleComplaintDetails($cmno);
+	        	$DepId 			= $_SESSION['admindepid'];	
+				$UserType		= $_SESSION['usertype'];
+				$cc_no 			=$this->admin->fetch_cc_no($UserType, $DepId);
+	        	$ComplaintData	= $this->admin->getSingleComplaintDetails($cc_no, $cmno);
 		    	foreach($ComplaintData as $cdata):
 					$CM_USER_EMAIL= $cdata->CM_COMPLAINT_CONTACT_EMAIL;
 					$CM_USER_NANE= $cdata->NAME;
@@ -153,8 +169,8 @@ class Admin extends CI_Controller {
 		$from = 'raquib4u@gmail.com';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
-						'With refrence to Your Ticket No '.$cmno.', dated '.$Reg_DATE.' this is to update you that the ticket has been assigned to '.$EmpName.'  :<br><br>';
-		$emailContaint .='Mr '.$EmpName.' will get in touch with you soon.';
+						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' this is to update you that the ticket has been assigned to <b>Mr '.$EmpName.'</b>  :<br><br>';
+		$emailContaint .='<b>Mr '.$EmpName.'</b> will get in touch with you soon.';
 		$emailContaint .='Details about your ticket as fellows :<br><br>';
 		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
 						<tr>
@@ -215,6 +231,30 @@ class Admin extends CI_Controller {
 //-----------------------------------------------------------------------------------------------------
 			//For Assign Engineer controller codeigniter
 //-----------------------------------------------------------------------------------------------------
- 
+ 	public function complaintStatusHR(){
+ 		$DepId 						= $_SESSION['admindepid'];
+		$UserType					= $_SESSION['usertype'];
+		$UserId						= $_SESSION['login'];
+		$cc_no 						=$this->admin->fetch_cc_no($UserType, $DepId);
+		$data['pending_accept']		=$this->admin->getPendingComplaintForAccept($UserId);
+		$data['accepted_comp']		=$this->admin->getAcceptedComplaints($UserId);
+		//$data['accepted_comp']
+		$data['tot_no_assigned']	=$this->admin->getToTNoAssign($cc_no,$UserId);
+		$this->load->view('admin/complaintStatusHR', $data);
+	}
+
+	public function hr_acceptance(){ 		
+		$UserId		= $_SESSION['login'];
+		$UserName	= $_SESSION['username'];		
+		$cmno 		= $this->input->post('id');
+
+		$data['insert']  = $this->admin->AssignCompalintAcceptance($cmno, $UserId ,$UserName);
+		if ($data['insert'] == 'OK') {
+		$this->session->set_flashdata('msg',"Complaint accepted successfully.");
+    	$this->session->set_flashdata('msg_class','alert-success');
+    	}
+
+    	return redirect('Admin/complaintStatusHR');
+	}
 
 }

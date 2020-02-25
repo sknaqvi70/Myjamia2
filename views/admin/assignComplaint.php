@@ -2,14 +2,9 @@
 <fieldset>
 <span style="color:#FF0000; font-weight:bold; font-size: 20px;" id="success_message">&nbsp;</span>
 <div class="row">
-  <center>
-    <img style="width:80px; height: 80px;"src="<?= base_url(); ?>application/assets/images/appllogo1.bmp">
-  </center><br>
-
     <?php foreach($single_comp as $v_single){ ?>
-      <div class="col-lg-6 table-responsive">
-       
-        <th colspan="8" align="center"><---------------- COMPLAINTS DETAILS ----------------></th>
+      <div class="col-lg-6 table-responsive">       
+        <th colspan="8" align="center"><---------------- COMPLAINT DETAILS ----------------></th>
         <table class="table table-bordered" style="text-align: left;">          
           <tr>
             <td><b>Complaint No</b></td>
@@ -18,7 +13,7 @@
           </tr>          
           <tr>
             <td><b>Complaint Description</b></td>
-            <td><?php echo form_textarea(['name'=>'CM_COMPLAINT_TEXT','class'=>'form-control','readonly'=>'true', 'id'=>'id_CM_COMPLAINT_TEXT','placeholder'=>'Complaint Description', 'value'=>$v_single->CM_COMPLAINT_TEXT]); ?>
+            <td><?php echo form_input(['name'=>'CM_COMPLAINT_TEXT','class'=>'form-control','readonly'=>'true', 'id'=>'id_CM_COMPLAINT_TEXT','placeholder'=>'Complaint Description', 'value'=>$v_single->CM_COMPLAINT_TEXT]); ?>
             </td>            
           </tr>
           <tr>
@@ -63,7 +58,7 @@
                   <option value="L">Low</option>
               </select>
               <span id="frm_Complaint_priority_Error" class="text-danger"></span>             
-            </td>            
+            </td>                       
           </tr>                             
         </table> 
 

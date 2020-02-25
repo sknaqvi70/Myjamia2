@@ -232,8 +232,8 @@ class UserModel extends CI_MODEL {
 				return '-1'; //Error			
 	} 
 
-	//This function fectches User (Alumni Type) Name
-	public function getAlumniName($UserId) {
+	//This function fectches User (Alumni Type) Name commented by raquib
+	/*public function getAlumniName($UserId) {
 
 		$this->db->select('STU_FNAME, STU_MNAME, STU_LNAME ');
 		$this->db->from('STU_MST');
@@ -247,26 +247,31 @@ class UserModel extends CI_MODEL {
 						$query->row()->STU_LNAME;
 			else
 				return '-1'; //Error	
-	}
+	}*/
 
 	//This function fectches User ( User Type 6,7,8,9) Name added by raquib
 	public function getAdminName($UserId) {
 
-		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME');
+		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_DEPARTMENT DEPID');
 		$this->db->where('EMP_ID','EMP\\'.$UserId);		 
 		$query1 = $this->db->get_compiled_select('EMP_MST');
 		    		
-		$this->db->select('CMM_DESC ADMINNAME');
+		$this->db->select('CMM_DESC ADMINNAME,CMM_DEP_ID DEPID');
 		$this->db->where('CMM_ID',$UserId);		 
 		$query2 = $this->db->get_compiled_select('COMPANY_MST A');
 		$str = $this->db->last_query();
   		    		
 		$query = $this->db->query($query1 . ' UNION ' . $query2);
+		if($query->num_rows() > 0) 
+				return $query->result();
+			else
+				return '-1'; //Error		
+	/*
 		
 		if($query->num_rows() > 0) 
 				return 	$query->row()->ADMINNAME;
 			else
-				return '-1'; //Error			
+				return '-1'; //Error			*/
 	} 
 	//This function Finds New User Id from MJ_User_Mst table
 	public function getNewUserId(){

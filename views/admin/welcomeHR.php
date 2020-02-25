@@ -19,7 +19,7 @@
             <div style="width: 1000px; height: 100px;">
                 &nbsp;&nbsp;&nbsp;
             <?php if (isset($pending_comp)) { ?>  
-            <a class="btn btn-info" href="<?php echo base_url() ?>Admin/complaintStatus#open_no_comp">
+            <a class="btn btn-info" href="<?php echo base_url() ?>Admin/complaintStatusHR#pending_accept">
                 <span style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $pending_comp ?></font></strong>       
                 <br>&nbsp;&nbsp;<font size="4">Pending for Accept</font>
@@ -27,7 +27,7 @@
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($accepted_comp)) { ?>
-            <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
+            <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatusHR#accepted_comp">
                 <span   style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $accepted_comp ?></font></strong> 
                 <br>&nbsp;&nbsp;<font size="4">Accepted Complaints</font>
@@ -35,7 +35,7 @@
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($closed_comp)) { ?> 
-            <a class="btn btn-success" href="<?php echo base_url() ?>Admin/complaintStatus#closed_no_comp">
+            <a class="btn btn-success" href="<?php echo base_url() ?>Admin/complaintStatusHR#hold_comp">
                 <span    style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $closed_comp ?></font></strong> 
                 <br>&nbsp;&nbsp;<font size="4">Closed Complaints</font>
@@ -43,7 +43,7 @@
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($total_assigned)) { ?>  
-            <a class="btn btn-primary " href="<?php echo base_url() ?>Admin/complaintStatus#tot_no_comp">
+            <a class="btn btn-primary " href="<?php echo base_url() ?>Admin/complaintStatusHR#tot_no_assigned">
                 <span      style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $total_assigned ?></font></strong> 
                 <br>&nbsp;&nbsp;<font size="4">Total Assigned</font>
