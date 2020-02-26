@@ -92,8 +92,6 @@ $(document).ready(function() {
               <td>
                 <center>
                   <input type="button" class="btn btn-sm btn-info assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
-                  <input type="button" class="btn btn-info btn-sm closed_data" value="CLose" id="<?php echo $v_open->CM_NO; ?>">
-                  <input type="button" class="btn btn-info btn-sm hold_data" value="Put on Hold" id="<?php echo $v_open->CM_NO; ?>">
                 </center>
               </td>
               <!-- <td>
@@ -134,7 +132,8 @@ $(document).ready(function() {
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -169,7 +168,8 @@ $(document).ready(function() {
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -204,7 +204,8 @@ $(document).ready(function() {
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_hold->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -235,7 +236,7 @@ $(document).ready(function() {
                 <td><?php echo $v_closed->CSC_NAME ?></td>
                 <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_PERSON ?></td>
                 <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_closed->CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_closed->CM_NO; ?>"></center>
                 </td>
                 
               </tr>
@@ -268,7 +269,7 @@ $(document).ready(function() {
                 <td><?php echo $v_tot->CM_NO ?></td>
                 <td><?php echo $v_tot->CSC_NAME ?></td>
                 <td><?php echo $v_tot->DEP_DESC ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_tot->CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_tot->CM_NO; ?>"></center>
                 </td>                
               </tr>
               <?php endforeach; ?>           

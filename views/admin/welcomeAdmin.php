@@ -16,8 +16,7 @@
             </div>
         </div>
         <div class="panel-body">
-            <div style="width: 1000px; height: 100px;">
-                &nbsp;&nbsp;&nbsp;&nbsp;
+            <div align="center" style="width: 840px; height: 100px;">                
             <?php if (isset($open)) { ?>  
             <a class="btn btn-info" href="<?php echo base_url() ?>Admin/complaintStatus#open_no_comp">
                 <span style="font-size: 30px;"></span>
@@ -25,15 +24,31 @@
                 <br>&nbsp;&nbsp;<font size="4">Open Complaints</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if (isset($pending_at)) { ?>
+            <a class="btn btn-danger" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
+                <span   style="font-size: 30px;"></span>
+                <strong><font size="8"><?php echo $pending_at ?></font></strong> 
+                <br>&nbsp;&nbsp;<font size="4">Pending For Acceptance</font>
+            </a>
+            <?php } ?>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if (isset($pending)) { ?>
+            <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
+                <span   style="font-size: 30px;"></span>
+                <strong><font size="8"><?php echo $pending ?></font></strong> 
+                <br>&nbsp;&nbsp;<font size="4">Pending Complaints</font>
+            </a>
+            <?php } ?><br><br>
+            
             <?php if (isset($hold)) { ?>
             <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
                 <span   style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $hold ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">On Hold Complaints</font>
+                <br>&nbsp;&nbsp;<font size="4">Hold Complaints</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($closed)) { ?> 
             <a class="btn btn-success" href="<?php echo base_url() ?>Admin/complaintStatus#closed_no_comp">
                 <span    style="font-size: 30px;"></span>
@@ -41,7 +56,7 @@
                 <br>&nbsp;&nbsp;<font size="4">Closed Complaints</font>
             </a>
             <?php } ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <?php if (isset($total)) { ?>  
             <a class="btn btn-primary " href="<?php echo base_url() ?>Admin/complaintStatus#tot_no_comp">
                 <span      style="font-size: 30px;"></span>
@@ -49,16 +64,18 @@
                 <br>&nbsp;&nbsp;<font size="4">Total Complaint</font>
             </a>
             <?php } ?>
-            </div><br><br>
+            </div><br><br><br><br><br><br>
             <hr class="panel panel-info">                
         </div>
         <div class="panel-body">
         <?php
             $dataPoints = array(
             array("label"=> "Open Complaints", "y"=> $open),
+            array("label"=> "Pending for Acceptance", "y"=> $pending_at),
+            array("label"=> "Closed Complaints", "y"=> $closed),
             array("label"=> "Pending Complaints at Engineer", "y"=> $pending),
             array("label"=> "On Hold Complaints", "y"=> $hold),
-            array("label"=> "Closed Complaints", "y"=> $closed),
+            
             //array("label"=> "Total Complaints", "y"=> $pending)
             );    
         ?>

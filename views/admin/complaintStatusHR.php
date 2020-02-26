@@ -84,7 +84,7 @@ $(document).ready(function() {
               <td><?php echo $v_pending->MJ_CAD_CM_NO ?></td>
               <td><?php echo $v_pending->CSC_NAME ?></td>
               <td><?php echo $v_pending->MJ_CAD_ASSIGN_DATE ?></td>
-              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="View" id="<?php echo $v_pending->MJ_CAD_CM_NO; ?>"></center>
+              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="VIEW" id="<?php echo $v_pending->MJ_CAD_CM_NO; ?>"></center>
               </td>
               <td>
                 <center>
@@ -97,31 +97,26 @@ $(document).ready(function() {
                   $('#user_id').val(id);
                   $('#modal_popup').modal({backdrop: 'static', keyboard: true, show: true});
                   });
-              </script>
-              <div class="modal modal-danger fade" id="modal_popup">
-                <div class="modal-dialog modal-sm">
-                <!-- create form to change user status -->
-                <form action="<?php echo base_url(); ?>Admin/hr_acceptance" method="post"> 
-                <div class="modal-content">
-                  <div class="modal-header" style="height: 150px;">
-                  <h4 style="margin-top: 50px;text-align: center;">Are you sure, do you Accept this Complaint?</h4>
-                  <!-- getting value in hidden field with the hep of ID's -->
-                  <input type="hidden" name="id" id="user_id" value="">
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">No</button>
-                    <button type="submit" name="submit" class="btn btn-success">Yes</button>
+                </script>
+                <div class="modal modal-danger fade" id="modal_popup">
+                  <div class="modal-dialog modal-sm">
+                  <!-- create form to change user status -->
+                  <form action="<?php echo base_url(); ?>Admin/hr_acceptance" method="post"> 
+                    <div class="modal-content">
+                      <div class="modal-header" style="height: 150px;">
+                      <h4 style="margin-top: 50px;text-align: center;">Are you sure, do you Accept this Complaint?</h4>
+                      <!-- getting value in hidden field with the hep of ID's -->
+                      <input type="hidden" name="id" id="user_id" value="">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">No</button>
+                        <button type="submit" name="submit" class="btn btn-success">Yes</button>
+                      </div>
+                    </div>
+                  </form>
                   </div>
                 </div>
-                </form>
-                </div>
-              </div>
               </td>
-              <!-- <td>
-                <a href="" class="btn btn-sm btn-info">Assign</a>
-                <a href="" class="btn btn-sm btn-info">CLose</a>
-                <a href="" class="btn btn-sm btn-info">Put on Hold</a>
-              </td> -->
             </tr>
             <?php endforeach; ?>           
           </tbody>
@@ -152,10 +147,11 @@ $(document).ready(function() {
                 <td><?php echo $v_accepted->MJ_CAD_CM_NO ?></td>
                 <td><?php echo $v_accepted->CSC_NAME ?></td>
                 <td><?php echo $v_accepted->MJ_CAD_ASSIGN_DATE ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->MJ_CAD_CM_NO; ?>"></center>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_accepted->MJ_CAD_CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_accepted->MJ_CAD_CM_NO; ?>">
+                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -170,9 +166,9 @@ $(document).ready(function() {
               <thead>    
               <tr>
                 <th>S.No</th>
-                <th>Complaint Type</th>
-                <th>Complainant Name </th>
-                <th>Complainant Mobile No</th>
+                <th>Complaint No</th>
+                <th>Complainant Type </th>
+                <th>Complainant Assign date</th>
                 <th class="text-center">View</th>
                 <th class="text-center">Action</th>
               </tr>
@@ -184,13 +180,14 @@ $(document).ready(function() {
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
+                <td><?php echo $v_hold->MJ_CAD_CM_NO ?></td>
                 <td><?php echo $v_hold->CSC_NAME ?></td>
-                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_PERSON ?></td>
-                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_hold->CM_NO; ?>"></center>
+                <td><?php echo $v_hold->MJ_CAD_ASSIGN_DATE ?></td>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <a href="" class="btn btn-sm btn-info">CLose</a>
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -205,9 +202,10 @@ $(document).ready(function() {
               <thead>    
               <tr>
                 <th>S.No</th>
-                <th>Complaint Type</th>
-                <th>Complainant Name </th>
-                <th>Complainant Mobile No</th>
+                <th>Complaint No</th>
+                <th>Complainant Type </th>
+                <th>Complainant Assign date</th>
+                <th>Complainant Closed date</th>
                 <th class="text-center">View</th>
               </tr>
               </thead>
@@ -218,10 +216,11 @@ $(document).ready(function() {
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
+                <td><?php echo $v_closed->MJ_CAD_CM_NO ?></td>
                 <td><?php echo $v_closed->CSC_NAME ?></td>
-                <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_PERSON ?></td>
-                <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_closed->CM_NO; ?>"></center>
+                <td><?php echo $v_closed->MJ_CAD_ASSIGN_DATE ?></td>
+                <td><?php echo $v_closed->MJ_CAD_ASSIGN_DATE ?></td>
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_closed->MJ_CAD_CM_NO; ?>"></center>
                 </td>
                 
               </tr>
@@ -322,13 +321,13 @@ $(document).ready(function() {
          // Initiate DataTable function comes with plugin
          $('#dataTable').DataTable();
          // Start jQuery click function to view Bootstrap modal when view info button is clicked
-            $('.assign_data').click(function(){
+            $('.status_update').click(function(){
              // Get the id of selected phone and assign it in a variable called phoneData
                 var v_cm_no = $(this).attr('id');
                 // Start AJAX function
                 $.ajax({
                  // Path for controller function which fetches selected phone data
-                    url: "<?php echo base_url() ?>Admin/AsignComplaints",
+                    url: "<?php echo base_url() ?>Admin/ComplaintStatusUpdate",
                     // Method of getting data
                     method: "POST",
                     // Data is sent to the server

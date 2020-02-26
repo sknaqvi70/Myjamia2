@@ -2,6 +2,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
  
 class AdminModel extends CI_Model {
+	/**
+	 * Some Short Form used for Status of complaint in this Model.
+	 *
+	 * R - Registed Complaint
+	 * A - Assigned Complaint
+	 * P - Pending Complaint
+	 * H - Put On Hold Complaints
+	 * C - Closed Complaints
+	 * O - Re open Complaints
+	 */
 	public function __construct(){
 		parent::__construct();
 		$this->load->database();		
@@ -52,7 +62,22 @@ class AdminModel extends CI_Model {
 			else
 				return '0'; //Error	
 	}
-	//this function is use for fetch pending complaints at engineer
+	//this function is use for fetch pending for Acceptance 
+	public function getPendingAcceptance($cc_no, $UserType){
+		$where = "CM_COMPLAINT_STATUS IN ('A')";
+        $this->db->select('count(*) PENDING_COMPLAINT');
+        $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=A.CM_COMPLAINT_SUB_CATEGORY');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.CSC_USER_TYPE', $UserType);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->PENDING_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch pending for Acceptance 
 	public function getPendingComplaint($cc_no, $UserType){
 		$where = "CM_COMPLAINT_STATUS IN ('P')";
         $this->db->select('count(*) PENDING_COMPLAINT');
@@ -137,7 +162,7 @@ class AdminModel extends CI_Model {
 		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
 		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','P');
+		$this->db->where('A.CM_COMPLAINT_STATUS','A');
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query1 = $this->db->get_compiled_select();
 
@@ -149,7 +174,7 @@ class AdminModel extends CI_Model {
 		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
 		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','P');
+		$this->db->where('A.CM_COMPLAINT_STATUS','A');
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query2 = $this->db->get_compiled_select();
 		$data = $this->db->query($query1 . ' UNION ' . $query2);		
@@ -165,7 +190,7 @@ class AdminModel extends CI_Model {
 		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
 		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','A');
+		$this->db->where('A.CM_COMPLAINT_STATUS','P');
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query1 = $this->db->get_compiled_select();
 
@@ -275,7 +300,7 @@ class AdminModel extends CI_Model {
        	foreach ($res as $record)
        	$str .= $record->CM_COMPLAINT_SUB_CATEGORY ;
 
-        $this->db->select('MJ_CHD_USER_ID,CMM_DESC NAME');	
+        /*$this->db->select('MJ_CHD_USER_ID,CMM_DESC NAME');	
 		$this->db->join('COMPANY_MST C','C.CMM_ID=M.MJ_CHD_USER_ID');
 		$this->db->where('M.MJ_CHD_CSC_NO',$str);
 		$query1 = $this->db->get_compiled_select('MJ_COMPLAINT_HR_DTL M');
@@ -285,12 +310,21 @@ class AdminModel extends CI_Model {
 		$this->db->where('M.MJ_CHD_CSC_NO',$str);
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_HR_DTL M');
 		//making union both fee
-		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		$data = $this->db->query($query1 . ' UNION ' . $query2);*/
+		$data=$this->db->query("SELECT MJ_CHD_USER_ID, C.CMM_DESC||' - (No of Complaints - '||(SELECT COUNT(MJ_CAD_CMM_ID) FROM MJ_COMPLAINT_ASSIGN_DTL A WHERE A.MJ_CAD_CMM_ID=M.MJ_CHD_USER_ID AND MJ_CAD_COMPLAINT_STATUS IN ('Assigned','Accepted') )||')' NAME
+			FROM MJ_COMPLAINT_HR_DTL M
+			JOIN COMPANY_MST C ON C.CMM_ID=M.MJ_CHD_USER_ID
+			WHERE M.MJ_CHD_CSC_NO = '$str' 
+			UNION 
+			SELECT MJ_CHD_USER_ID, EMP_NAME(EMP_ID)||' - (No of Complaints - '||(SELECT COUNT(MJ_CAD_CMM_ID) FROM MJ_COMPLAINT_ASSIGN_DTL A 
+			WHERE A.MJ_CAD_CMM_ID=M.MJ_CHD_USER_ID AND MJ_CAD_COMPLAINT_STATUS IN ('Assigned','Accepted'))||')' NAME
+			FROM MJ_COMPLAINT_HR_DTL M
+			JOIN EMP_MST E ON E.EMP_ID=M.MJ_CHD_USER_ID
+			WHERE M.MJ_CHD_CSC_NO = '$str'");		
 		$EMPList[0] = 'Select User';
       	
       	foreach($data->result() as $User) 
-        	$EMPList[$User->MJ_CHD_USER_ID] = $User->NAME; 
-    
+        	$EMPList[$User->MJ_CHD_USER_ID] = $User->NAME;
     	return $EMPList;   	
 
 	}
@@ -409,18 +443,34 @@ class AdminModel extends CI_Model {
 
 	public function getAcceptedComplaint($UserId){
 	$where = "MJ_CAD_COMPLAINT_STATUS IN ('Accepted')";
-        $this->db->select('count(*) PENDING_FOR_ACCEPT');
+        $this->db->select('count(*) ACCEPTED_COMPLAINT');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
 		$this->db->where('MJ_CAD_CMM_ID',$UserId);
 		$this->db->where($where);
 		$query = $this->db->get();
 				
 		if($query->num_rows() > 0) 
-				return $query->row()->PENDING_FOR_ACCEPT;
+				return $query->row()->ACCEPTED_COMPLAINT;
 			else
 				return '0'; //Error	
 	
 	}
+
+	public function fetchClosedComplaint($UserId){
+	$where = "MJ_CAD_COMPLAINT_STATUS IN ('Closed')";
+        $this->db->select('count(*) CLOSED_COMPLAINT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
+		$this->db->where('MJ_CAD_CMM_ID',$UserId);
+		$this->db->where($where);
+		$query = $this->db->get();
+				
+		if($query->num_rows() > 0) 
+				return $query->row()->CLOSED_COMPLAINT;
+			else
+				return '0'; //Error	
+	
+	}
+
 	public function getTotalAssign($UserId){
         $this->db->select('count(*) PENDING_FOR_ACCEPT');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
@@ -461,6 +511,54 @@ class AdminModel extends CI_Model {
 
 	public function getAcceptedComplaints($UserId){
 		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Accepted')";
+		$orderBy = "MJ_CAD_PRIORITY DESC";
+        $this->db->select('MJ_CAD_ID, MJ_CAD_CM_NO,CSC_NAME,CM_COMPLAINT_TEXT, MJ_CAD_EMP_ID, MJ_CAD_CMM_ID, MJ_CAD_ASSIGN_DATE, MJ_CAD_COMPLAINT_STATUS,MJ_CAD_CLOSED_DATE, MJ_CAD_PRIORITY');  
+        $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
+        $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
+		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
+		$this->db->where('A.MJ_CAD_CMM_ID',$UserId);
+		$this->db->where($where);
+		$query1 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
+
+		$this->db->select('MJ_CAD_ID, MJ_CAD_CM_NO,CSC_NAME,CM_COMPLAINT_TEXT, MJ_CAD_EMP_ID, MJ_CAD_CMM_ID, MJ_CAD_ASSIGN_DATE, MJ_CAD_COMPLAINT_STATUS,MJ_CAD_CLOSED_DATE, MJ_CAD_PRIORITY');  
+        $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
+        $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
+		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
+		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where($where);	
+		$this->db->order_by($orderBy);	
+		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();	
+	
+	}
+
+	public function getPutOnHoldComplaints($UserId){
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Put On Hold')";
+		$orderBy = "MJ_CAD_PRIORITY DESC";
+        $this->db->select('MJ_CAD_ID, MJ_CAD_CM_NO,CSC_NAME,CM_COMPLAINT_TEXT, MJ_CAD_EMP_ID, MJ_CAD_CMM_ID, MJ_CAD_ASSIGN_DATE, MJ_CAD_COMPLAINT_STATUS,MJ_CAD_CLOSED_DATE, MJ_CAD_PRIORITY');  
+        $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
+        $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
+		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
+		$this->db->where('A.MJ_CAD_CMM_ID',$UserId);
+		$this->db->where($where);
+		$query1 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
+
+		$this->db->select('MJ_CAD_ID, MJ_CAD_CM_NO,CSC_NAME,CM_COMPLAINT_TEXT, MJ_CAD_EMP_ID, MJ_CAD_CMM_ID, MJ_CAD_ASSIGN_DATE, MJ_CAD_COMPLAINT_STATUS,MJ_CAD_CLOSED_DATE, MJ_CAD_PRIORITY');  
+        $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
+        $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
+		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
+		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where($where);	
+		$this->db->order_by($orderBy);	
+		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();	
+	
+	}
+
+	public function fetchClosedComplaints($UserId){
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Closed')";
 		$orderBy = "MJ_CAD_PRIORITY DESC";
         $this->db->select('MJ_CAD_ID, MJ_CAD_CM_NO,CSC_NAME,CM_COMPLAINT_TEXT, MJ_CAD_EMP_ID, MJ_CAD_CMM_ID, MJ_CAD_ASSIGN_DATE, MJ_CAD_COMPLAINT_STATUS,MJ_CAD_CLOSED_DATE, MJ_CAD_PRIORITY');  
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
@@ -556,5 +654,75 @@ class AdminModel extends CI_Model {
 
 		if (isset($row))
 		     return $row->MJ_CAD_ID;
+	}
+
+	public function compalintStatusUpdated($cmno,$cm_status, $cm_Remarks){
+		$reg_date		= date('d-m-Y');
+		$UserId 		= $_SESSION['login'];
+		$ActionTicketNo = $this->get_New_CA_NO();
+		$AssignmentNo 	= $this->getAssignNo($cmno);
+		if ($cm_status == 'P') {
+		$data = array(
+		    'MJ_CA_ID' 			=>  $ActionTicketNo,
+		    'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
+		    'MJ_CA_CM_NO' 		=> 	$cmno,
+		    'MJ_CA_ACTION' 		=> 	'Accepted',
+		    'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    'MJ_CA_REMARKS'		=>	$cm_Remarks
+			);			
+			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);			
+		}elseif ($cm_status == 'H') {		
+		$data = array(
+		    'MJ_CA_ID' 			=>  $ActionTicketNo,
+		    'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
+		    'MJ_CA_CM_NO' 		=> 	$cmno,
+		    'MJ_CA_ACTION' 		=> 	'Put On Hold',
+		    'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    'MJ_CA_REMARKS'		=>	$cm_Remarks
+			);			
+			$respose = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);
+
+			if ($respose) {
+			$status 	= 'Put On Hold';
+			$this->db->set('MJ_CAD_COMPLAINT_STATUS', $status);
+			$this->db->set('MJ_CAD_REMARKS', $cm_Remarks);
+			$this->db->where('MJ_CAD_CM_NO', $cmno);
+			$result = $this->db->update('MJ_COMPLAINT_ASSIGN_DTL');			
+			}
+			if ($result) {
+			$status = 'H'; // P== Pending at Engineer
+			$this->db->set('CM_COMPLAINT_STATUS', $status);
+			$this->db->where('CM_NO', $cmno);
+			$this->db->update('COMPLAINT_MST');			
+			}
+
+		}else{		
+		$data = array(
+		    'MJ_CA_ID' 			=>  $ActionTicketNo,
+		    'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
+		    'MJ_CA_CM_NO' 		=> 	$cmno,
+		    'MJ_CA_ACTION' 		=> 	'Closed',
+		    'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    'MJ_CA_REMARKS'		=>	$cm_Remarks
+			);			
+			$respose = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);
+
+			if ($respose) {
+			$status 	= 'Closed';
+			$this->db->set('MJ_CAD_COMPLAINT_STATUS', $status);
+			$this->db->set('MJ_CAD_REMARKS', $cm_Remarks);
+			$this->db->where('MJ_CAD_CM_NO', $cmno);
+			$result = $this->db->update('MJ_COMPLAINT_ASSIGN_DTL');			
+			}
+			if ($result) {
+			$status = 'C'; 
+			$this->db->set('CM_COMPLAINT_STATUS', $status);
+			$this->db->set('CM_COMPLAINT_CLOSE_DATE', $reg_date);
+			$this->db->set('CM_COMPLAINT_CLOSED_BY', $UserId);
+			$this->db->where('CM_NO', $cmno);
+			$this->db->update('COMPLAINT_MST');			
+			}
+		}
+		return $result;
 	}
 }

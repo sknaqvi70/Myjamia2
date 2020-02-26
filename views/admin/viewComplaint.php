@@ -31,8 +31,9 @@
             <?php if ($v_single->CM_COMPLAINT_STATUS == 'R') {?>
             <td>Registered</td>  
             <?php } elseif ($v_single->CM_COMPLAINT_STATUS == 'O') { ?>
-              <td>Registered</td> 
-            <?php } elseif ($v_single->CM_COMPLAINT_STATUS == 'O') { ?> 
+              <td>Re-Open</td> 
+            <?php } elseif ($v_single->CM_COMPLAINT_STATUS == 'A') { ?> 
+              <td>Pending For Acceptance</td>
             <?php } elseif ($v_single->CM_COMPLAINT_STATUS == 'P') { ?>
               <td>Pending</td>   
             <?php } elseif ($v_single->CM_COMPLAINT_STATUS == 'C') { ?>
