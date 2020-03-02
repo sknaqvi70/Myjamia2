@@ -48,9 +48,6 @@ $(document).ready(function() {
           <li class="nav-item">
             <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending at Engineer</a>
           </li>
-          <!-- <li class="nav-item">
-            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Accepted by Engineer</a>
-          </li> -->
           <li class="nav-item">
             <a href="#on_hold_comp" class="nav-link" data-toggle="tab">On Hold Complaints</a>
           </li>
@@ -132,7 +129,7 @@ $(document).ready(function() {
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_pending->CM_NO; ?>">
                   </center>
                 </td>
               </tr>
@@ -142,7 +139,7 @@ $(document).ready(function() {
             <?php } ?>
         </div>
         <div class="tab-pane fade" id="pending_for_accept">
-            <h4 class="mt-2">Total Number of Pending complaint</h4>
+            <h4 class="mt-2">Total Number of Pending for Accept</h4>
             <?php if(isset($pending_for_accept)) {?>
             <table id="pending_accept_comp" class="table table-striped table-bordered">
               <thead>    
@@ -157,18 +154,18 @@ $(document).ready(function() {
               </thead>
               <?php
               $no = 0;
-              foreach ($pending_for_accept as $v_pending):
+              foreach ($pending_for_accept as $v_accept):
               $no++;
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
-                <td><?php echo $v_pending->CM_NO ?></td>
-                <td><?php echo $v_pending->CSC_NAME ?></td>
-                <td><?php echo $v_pending->EMPNAME ?></td>              
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
+                <td><?php echo $v_accept->CM_NO ?></td>
+                <td><?php echo $v_accept->CSC_NAME ?></td>
+                <td><?php echo $v_accept->EMPNAME ?></td>              
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_accept->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_accept->CM_NO; ?>">
                   </center>
                 </td>
               </tr>
@@ -204,7 +201,7 @@ $(document).ready(function() {
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_hold->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->MJ_CAD_CM_NO; ?>">
+                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->CM_NO; ?>">
                   </center>
                 </td>
               </tr>
@@ -344,6 +341,41 @@ $(document).ready(function() {
                 $.ajax({
                  // Path for controller function which fetches selected phone data
                     url: "<?php echo base_url() ?>Admin/AsignComplaints",
+                    // Method of getting data
+                    method: "POST",
+                    // Data is sent to the server
+                    data: {v_cm_no:v_cm_no},
+                    // Callback function that is executed after data is successfully sent and recieved
+                    success: function(data){
+                     // Print the fetched data of the selected phone in the section called #view_result 
+                     // within the Bootstrap modal
+                        $('#view_result').html(data);
+                        // Display the Bootstrap modal
+                        $('#complaintModal').modal('show');
+                    }
+                    
+             });
+             // End AJAX function
+             // when modal form close parent page will refreshed
+             $('#complaintModal').on('hidden.bs.modal', function () {
+                location.reload();
+              });
+         });
+     });  
+</script>
+<script type="text/javascript">
+     // Start jQuery function after page is loaded
+        $(document).ready(function(){
+         // Initiate DataTable function comes with plugin
+         $('#dataTable').DataTable();
+         // Start jQuery click function to view Bootstrap modal when view info button is clicked
+            $('.status_update').click(function(){
+             // Get the id of selected phone and assign it in a variable called phoneData
+                var v_cm_no = $(this).attr('id');
+                // Start AJAX function
+                $.ajax({
+                 // Path for controller function which fetches selected phone data
+                    url: "<?php echo base_url() ?>Admin/ComplaintStatusUpdate",
                     // Method of getting data
                     method: "POST",
                     // Data is sent to the server

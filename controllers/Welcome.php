@@ -248,6 +248,8 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserID =  $this->UM->getUser($User); //added by raquib
 		$UserType =  $this->UM->getUserType($UserID, $User);
+		echo "Usertype".$UserType;
+
 		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
 		$UserEmail =  $this->UM->getEmail($UserID); //added by raquib
 
@@ -270,10 +272,15 @@ class Welcome extends CI_Controller {
 			endforeach;
 
 		}
-		elseif ($UserType == 3) {//User is Contractual added by Raquib
-			$UserName = $this->UM->getContEmpName($UserID);
+		/*elseif ($UserType == 3) {//User is Contractual added by Raquib
+			$ContEmp = $this->UM->getContEmpName($UserID);
+			foreach($ContEmp as $cedata):
+			$UserName= $cedata->CONTNAME;
+    		$ContDepId= $cedata->CONTDEPID;
+    		//$EmpDepDesc= $audata->DEP_DESC;
+			endforeach;
 
-		}else{ //added by raquib
+		}*/else{ //added by raquib
 			$AdminUserData = $this->UM->getAdminName($UserID);
 			foreach($AdminUserData as $audata):
 			$UserName= $audata->ADMINNAME;
@@ -298,7 +305,8 @@ class Welcome extends CI_Controller {
         	'depdesc'	=>	$DepDesc,
         	'empdepid'	=>	$EmpDepId,
         	'empdepdesc'=>	$EmpDepDesc,
-        	'admindepid'=>	$AdminDepId
+        	'admindepid'=>	$AdminDepId/*,
+        	'contdepid'	=>	$ContDepId*/
 		);
 
 		$this->session->set_userdata($sessionData);

@@ -127,8 +127,8 @@ class Complaint extends CI_Controller {
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$subject = 'MyJamia Complaint Registration.';
-		$from = $from_emailid;
-		$cc = $cc_emailid;
+		$from = 'raquib4u@gmail.com'; //$from_emailid;
+		$cc = 'raquib4u@gmail.com'; //$cc_emailid;
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';
         /*$emailContaint .= '<center><img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
@@ -213,6 +213,25 @@ class Complaint extends CI_Controller {
 		}
 		$maskedEMail .= substr($CM_USER_EMAIL, $i-1,1);
 		return $maskedEMail;
+	}
+
+	//FUNTION IS USED FOR TRACK COMPLAINT
+	public function trackComplaintStatus(){
+		$UserId= $_SESSION['login'];
+		$data['comp_status'] = $this->CM->getComplaintDtl($UserId);
+
+		$this->load->view('auth/trackComplaint', $data);
+
+	}
+
+	//this function used for to fetch fee paid to view in details
+	public function get_details_Status(){
+		if ($this->uri->segment(3)) {
+			$COM_NO=$this->uri->segment(3);
+			$UserId= $_SESSION['login'];
+			$data['comp_status_dtl']=$this->CM->getSingleComplaintDetails($COM_NO,$UserId);
+			$this->load->view('auth/trackComplaint', $data);
+		}
 	}
 
 

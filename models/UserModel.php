@@ -218,19 +218,19 @@ class UserModel extends CI_MODEL {
 						$query->row()->EMP_SURNAME;
 			else
 				return '-1'; //Error	
-	}*/ 
+	} 
 	//This function fectches User (Contract Employee Type) Name added by raquib
 	public function getContEmpName($UserId) {
 
-		$this->db->select('CMM_DESC');
+		$this->db->select('CMM_DESC CONTNAME,CMM_DEP_ID CONTDEPID');
 		$this->db->from('COMPANY_MST');
 		$this->db->where('CMM_ID',$UserId);		 
 		$query = $this->db->get();		
 		if($query->num_rows() > 0) 
-				return 	$query->row()->CMM_DESC;
+				return $query->result();
 			else
 				return '-1'; //Error			
-	} 
+	} */
 
 	//This function fectches User (Alumni Type) Name commented by raquib
 	/*public function getAlumniName($UserId) {
@@ -259,7 +259,6 @@ class UserModel extends CI_MODEL {
 		$this->db->select('CMM_DESC ADMINNAME,CMM_DEP_ID DEPID');
 		$this->db->where('CMM_ID',$UserId);		 
 		$query2 = $this->db->get_compiled_select('COMPANY_MST A');
-		$str = $this->db->last_query();
   		    		
 		$query = $this->db->query($query1 . ' UNION ' . $query2);
 		if($query->num_rows() > 0) 

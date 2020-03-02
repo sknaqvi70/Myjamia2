@@ -46,7 +46,7 @@
             <a class="btn btn-primary " href="<?php echo base_url() ?>Admin/complaintStatusHR#tot_no_assigned">
                 <span      style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $total_assigned ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">Total Assigned</font>
+                <br>&nbsp;&nbsp;<font size="4">Total Complaints</font>
             </a>
             <?php } ?>
             </div><br><br>
@@ -86,7 +86,8 @@
 
         <div id="chartContainer" style="height: 370px; width: 100%;"></div>
         <script src="<?= base_url(); ?>application/assets/js/canvasjs.min.js"></script>
-        </div>          
+        </div>  
+
     </div>        
 </div>
 

@@ -349,7 +349,24 @@ class AdminModel extends CI_Model {
 		    'MJ_CAD_PRIORITY'			=>	$cm_priority,
 		    'MJ_CAD_REMARKS'			=>	'Assigned To User ID- '.$emp_to_assign.', Updated On '.$reg_date
 			);			
-			$result = $this->db->insert('MJ_COMPLAINT_ASSIGN_DTL', $data);			
+			$response = $this->db->insert('MJ_COMPLAINT_ASSIGN_DTL', $data);	
+		if ($response) {
+			$data = array(
+		    'MJ_CA_ID' 			=>  $ActionTicketNo,
+		    'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
+		    'MJ_CA_CM_NO' 		=> 	$cmno,
+		    'MJ_CA_ACTION' 		=> 	'Assigned',
+		    'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    'MJ_CA_REMARKS'		=>	'Assigned To User ID- '.$emp_to_assign.', Assigned On '.$reg_date
+			);			
+			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);
+		}
+		if ($result) {
+			$status = 'A'; 
+			$this->db->set('CM_COMPLAINT_STATUS', $status);
+			$this->db->where('CM_NO', $cmno);
+			$this->db->update('COMPLAINT_MST');			
+		}		
 		}
 		else // when complaint assign to contractor employee this else condition run
 		{
@@ -378,7 +395,7 @@ class AdminModel extends CI_Model {
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);
 		}
 		if ($result) {
-			$status = 'P'; // P== Pending at Engineer
+			$status = 'A'; 
 			$this->db->set('CM_COMPLAINT_STATUS', $status);
 			$this->db->where('CM_NO', $cmno);
 			$this->db->update('COMPLAINT_MST');			
@@ -427,11 +444,20 @@ class AdminModel extends CI_Model {
 			//For Assign Engineer Model codeigniter
 //-----------------------------------------------------------------------------------------------------
 	public function getPendingForAccept($UserId){
+		$User = substr($UserId, 1,1);
+		if (ord($User) >= 65 && ord($User) <= 90 ) {//checking user
 		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Assigned')";
         $this->db->select('count(*) PENDING_FOR_ACCEPT');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
+		$this->db->where('MJ_CAD_EMP_ID','EMP\\'.$UserId);
+		$this->db->where($where);
+		}else{
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Assigned')";
+		$this->db->select('count(*) PENDING_FOR_ACCEPT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
 		$this->db->where('MJ_CAD_CMM_ID',$UserId);
 		$this->db->where($where);
+		}		
 		$query = $this->db->get();
 				
 		if($query->num_rows() > 0) 
@@ -442,11 +468,20 @@ class AdminModel extends CI_Model {
 	}
 
 	public function getAcceptedComplaint($UserId){
-	$where = "MJ_CAD_COMPLAINT_STATUS IN ('Accepted')";
+		$User = substr($UserId, 1,1);
+		if (ord($User) >= 65 && ord($User) <= 90 ) {//checking user
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Accepted')";
         $this->db->select('count(*) ACCEPTED_COMPLAINT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
+		$this->db->where('MJ_CAD_EMP_ID','EMP\\'.$UserId);
+		$this->db->where($where);
+		}else{
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Accepted')";
+		$this->db->select('count(*) ACCEPTED_COMPLAINT');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
 		$this->db->where('MJ_CAD_CMM_ID',$UserId);
 		$this->db->where($where);
+		}			
 		$query = $this->db->get();
 				
 		if($query->num_rows() > 0) 
@@ -457,13 +492,22 @@ class AdminModel extends CI_Model {
 	}
 
 	public function fetchClosedComplaint($UserId){
-	$where = "MJ_CAD_COMPLAINT_STATUS IN ('Closed')";
+		$User = substr($UserId, 1,1);
+		if (ord($User) >= 65 && ord($User) <= 90 ) {//checking user
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Closed')";
         $this->db->select('count(*) CLOSED_COMPLAINT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
+		$this->db->where('MJ_CAD_EMP_ID','EMP\\'.$UserId);
+		$this->db->where($where);
+		$query = $this->db->get();
+		}else{
+		$where = "MJ_CAD_COMPLAINT_STATUS IN ('Closed')";
+		$this->db->select('count(*) CLOSED_COMPLAINT');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
 		$this->db->where('MJ_CAD_CMM_ID',$UserId);
 		$this->db->where($where);
 		$query = $this->db->get();
-				
+		}
 		if($query->num_rows() > 0) 
 				return $query->row()->CLOSED_COMPLAINT;
 			else
@@ -472,13 +516,19 @@ class AdminModel extends CI_Model {
 	}
 
 	public function getTotalAssign($UserId){
-        $this->db->select('count(*) PENDING_FOR_ACCEPT');
+		$User = substr($UserId, 1,1);
+		if (ord($User) >= 65 && ord($User) <= 90 ) { //checking user
+        $this->db->select('count(*) TOTAL_ASSIGN');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
+		$this->db->where('MJ_CAD_EMP_ID','EMP\\'.$UserId);
+		}else{
+		$this->db->select('count(*) TOTAL_ASSIGN');
 		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL');
 		$this->db->where('MJ_CAD_CMM_ID',$UserId);
-		$query = $this->db->get();
-				
+		}
+		$query = $this->db->get();				
 		if($query->num_rows() > 0) 
-				return $query->row()->PENDING_FOR_ACCEPT;
+				return $query->row()->TOTAL_ASSIGN;
 			else
 				return '0'; //Error	
 	
@@ -499,12 +549,11 @@ class AdminModel extends CI_Model {
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
 		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
-		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where('A.MJ_CAD_EMP_ID','EMP\\'.$UserId);
 		$this->db->where($where);	
 		$this->db->order_by($orderBy);	
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
-
 		return $data->result();	
 	
 	}
@@ -524,7 +573,7 @@ class AdminModel extends CI_Model {
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
 		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
-		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where('A.MJ_CAD_EMP_ID','EMP\\'.$UserId);
 		$this->db->where($where);	
 		$this->db->order_by($orderBy);	
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
@@ -548,7 +597,7 @@ class AdminModel extends CI_Model {
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
 		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
-		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where('A.MJ_CAD_EMP_ID','EMP\\'.$UserId);
 		$this->db->where($where);	
 		$this->db->order_by($orderBy);	
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
@@ -572,7 +621,7 @@ class AdminModel extends CI_Model {
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
 		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
-		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where('A.MJ_CAD_EMP_ID','EMP\\'.$UserId);
 		$this->db->where($where);	
 		$this->db->order_by($orderBy);	
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
@@ -594,7 +643,7 @@ class AdminModel extends CI_Model {
         $this->db->join('COMPLAINT_MST B','A.MJ_CAD_CM_NO=B.CM_NO');      
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=B.CM_COMPLAINT_SUB_CATEGORY');        
 		$this->db->join('MJ_COMPLAINT_ACTION_DTL D', 'A.MJ_CAD_ID=D.MJ_CA_CAD_ID');
-		$this->db->where('A.MJ_CAD_EMP_ID',$UserId);
+		$this->db->where('A.MJ_CAD_EMP_ID','EMP\\'.$UserId);
 		$this->db->order_by($orderBy);	
 		$query2 = $this->db->get_compiled_select('MJ_COMPLAINT_ASSIGN_DTL A');
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
@@ -626,7 +675,7 @@ class AdminModel extends CI_Model {
 			$result = $this->db->update('MJ_COMPLAINT_ASSIGN_DTL');			
 		}
 		if ($result) {
-			$status = 'A'; // P== Pending at Engineer
+			$status = 'P'; // P== Pending at Engineer
 			$this->db->set('CM_COMPLAINT_STATUS', $status);
 			$this->db->where('CM_NO', $cmno);
 			$this->db->update('COMPLAINT_MST');			

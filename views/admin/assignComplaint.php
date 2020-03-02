@@ -53,9 +53,9 @@
             <td>
               <select name="frm_Complaint_Priority" class="form-control">
                   <option value="">Select Priority</option>
-                  <option value="T">Top</option>
-                  <option value="M">Medium</option>
-                  <option value="L">Low</option>
+                  <option value="T">Top Priority</option>
+                  <option value="M">Medium Priority</option>
+                  <option value="L">Normal Priority</option>
               </select>
               <span id="frm_Complaint_priority_Error" class="text-danger"></span>             
             </td>                       
