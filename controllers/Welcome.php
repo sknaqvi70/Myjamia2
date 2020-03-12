@@ -369,13 +369,37 @@ class Welcome extends CI_Controller {
 
 		$this->load->library('email');
 		$this->email->set_header('Content-Type', 'text/html');
-		$this->email->from('kazim.jmi@gmail.com', 'Additional Director, CIT');
+		//$this->email->from('kazim.jmi@gmail.com', 'Additional Director, CIT');
 		$this->email->to($to);
-		$this->email->subject('MyJamia Account Verification Mail.');
-		$this->email->message('<html>Dear Sir/Madam,<br>'.
-							  'With reference to your request for account creation on MyJamia Portal, please click <a href=http://localhost:8080/CI/Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a> to verify your account and set password for your account. <br><br>CIT, JMI</html>');
+		$subject = 'MyJamia Account Verification Mail.'; //added by raquib
+		$from = 'raquib4u@gmail.com'; //$from_emailid; //added by raquib
+		//$this->email->subject('MyJamia Account Verification Mail.');
+		//$this->email->message(
+		//added by raquib
+		$emailContaint ='<html>Dear Sir/Madam,<br>'.
+							  'With reference to your request for account creation on MyJamia Portal, please click <a href=http://localhost:8080/CI/Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a> to verify your account and set password for your account. <br><br>CIT, JMI</html>';
 		
-		
+		//added by raquib
+		$config['protocol']			='smtp';
+		$config['smtp_host']		='ssl://smtp.googlemail.com';
+		$config['smtp_port']		='465';
+		$config['smtp_timeout']		='60';
+
+		$config['smtp_user']		='raquib4u@gmail.com';
+		$config['smtp_pass']		='Raquib*88';
+
+		$config['charset']			='utf-8';
+		$config['newline']			="\r\n";
+		$config['mailtype']			='html';
+		$config['validation']		=TRUE;
+		//added by raquib
+		$this->email->initialize($config);
+		$this->email->set_mailtype("html");
+		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->to($to);
+		$this->email->subject($subject);
+		$this->email->message($emailContaint);
+
 		$this->email->send();
 		echo $this->email->print_debugger();
 	}

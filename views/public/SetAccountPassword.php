@@ -10,13 +10,12 @@
 <div class="container">
 
 <!-- Show Page Banner -->
-<div class="row">
-  <div class="col-sm-12">
-   <!-- m6 l6"> -->
-           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo1.jpg" class="responsive-img center-block" style="padding-top: 5px !important;">
-           <img src="http://10.2.1.57:8080/SSPUSER/Assets/img/logo2.jpg" class="responsive-img center-block" style="padding-top: 5px !important; align-items: center;">
+
+  <div class="row text-center">
+    <div class="col-sm-6 text-center"><img src="<?= base_url(); ?>application/assets/images/logo1.jpg"></div>
+    <div class="col-sm-6 text-left"><img src="<?= base_url(); ?>application/assets/images/logo2.jpg"></div>
   </div>
-</div>
+
 
 <!-- Show Menu Bar -->
 
