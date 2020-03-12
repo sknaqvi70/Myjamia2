@@ -46,7 +46,7 @@ $(document).ready(function() {
             <a href="#pending_for_accept" class="nav-link" data-toggle="tab">Pending for Accept</a>
           </li>
           <li class="nav-item">
-            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending at Engineer</a>
+            <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending with Engineer</a>
           </li>
           <li class="nav-item">
             <a href="#on_hold_comp" class="nav-link" data-toggle="tab">On Hold Complaints</a>
@@ -83,12 +83,13 @@ $(document).ready(function() {
               <td><?php echo $no ?></td>
               <td><?php echo $v_open->CM_NO ?></td>
               <td><?php echo $v_open->CSC_NAME ?></td>
-              <td><?php echo $v_open->CM_COMPLAINT_DATE ?></td>
-              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="View" id="<?php echo $v_open->CM_NO; ?>"></center>
+              <td><?php echo $v_open->REGDATE ?></td>
+              <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="VIEW" id="<?php echo $v_open->CM_NO; ?>"></center>
               </td>
               <td>
                 <center>
-                  <input type="button" class="btn btn-sm btn-info assign_data" value="Assign" id="<?php echo $v_open->CM_NO; ?>">
+                  <input type="button" class="btn btn-sm btn-info assign_data" value="ASSIGN" id="<?php echo $v_open->CM_NO; ?>">
+                  <input type="button" class="btn btn-sm btn-info " value="TRANSFER" id="<?php echo $v_open->CM_NO; ?>">
                 </center>
               </td>
               <!-- <td>
@@ -111,7 +112,7 @@ $(document).ready(function() {
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
-                <th>Pending At</th>
+                <th>Pending With</th>
                 <th class="text-center">View</th>
                 <th class="text-center">Action</th>
               </tr>
@@ -147,7 +148,8 @@ $(document).ready(function() {
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
-                <th>Pending At</th>
+                <th>Pending With</th>
+                <th>No of Unit Assign</th>
                 <th class="text-center">View</th>
                 <th class="text-center">Action</th>
               </tr>
@@ -161,11 +163,12 @@ $(document).ready(function() {
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_accept->CM_NO ?></td>
                 <td><?php echo $v_accept->CSC_NAME ?></td>
-                <td><?php echo $v_accept->EMPNAME ?></td>              
+                <td><?php echo $v_accept->EMPNAME ?></td>  
+                <td><?php echo $v_accept->NO_UNIT ?></td>            
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_accept->CM_NO; ?>"></center>
                 </td>
                 <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_accept->CM_NO; ?>">
+                  <center><input type="button" class="btn btn-info btn-sm revert_back" value="REVERT BACK" id="<?php echo $v_accept->CM_NO; ?>">
                   </center>
                 </td>
               </tr>
@@ -181,9 +184,10 @@ $(document).ready(function() {
               <thead>    
               <tr>
                 <th>S.No</th>
-                <th>Complaint Type</th>
-                <th>Complainant Name </th>
-                <th>Complainant Mobile No</th>
+                <th>Complaint No</th>
+                <th>Complainant Type </th>
+                <th>On Hold With</th>
+                <th>Hold Location</th>
                 <th class="text-center">View</th>
                 <th class="text-center">Action</th>
               </tr>
@@ -195,11 +199,12 @@ $(document).ready(function() {
               ?>           
               <tr>
                 <td><?php echo $no ?></td>
+                <td><?php echo $v_hold->CM_NO ?></td>
                 <td><?php echo $v_hold->CSC_NAME ?></td>
-                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_PERSON ?></td>
-                <td><?php echo $v_hold->CM_COMPLAINT_CONTACT_MOBILE ?></td>
-                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_hold->CM_NO; ?>"></center>
-                </td>
+                <td><?php echo $v_hold->EMPNAME ?></td>  
+                <td><?php echo $v_hold->CM_COMPLAINT_LOCATION ?></td>            
+                <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_hold->CM_NO; ?>"></center>
+                </td>               
                 <td>                  
                   <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" id="<?php echo $v_hold->CM_NO; ?>">
                   </center>
@@ -217,9 +222,10 @@ $(document).ready(function() {
               <thead>    
               <tr>
                 <th>S.No</th>
-                <th>Complaint Type</th>
-                <th>Complainant Name </th>
-                <th>Complainant Mobile No</th>
+                <th>Complaint No</th>
+                <th>Complainant Type </th>
+                <th>Closed By</th>
+                <th>No of Unit Assign</th>
                 <th class="text-center">View</th>
               </tr>
               </thead>
@@ -227,18 +233,18 @@ $(document).ready(function() {
               $no = 0;
               foreach ($closed_no_comp as $v_closed):
               $no++;
-              ?>           
+              ?>            
               <tr>
                 <td><?php echo $no ?></td>
+                <td><?php echo $v_closed->CM_NO ?></td>
                 <td><?php echo $v_closed->CSC_NAME ?></td>
-                <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_PERSON ?></td>
-                <td><?php echo $v_closed->CM_COMPLAINT_CONTACT_MOBILE ?></td>
+                <td><?php echo $v_closed->EMPNAME ?></td>  
+                <td><?php echo $v_closed->NO_UNIT ?></td>            
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_closed->CM_NO; ?>"></center>
-                </td>
-                
+                </td>               
               </tr>
               <?php endforeach; ?>           
-              </tbody>
+              </tbody>         
             </table>
             <?php } ?>
         </div>
@@ -375,7 +381,42 @@ $(document).ready(function() {
                 // Start AJAX function
                 $.ajax({
                  // Path for controller function which fetches selected phone data
-                    url: "<?php echo base_url() ?>Admin/ComplaintStatusUpdate",
+                    url: "<?php echo base_url() ?>Admin/complaintStatusUpdate",
+                    // Method of getting data
+                    method: "POST",
+                    // Data is sent to the server
+                    data: {v_cm_no:v_cm_no},
+                    // Callback function that is executed after data is successfully sent and recieved
+                    success: function(data){
+                     // Print the fetched data of the selected phone in the section called #view_result 
+                     // within the Bootstrap modal
+                        $('#view_result').html(data);
+                        // Display the Bootstrap modal
+                        $('#complaintModal').modal('show');
+                    }
+                    
+             });
+             // End AJAX function
+             // when modal form close parent page will refreshed
+             $('#complaintModal').on('hidden.bs.modal', function () {
+                location.reload();
+              });
+         });
+     });  
+</script>
+<script type="text/javascript">
+     // Start jQuery function after page is loaded
+        $(document).ready(function(){
+         // Initiate DataTable function comes with plugin
+         $('#dataTable').DataTable();
+         // Start jQuery click function to view Bootstrap modal when view info button is clicked
+            $('.revert_back').click(function(){
+             // Get the id of selected phone and assign it in a variable called phoneData
+                var v_cm_no = $(this).attr('id');
+                // Start AJAX function
+                $.ajax({
+                 // Path for controller function which fetches selected phone data
+                    url: "<?php echo base_url() ?>Admin/complaintRevertBack",
                     // Method of getting data
                     method: "POST",
                     // Data is sent to the server

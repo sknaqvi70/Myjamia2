@@ -1,4 +1,4 @@
-<?php echo form_open('/Admin/complaintAssignTo', 'id="assignComplaintsForm"' ); ?>
+<?php echo form_open('/Admin/complaintRevertStatus', 'id="revertComplaintsForm"' ); ?>
 <fieldset>
 <span style="color:#FF0000; font-weight:bold; font-size: 20px;" id="success_message">&nbsp;</span>
 <div class="row">
@@ -35,48 +35,33 @@
             <td><b>Mobile Number</b></td>
             <td><?php echo form_input(['name'=>'CM_COMPLAINT_CONTACT_MOBILE','class'=>'form-control','readonly'=>'true', 'id'=>'id_CM_COMPLAINT_CONTACT_MOBILE','placeholder'=>'Mobile Number', 'value'=>$v_single->CM_COMPLAINT_CONTACT_MOBILE]); ?>              
             </td>
-          </tr> 
-                                                   
+          </tr>                                          
         </table>
       </div>
       <div class="col-lg-6">  
-      <th colspan="8" align="center"><---------------- ASSIGN TO ----------------></th>      
-        <table class="table table-bordered" style="text-align: left;"> 
-        <tr>
-            <td><b>Number of Unit</b></td>
-            <td><?php echo form_input(['name'=>'CM_NO_UNIT','class'=>'form-control','readonly'=>'true', 'id'=>'id_CM_NO_UNIT','placeholder'=>'No of unit', 'value'=>$v_single->CM_NO_UNIT]); ?>              
-            </td>
-          </tr> 
+      <th colspan="8" align="center"><---------------- ACCTION BY ADMIN ----------------></th>      
+        <table class="table table-bordered" style="text-align: left;">          
           <tr>
-            <td><b>Remaining To Assign</b></td>
-            <td><?php echo form_input(['name'=>'CM_RENAINING_UNIT','class'=>'form-control','readonly'=>'true', 'id'=>'id_CM_RENAINING_UNIT','placeholder'=>'Mobile Number', 'value'=>$v_single->CM_NO_UNIT-$unit_Assigned]); ?>              
+            <td><b>Pending With</b></td>
+            <td><?php echo form_dropdown('frm_Revert_User', $AssignList, set_value('frm_Revert_User'), "class='form-control'"); ?> 
+                <span id="frm_Revert_User_Error" class="text-danger"></span>                       
             </td>
-          </tr>         
-          <tr>
-            <td><b>Employee Name</b></td>
-            <td>
-              <?php echo form_dropdown('frm_MJ_User', $UserList, set_value('frm_MJ_User'), "class='form-control'"); ?> 
-                <span id="frm_MJ_User_Error" class="text-danger"></span>             
-            </td>            
           </tr>
           <tr>
-            <td><b>No. Of Unit Assign</b></td>
-            <td><?php echo form_input(['name'=>'frm_CM_No_Unit_Assign','class'=>'form-control','id'=>'id_CM_NO_UNIT_ASSIGN','placeholder'=>'Enter Number Of Unit to be Assign', 'value'=>'']); ?> 
-            <span id="frm_CM_No_Unit_Assign_Error" class="text-danger"></span>             
-            </td>
-          </tr>  
-          <tr>
-            <td><b>Priority</b></td>
+            <td><b>Complaint Status</b></td>
             <td>
-              <select name="frm_Complaint_Priority" class="form-control">
-                  <option value="">Select Priority</option>
-                  <option value="T">Top Priority</option>
-                  <option value="M">Medium Priority</option>
-                  <option value="L">Normal Priority</option>
+              <select name="frm_Complaint_Revert" class="form-control">
+                  <option value="">Select Complaint Status</option>
+                  <option value="R">Revert Back</option>
               </select>
-              <span id="frm_Complaint_priority_Error" class="text-danger"></span>             
+              <span id="frm_Complaint_Revert_Error" class="text-danger"></span>             
             </td>                       
-          </tr>                             
+          </tr>
+          <tr>
+            <td><b>Reason for Revert Back</b></td>
+            <td><?php echo form_textarea(['name'=>'CM_COMPLAINT_REMARKS','class'=>'form-control', 'id'=>'id_CM_COMPLAINT_REMARKS','placeholder'=>'Please Write reason for Update complaint Status in this box']); ?> <span id="CM_COMPLAINT_REMARKS_Error" class="text-danger"></span>             
+            </td>
+          </tr>                              
         </table> 
 
       </div>
@@ -88,10 +73,10 @@
 
 <script>
   $(document).ready(function()  {
-    $('#assignComplaintsForm').on('submit',function(event){ 
+    $('#revertComplaintsForm').on('submit',function(event){ 
       event.preventDefault();
       $.ajax({
-        url:      "<?php echo base_url() ?>Admin/complaintAssignTo",
+        url:      "<?php echo base_url() ?>Admin/complaintRevertStatus",
         method:   "POST",
         data:     $(this).serialize(),
         dataType: "json",
@@ -100,33 +85,33 @@
         },
         success: function(data) {         
         $('#success_message').html(data.message);
-         if (data.error) {            
-            if (data.frm_MJ_User_Error != ''){
-              $('#frm_MJ_User_Error').html(data.frm_MJ_User_Error);
+         if (data.error) { 
+            if (data.frm_Revert_User_Error != ''){
+              $('#frm_Revert_User_Error').html(data.frm_Revert_User_Error);
             } 
             else {
-              $('#frm_MJ_User_Error').html('');
+              $('#frm_Revert_User_Error').html('');
+            }           
+            if (data.frm_Complaint_Revert_Error != ''){
+              $('#frm_Complaint_Revert_Error').html(data.frm_Complaint_Revert_Error);
+            } 
+            else {
+              $('#frm_Complaint_Revert_Error').html('');
             }
-            if (data.frm_Complaint_priority_Error != ''){
-              $('#frm_Complaint_priority_Error').html(data.frm_Complaint_priority_Error);
+            if (data.CM_COMPLAINT_REMARKS_Error != ''){
+              $('#CM_COMPLAINT_REMARKS_Error').html(data.CM_COMPLAINT_REMARKS_Error);
             } 
             else {
-              $('#frm_Complaint_priority_Error').html('');
-            }
-            if (data.frm_CM_No_Unit_Assign_Error != ''){
-              $('#frm_CM_No_Unit_Assign_Error').html(data.frm_CM_No_Unit_Assign_Error);
-            } 
-            else {
-              $('#frm_CM_No_Unit_Assign_Error').html('');
+              $('#CM_COMPLAINT_REMARKS_Error').html('');
             }
           }
 
           if(data.success) {
-            $('#frm_MJ_User_Error').html('');
-            $('frm_Complaint_priority_Error').html('');
-            $('frm_CM_No_Unit_Assign_Error').html('');
+            $('#frm_Revert_User_Error').html('');
+            $('#frm_Complaint_Revert_Error').html('');
+            $('CM_COMPLAINT_REMARKS_Error').html('');
             $('#success_message').html(data.message);
-            $('#assignComplaintsForm')[0].reset();
+            $('#revertComplaintsForm')[0].reset();
 
           } 
           $('#id_frm_Btn_Submit').attr('disabled',false);

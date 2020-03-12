@@ -39,9 +39,9 @@ class ComplaintModel extends CI_Model {
   	}
 
   	//this function is to insert complaint into complaint_mst table and when check_fts_based is N then it also inserted complaint into FILE_MST and FILE_MV_DTL table
-  	public function RegisterComplaint($dept,$UserId,$CM_COMPLAINT_TYPE,$CM_COMPLAINT_SUB_TYPE,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_NANE,$CM_USER_MOBILE,$CM_USER_EMAIL,&$VerificationString,&$TicketNo,&$FtsNo){
+  	public function RegisterComplaint($dept,$UserId,$CM_COMPLAINT_TYPE,$CM_COMPLAINT_SUB_TYPE,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_NANE,$CM_USER_MOBILE,$CM_USER_EMAIL,&$VerificationString,&$TicketNo,&$FtsNo,$CM_NO_UNIT){
   		//current date of register
-  		$reg_date=date('d-m-Y');
+  		$reg_date=date('d-m-Y'); //date('d-m-Y H:i:s');
   		//Generate random string for email account verification
 		$str = rand(); 
 		$VerificationString = hash("sha256", $str); 	
@@ -50,12 +50,18 @@ class ComplaintModel extends CI_Model {
 		$ActionTicketNo = $this->get_New_CA_NO();
 		$AssignmentNo 	= $this->get_New_CAD_NO($TicketNo);
 		$check_fts_based = $this->check_fts_status($CM_COMPLAINT_SUB_TYPE);
+		if ($CM_NO_UNIT == '') {
+			$no_of_faulty_eq = 1;
+		}else{
+			$no_of_faulty_eq = $CM_NO_UNIT;
+		}
 
 		if($check_fts_based == 'N'){ //this function is to insert complaint without FTS number
-			
+			$Users = substr($UserId, 1,1);		
+
 			$number = substr($UserId,2);
 			$User = rtrim($UserId, $number);		
-			if (preg_match('/[A-Z]/', $User)) { //checking user
+			if (ord($Users) >= 65 && ord($Users) <= 90 ) { //checking user				
 			$data = array(
 		    	'CM_NO' 						=>  $TicketNo,
 		    	'CM_DEP_ID' 					=> 	$dept,
@@ -70,9 +76,10 @@ class ComplaintModel extends CI_Model {
 		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
 		    	'CM_COMPLAINT_STATUS'			=>	'R',
 		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
-		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	//'CM_COMPLAINT_DATE'				=>	$reg_date,
 		    	'CM_STU_ID'						=>	'',
-		    	'CM_CMM_ID'						=>	''
+		    	'CM_CMM_ID'						=>	'',
+		    	'CM_NO_UNIT'					=>	$no_of_faulty_eq
 			);
 			
 			$cm_response = $this->db->insert('COMPLAINT_MST', $data);
@@ -82,7 +89,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CAD_CM_NO' 				=> 	$TicketNo,
 		    	'MJ_CAD_EMP_ID' 			=> 	'',
 		    	'MJ_CAD_CMM_ID' 			=> 	'',
-		    	'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
+		    	//'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
 		    	'MJ_CAD_COMPLAINT_STATUS'	=>	'Registered',	// Assign to Engineer
 		    	'MJ_CAD_CLOSED_DATE' 		=>	'',
 		    	'MJ_CAD_PRIORITY'			=>	'',
@@ -96,7 +103,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
 		    	'MJ_CA_CM_NO' 		=> 	$TicketNo,
 		    	'MJ_CA_ACTION' 		=> 	'Registered',
-		    	'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    	//'MJ_CA_ACTION_DATE' => 	$reg_date,
 		    	'MJ_CA_REMARKS'		=>	$CM_COMPLAINT_DESC
 				);			
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);			
@@ -117,9 +124,10 @@ class ComplaintModel extends CI_Model {
 		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
 		    	'CM_COMPLAINT_STATUS'			=>	'R',
 		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
-		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	//'CM_COMPLAINT_DATE'				=>	$reg_date,
 		    	'CM_STU_ID'						=>	$UserId,
-		    	'CM_CMM_ID'						=>	''
+		    	'CM_CMM_ID'						=>	'',
+		    	'CM_NO_UNIT'					=>	$no_of_faulty_eq
 			);
 			
 			$cm_response = $this->db->insert('COMPLAINT_MST', $data);
@@ -129,7 +137,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CAD_CM_NO' 				=> 	$TicketNo,
 		    	'MJ_CAD_EMP_ID' 			=> 	'',
 		    	'MJ_CAD_CMM_ID' 			=> 	'',
-		    	'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
+		    	//'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
 		    	'MJ_CAD_COMPLAINT_STATUS'	=>	'Registered',	// Assign to Engineer
 		    	'MJ_CAD_CLOSED_DATE' 		=>	'',
 		    	'MJ_CAD_PRIORITY'			=>	'',
@@ -143,7 +151,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
 		    	'MJ_CA_CM_NO' 		=> 	$TicketNo,
 		    	'MJ_CA_ACTION' 		=> 	'Registered',
-		    	'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    	//'MJ_CA_ACTION_DATE' => 	$reg_date,
 		    	'MJ_CA_REMARKS'		=>	$CM_COMPLAINT_DESC
 				);			
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);			
@@ -164,9 +172,10 @@ class ComplaintModel extends CI_Model {
 		    	'CM_COMPLAINT_FTS_NO' 			=> 	'',
 		    	'CM_COMPLAINT_STATUS'			=>	'R',
 		    	'VERIFICATIONSTRING' 			=>	$VerificationString,
-		    	'CM_COMPLAINT_DATE'				=>	$reg_date,
+		    	//'CM_COMPLAINT_DATE'				=>	$reg_date,
 		    	'CM_STU_ID'						=>	'',
-		    	'CM_CMM_ID'						=>	$UserId
+		    	'CM_CMM_ID'						=>	$UserId,
+		    	'CM_NO_UNIT'					=>	$no_of_faulty_eq
 			);
 			
 			$cm_response = $this->db->insert('COMPLAINT_MST', $data);
@@ -176,7 +185,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CAD_CM_NO' 				=> 	$TicketNo,
 		    	'MJ_CAD_EMP_ID' 			=> 	'',
 		    	'MJ_CAD_CMM_ID' 			=> 	'',
-		    	'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
+		    	//'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
 		    	'MJ_CAD_COMPLAINT_STATUS'	=>	'Registered',	// Assign to Engineer
 		    	'MJ_CAD_CLOSED_DATE' 		=>	'',
 		    	'MJ_CAD_PRIORITY'			=>	'',
@@ -190,7 +199,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
 		    	'MJ_CA_CM_NO' 		=> 	$TicketNo,
 		    	'MJ_CA_ACTION' 		=> 	'Registered',
-		    	'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    	//'MJ_CA_ACTION_DATE' => 	$reg_date,
 		    	'MJ_CA_REMARKS'		=>	$CM_COMPLAINT_DESC
 				);			
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);			
@@ -220,7 +229,8 @@ class ComplaintModel extends CI_Model {
 		    'CM_COMPLAINT_FTS_NO' 			=> 	$FtsNo,
 		    'CM_COMPLAINT_STATUS'			=>	'R',
 		    'VERIFICATIONSTRING' 			=>	$VerificationString,
-		    'CM_COMPLAINT_DATE'				=>	$reg_date
+		    'CM_NO_UNIT'					=>	$no_of_faulty_eq
+		    //'CM_COMPLAINT_DATE'				=>	$reg_date
 			);
 			
 			$response = $this->db->insert('COMPLAINT_MST', $data);
@@ -230,7 +240,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CAD_CM_NO' 				=> 	$TicketNo,
 		    	'MJ_CAD_EMP_ID' 			=> 	'',
 		    	'MJ_CAD_CMM_ID' 			=> 	'',
-		    	'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
+		    	//'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
 		    	'MJ_CAD_COMPLAINT_STATUS'	=>	'Registered',	// Assign to Engineer
 		    	'MJ_CAD_CLOSED_DATE' 		=>	'',
 		    	'MJ_CAD_PRIORITY'			=>	'',
@@ -244,7 +254,7 @@ class ComplaintModel extends CI_Model {
 		    	'MJ_CA_CAD_ID' 		=> 	$AssignmentNo,
 		    	'MJ_CA_CM_NO' 		=> 	$TicketNo,
 		    	'MJ_CA_ACTION' 		=> 	'Registered',
-		    	'MJ_CA_ACTION_DATE' => 	$reg_date,
+		    	//'MJ_CA_ACTION_DATE' => 	$reg_date,
 		    	'MJ_CA_REMARKS'		=>	$CM_COMPLAINT_DESC
 				);			
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);			
@@ -438,10 +448,10 @@ class ComplaintModel extends CI_Model {
 	public function getComplaintDtl($UserId){
 		$orderBy = "CM_NO DESC";
 		$condition_date = "01-JAN-2020";
+		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MM:SS am";
 		//for Employee 
 		$where = "CM_EMP_ID IS NOT NULL";         			
-		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,CM_COMPLAINT_DATE,
-			CM_COMPLAINT_CLOSE_DATE');
+		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -452,8 +462,7 @@ class ComplaintModel extends CI_Model {
 
 		//for Student 
 		$where = "CM_STU_ID IS NOT NULL";		
-		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,CM_COMPLAINT_DATE,
-			CM_COMPLAINT_CLOSE_DATE');
+		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -464,8 +473,7 @@ class ComplaintModel extends CI_Model {
 
 		//for contrator and profession staff
 		$where = "CM_CMM_ID IS NOT NULL";
-		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,CM_COMPLAINT_DATE,
-			CM_COMPLAINT_CLOSE_DATE');
+		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -477,15 +485,17 @@ class ComplaintModel extends CI_Model {
 		$query3 = $this->db->get_compiled_select();
 
 		$data = $this->db->query($query1 . ' UNION ' . $query2 . ' UNION ' . $query3);
+
 		return $data->result();
 	}
 
 	//this function used for fetch sigle fee details to view and print
 	public function getSingleComplaintDetails($COM_NO,$UserId){
 		$orderBy = "MJ_CA_ID DESC";	
+		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MM:SS am";
 		$where = "CM_EMP_ID IS NOT NULL";         			
 		$this->db->select('MJ_CA_ID,CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,MJ_CA_REMARKS,
-			MJ_CA_ACTION,CM_COMPLAINT_DATE,	CM_COMPLAINT_CLOSE_DATE,MJ_CA_ACTION_DATE');
+			MJ_CA_ACTION,CM_COMPLAINT_DATE,	CM_COMPLAINT_CLOSE_DATE,TO_CHAR(MJ_CA_ACTION_DATE, '."'$dateFormate'".') ACTIONDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -498,7 +508,7 @@ class ComplaintModel extends CI_Model {
 		//for Student 
 		$where = "CM_STU_ID IS NOT NULL";
 		$this->db->select('MJ_CA_ID,CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,MJ_CA_REMARKS,
-			MJ_CA_ACTION,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,MJ_CA_ACTION_DATE');
+			MJ_CA_ACTION,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,TO_CHAR(MJ_CA_ACTION_DATE, '."'$dateFormate'".') ACTIONDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -511,7 +521,7 @@ class ComplaintModel extends CI_Model {
 		//for contrator and profession staff
 		$where = "CM_CMM_ID IS NOT NULL";
 		$this->db->select('MJ_CA_ID,CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,MJ_CA_REMARKS,
-			MJ_CA_ACTION,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,MJ_CA_ACTION_DATE');
+			MJ_CA_ACTION,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,TO_CHAR(MJ_CA_ACTION_DATE, '."'$dateFormate'".') ACTIONDATE');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -522,7 +532,6 @@ class ComplaintModel extends CI_Model {
 		$this->db->order_by($orderBy);
 		$query3 = $this->db->get_compiled_select();
 		$data = $this->db->query($query1 . ' UNION ' . $query2 . ' UNION ' . $query3);
-		
 		foreach($data->result() as $v_csdtl){
   		$output ='<table class="table table-striped table-bordered table-hover " width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;
   			border: 1px solid;">';
@@ -556,7 +565,7 @@ class ComplaintModel extends CI_Model {
 		 		 <tr>
               		<td>'.$no.'</td>
               		<td>'.$v_csdtl->MJ_CA_REMARKS.'</td>
-              		<td>'.$v_csdtl->MJ_CA_ACTION_DATE.'</td>
+              		<td>'.$v_csdtl->ACTIONDATE.'</td>
               		<td>'.$v_csdtl->MJ_CA_ACTION.'</td>
             	</tr>                 
                 </tbody>

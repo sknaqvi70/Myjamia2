@@ -38,6 +38,9 @@ class Complaint extends CI_Controller {
 			//7 Brief Description of Complaint is required
 			$this->form_validation->set_rules('CM_COMPLAINT_DESC','Brief Description of Complaint','required|max_length[400]');
 
+			//8 No Of Unit cannot be blank
+			$this->form_validation->set_rules('CM_NO_UNIT','Number of Faulty Equipment','trim|is_natural_no_zero');
+
 			//Set Error Delimeter
 
 			$this->form_validation->set_error_delimiters("<p class='text-danger'>",'</p>');
@@ -55,13 +58,14 @@ class Complaint extends CI_Controller {
 	       		$VerificationString = '';
 	       		$TicketNo = '';
 	       		$FtsNo = '';
-	       		if($_SESSION['usertype'] == 1){
+	       		if ($UserType == 1 || $UserType == 4){
 	       			$dept = $_SESSION['depid'];
 	       			$deptdesc = $_SESSION['depdesc'];
-	       		}
-
-	       		if($_SESSION['usertype'] == 2){
+	       		}elseif ($UserType == 2 || $UserType == 5){
 	       			$dept = $_SESSION['empdepid'];
+	       			$deptdesc = $_SESSION['empdepdesc'];
+	       		}else{
+	       			$dept = $_SESSION['admindepid'];
 	       			$deptdesc = $_SESSION['empdepdesc'];
 	       		}
 	       		
@@ -72,8 +76,8 @@ class Complaint extends CI_Controller {
 	       		$CM_USER_LOCATION		= $this->input->post('CM_USER_LOCATION');
 	       		$CM_COMPLAINT_TYPE 		= $this->input->post('CM_COMPLAINT_TYPE');
 	       		$CM_COMPLAINT_SUB_TYPE 	= $this->input->post('CM_COMPLAINT_SUB_TYPE');
-	       		$CM_COMPLAINT_DESC		= $this->input->post('CM_COMPLAINT_DESC'); 	       		
-
+	       		$CM_COMPLAINT_DESC		= $this->input->post('CM_COMPLAINT_DESC'); 
+	       		$CM_NO_UNIT				= $this->input->post('CM_NO_UNIT');
 				$data['message']  = $this->CM->RegisterComplaint(
 	       				$dept,
 	       				$UserId,
@@ -86,7 +90,8 @@ class Complaint extends CI_Controller {
 	       				$CM_USER_EMAIL,	       				
 						$VerificationString,
 						$TicketNo,
-						$FtsNo
+						$FtsNo,
+						$CM_NO_UNIT
 				);
 				if ($data['message'] == 'OK') {
 
@@ -219,7 +224,6 @@ class Complaint extends CI_Controller {
 	public function trackComplaintStatus(){
 		$UserId= $_SESSION['login'];
 		$data['comp_status'] = $this->CM->getComplaintDtl($UserId);
-
 		$this->load->view('auth/trackComplaint', $data);
 
 	}

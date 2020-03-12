@@ -55,6 +55,24 @@
                       </select>
                     </td>
                   </tr>
+                  <?php $userType = $_SESSION['usertype'];
+                  if($userType == 2 || $userType == 3){?>
+                  <tr>
+                    <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;No of Faulty Equipment: </strong></td>
+                    <td valign="top" align="left">
+                      <?php echo form_input(['name'=>'CM_NO_UNIT','class'=>'form-control', 'id'=>'id_CM_NO_UNIT','placeholder'=>'Enter Number of Faulty Equipment', 'value'=>set_value('CM_NO_UNIT')]); echo form_error('CM_NO_UNIT');?>
+                    </td>
+                    <td colspan="2" valign="top" height="20" align="left"><strong>&nbsp;&nbsp;<font color="red"> If 'Not Applicable' Field should be Left Blank </font></strong></td>
+                  </tr>
+                  <?php }else { ?>
+                  <tr>
+                    <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;No of Faulty Equipment: </strong></td>
+                    <td valign="top" align="left">
+                      <?php echo form_input(['name'=>'CM_NO_UNIT','class'=>'form-control', 'id'=>'id_CM_NO_UNIT','readonly'=>'true','placeholder'=>'Enter Number of Faulty Equipment', 'value'=>set_value('CM_NO_UNIT')]); echo form_error('CM_NO_UNIT');?>
+                    </td>
+                    <td colspan="2" valign="top" height="20" align="left"><strong>&nbsp;&nbsp;<font color="red"> Field Not Applicable for Wifi related Complaint </font></strong></td>
+                  </tr>
+                  <?php } ?>
                   <tr>
                     <td valign="top" height="20" align="left" ><strong>&nbsp;&nbsp;Complaint Description : </strong></td>
                     <td valign="top" align="left" colspan="3">

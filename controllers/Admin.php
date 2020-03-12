@@ -96,36 +96,45 @@ class Admin extends CI_Controller {
 		$UserType				= $_SESSION['usertype'];
 		$cc_no 					=$this->admin->fetch_cc_no($UserType, $DepId);
 		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
+		$data['unit_Assigned']	= $this->admin->get_Tot_Assign_Unit($cmData);
 		$data['UserList']		=$this->admin->getAssignDetails($cmData);
 		$this->load->view('admin/assignComplaint', $data);
 		}
 	}
 
 	//this function is use for insert assign details
-	public function complaintAssignTo(){		
-
+	public function complaintAssignTo(){	
 		//Show Screen data
 		$cmno 	= $this->input->post('CM_NO');
 		$cm_priority 	= $this->input->post('frm_Complaint_Priority');
 		$emp_to_assign 	= $this->input->post('frm_MJ_User');	
-		
+		$cm_no_unit 	= $this->input->post('frm_CM_No_Unit_Assign');
+		$tot_Units 			= $this->admin->get_Tot_unit($cmno);
+		$tot_Unit_Assign 	= $this->admin->get_Tot_Assign_Unit($cmno);
+		$pending = $tot_Units-$tot_Unit_Assign;
 		// 1 Employee must be select
 		$this->form_validation->set_rules('frm_MJ_User','Employee','required|min_length[5]|max_length[10]');
 		// 1 Priority must be select
-		$this->form_validation->set_rules('frm_Complaint_Priority','Priority','required');		
-
+		$this->form_validation->set_rules('frm_Complaint_Priority','Priority','required');	
+		// 1 Priority must be select
+		if ($pending == 0) {
+		$this->form_validation->set_rules('frm_CM_No_Unit_Assign','Number of Unit to be Assign','required|less_than_equal_to['.$tot_Units.']');
+		}else{
+		$this->form_validation->set_rules('frm_CM_No_Unit_Assign','Number of Unit to be Assign','required|is_natural_no_zero|less_than_equal_to['.$pending.']');	
+		}
 		if ($this->form_validation->run() == FALSE) {		
 			//if(validation_errors()) echo validation_errors(); 
 	        $array = array(
 		        'error'							=> 	true,
 		        'frm_MJ_User_Error'				=>	form_error('frm_MJ_User'),
 		        'frm_Complaint_priority_Error'	=>	form_error('frm_Complaint_Priority'),
+		        'frm_CM_No_Unit_Assign_Error'	=>	form_error('frm_CM_No_Unit_Assign'),
 		        'message' 						=>	'Please review your data.'
 		       	);
 			}
 	        else {
 
-	        	$data['insert']  = $this->admin->AssignCompalintStatus($cmno,$emp_to_assign, $cm_priority );
+	        	$data['insert']  = $this->admin->AssignCompalintStatus($cmno,$emp_to_assign, $cm_priority,$cm_no_unit,$tot_Units,$tot_Unit_Assign );
 	        	if ($data['insert'] == 'OK') {
 	        	$DepId 			= $_SESSION['admindepid'];	
 				$UserType		= $_SESSION['usertype'];
@@ -247,11 +256,14 @@ class Admin extends CI_Controller {
 	}
 
 	public function hr_acceptance(){ 		
-		$UserId		= $_SESSION['login'];
-		$UserName	= $_SESSION['username'];		
-		$cmno 		= $this->input->post('id');
-
-		$data['insert']  = $this->admin->AssignCompalintAcceptance($cmno, $UserId ,$UserName);
+		$UserId				= $_SESSION['login'];
+		$UserName			= $_SESSION['username'];		
+		$cmno 				= $this->input->post('id');
+		$tot_Units 			= $this->admin->get_Tot_unit($cmno);
+		$tot_Unit_Assign 	= $this->admin->get_Tot_Accept_Unit($cmno);
+		$Unit_Assign_hr 	= $this->admin->get_Unit_Assign_hr($cmno,$UserId);
+		
+		$data['insert']  	= $this->admin->AssignCompalintAcceptance($cmno, $UserId ,$UserName,$tot_Units,$tot_Unit_Assign,$Unit_Assign_hr);
 		if ($data['insert'] == 'OK') {
 		$this->session->set_flashdata('msg',"Complaint accepted successfully.");
     	$this->session->set_flashdata('msg_class','alert-success');
@@ -259,7 +271,7 @@ class Admin extends CI_Controller {
     	return redirect('Admin/complaintStatusHR');
 	}
 
-	public function ComplaintStatusUpdate(){
+	public function complaintStatusUpdate(){
 		$cmData = $this->input->post('v_cm_no');
 		if(isset($cmData) and !empty($cmData)){
 		$DepId 					= $_SESSION['admindepid'];	
@@ -275,9 +287,14 @@ class Admin extends CI_Controller {
 	public function complaintUpdateStatus(){		
 
 		//Show Screen data
-		$cmno 		= $this->input->post('CM_NO');
-		$cm_status 	= $this->input->post('frm_Complaint_Status');
-		$cm_Remarks 	= $this->input->post('CM_COMPLAINT_REMARKS');	
+		$UserId				= $_SESSION['login'];
+		$UserName			= $_SESSION['username'];
+		$cmno 				= $this->input->post('CM_NO');
+		$cm_status 			= $this->input->post('frm_Complaint_Status');
+		$cm_Remarks 		= $this->input->post('CM_COMPLAINT_REMARKS');
+		$tot_Units 			= $this->admin->get_Tot_unit($cmno);
+		$tot_Unit_Closed 	= $this->admin->get_Tot_Closed_Unit($cmno);
+		$Unit_Assign_hr 	= $this->admin->get_Unit_Assign_hr($cmno,$UserId);	
 		
 		// 1 Employee must be select
 		$this->form_validation->set_rules('frm_Complaint_Status','Select Complaint Status','required');
@@ -295,11 +312,161 @@ class Admin extends CI_Controller {
 			}
 	        else {
 
-	        	$data['insert']  = $this->admin->compalintStatusUpdated($cmno,$cm_status, $cm_Remarks );	        	
+	        	$data['insert']  = $this->admin->compalintStatusUpdated($cmno,$cm_status, $cm_Remarks,$UserId,$UserName, $tot_Units, $tot_Unit_Closed, $Unit_Assign_hr);
+
+	        	// checking condition for mail when comlaint status closed.
+	        	/*if ($data['insert'] == 'OK' && $cm_status == 'C'){
+	        	if ($tot_Units == $tot_Unit_Closed + $Unit_Assign_hr) {
+	        	
+	        	$DepId 			= $_SESSION['admindepid'];	
+				$UserType		= $_SESSION['usertype'];
+				$cc_no 			=$this->admin->fetch_cc_no($UserType, $DepId);
+	        	$ComplaintData	= $this->admin->getSingleComplaintDetails($cc_no, $cmno);
+		    	foreach($ComplaintData as $cdata):
+					$CM_USER_EMAIL				= $cdata->CM_COMPLAINT_CONTACT_EMAIL;
+					$CM_USER_NANE				= $cdata->NAME;
+					$deptdesc					= $cdata->DEP_DESC;
+					$CM_COMPLAINT_TYPE_DESC 	= $cdata->CC_NAME;
+					$CM_COMPLAINT_SUB_TYPE_DESC = $cdata->CSC_NAME;
+					$CM_COMPLAINT_DESC 			= $cdata->CM_COMPLAINT_TEXT;
+					$CM_USER_LOCATION 			= $cdata->CM_COMPLAINT_LOCATION;
+					$CM_USER_MOBILE 			= $cdata->CM_COMPLAINT_CONTACT_MOBILE;
+					$FtsNo 						= $cdata->CM_COMPLAINT_FTS_NO;
+					$Reg_DATE 					= $cdata->CM_COMPLAINT_DATE;
+				endforeach;	
+	        	$EmpUserData= $this->admin->fetch_emp_details($cmno,$emp_to_assign);
+					foreach($EmpUserData as $eudata):
+						$EmpName 		= $eudata->EMPNAME;
+    					$EmpEmailId 	= $eudata->EMAIL;
+    					$EmpPhnoeNo 	= $eudata->PHONE_NO;
+					endforeach;	
+				$this->SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr);
+				}					
+	        	}*/
 	        	if ($data['insert'] == 'OK') {
 		        	$array = array(
 		        	'success'		=>	true,
 		        	'message' 		=>	'Status of Complaint No - '.$cmno.' Updated Successfully.'
+		        	);      	       		
+		        }		        
+	        }	        
+	        echo json_encode($array);
+	        //$this->SendMailToUserAndEngineer($cmno,$emp_to_assign,$cm_priority);	
+	} 
+
+	/*function SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr){		
+		$this->load->library('email');
+		$to = $CM_USER_EMAIL;
+		$cc = $EmpEmailId;
+		$subject = 'MyJamia Complaint Registration.';
+		$from = 'raquib4u@gmail.com';
+		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
+        $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
+						'With refrence to Your <b>Ticket No '.$cmno.'</b>, raised by you as per details provided below, :<br><br>';
+		$emailContaint .='You are requested to provide the feedback as the services by clicking <a href='.base_url().'Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a><br><br>';		
+		$emailContaint .='Details about your ticket as fellows :<br><br>';
+		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
+						<tr>
+					  		<td ><strong>&nbsp;&nbsp;Ticket No. :</strong></td><td>'.$cmno.'</std>
+					  	</tr>
+						<tr>
+							<td><strong>&nbsp;&nbsp;Department : </b></strong><td>'.$deptdesc.'<td>
+						</tr>
+						<tr>
+							<td><strong>&nbsp;&nbsp;Complaint Type : </strong></td>
+							<td>'.$CM_COMPLAINT_TYPE_DESC.'</td>					  		
+						</tr>
+						<tr>
+							<td><strong>&nbsp;&nbsp;Complaint Sub Type : </strong></td>
+							<td>'.$CM_COMPLAINT_SUB_TYPE_DESC.'</td>					  		
+						</tr>
+						<tr>
+							<td ><strong>&nbsp;&nbsp;Complaint Description :</strong></td>
+							<td>'.$CM_COMPLAINT_DESC.'</td>							  		
+						</tr>
+						<tr>
+							<td><strong>&nbsp;&nbsp;Complaint Location :</strong></td>
+							<td>'.$CM_USER_LOCATION.'</td>							  		
+						</tr>
+						</table> <br><br>';
+		
+			$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JMI</b>	
+			</body></html>";
+		
+		}
+
+		$config['protocol']			='smtp';
+		$config['smtp_host']		='ssl://smtp.googlemail.com';
+		$config['smtp_port']		='465';
+		$config['smtp_timeout']		='60';
+
+		$config['smtp_user']		='raquib4u@gmail.com';
+		$config['smtp_pass']		='Raquib*88';
+
+		$config['charset']			='utf-8';
+		$config['newline']			="\r\n";
+		$config['mailtype']			='html';
+		$config['validation']		=TRUE;
+
+		$this->email->initialize($config);
+		$this->email->set_mailtype("html");
+		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->to($to);
+		$this->email->cc($cc);
+		$this->email->subject($subject);
+		$this->email->message($emailContaint);
+		$this->email->send();
+		//echo $this->email->print_debugger();
+		 /*https://www.google.com/settings/security
+	}*/
+
+	//function for revert back 
+	public function complaintRevertBack(){
+		$cmData = $this->input->post('v_cm_no');
+		if(isset($cmData) and !empty($cmData)){
+		$DepId 					= $_SESSION['admindepid'];	
+		$UserType				= $_SESSION['usertype'];
+		$cc_no 					=$this->admin->fetch_cc_no($UserType, $DepId);
+		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
+		$data['AssignList']		=$this->admin->getAssignList($cmData);
+
+		$this->load->view('admin/complaintRevertBack', $data);
+		}
+	}
+
+	//this function is use for insert assign details
+	public function complaintRevertStatus(){		
+
+		//Show Screen data
+		$cmno 				= $this->input->post('CM_NO');		
+		$revert_user		= $this->input->post('frm_Revert_User');
+		$cm_revert 			= $this->input->post('frm_Complaint_Revert');
+		$cm_revert_Remarks 	= $this->input->post('CM_COMPLAINT_REMARKS');	
+		
+		// 1 Employee must be select
+		$this->form_validation->set_rules('frm_Revert_User','Assign Employee must be select','required|min_length[5]|max_length[10]');
+		// 2 Complaint status must be select
+		$this->form_validation->set_rules('frm_Complaint_Revert','Select Complaint Status','required');
+		// 3 Remarks
+		$this->form_validation->set_rules('CM_COMPLAINT_REMARKS','Please Update complaint Status in this box ','required');		
+
+		if ($this->form_validation->run() == FALSE) {		
+			//if(validation_errors()) echo validation_errors(); 
+	        $array = array(
+		        'error'							=> 	true,
+		        'frm_Revert_User_Error'			=>	form_error('frm_Revert_User'),
+		        'frm_Complaint_Revert_Error'	=>	form_error('frm_Complaint_Revert'),
+		        'CM_COMPLAINT_REMARKS_Error'	=>	form_error('CM_COMPLAINT_REMARKS'),
+		        'message' 						=>	'Please review your data.'
+		       	);
+			}
+	        else {
+
+	        	$data['insert']  = $this->admin->complaintRevertBackStatus($cmno,$revert_user,$cm_revert, $cm_revert_Remarks );	        	
+	        	if ($data['insert'] == 'OK') {
+		        	$array = array(
+		        	'success'		=>	true,
+		        	'message' 		=>	'Status of Complaint No - '.$cmno.' Successfully Revert Back.'
 		        	);      	       		
 		        }		        
 	        }	        

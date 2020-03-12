@@ -39,11 +39,22 @@ class Auth extends CI_Controller {
 
 	// Fuction for Logout Event
 	public function user_logout() {
-
-		$this->session->unset_userdata('menu');
-		$this->session->unset_userdata('username');
-		$this->session->unset_userdata('usertype');
+		
+		$this->session->unset_userdata('user');
 		$this->session->unset_userdata('login');
+		$this->session->unset_userdata('username');
+		$this->session->unset_userdata('useremail');
+		$this->session->unset_userdata('usertype');
+		$this->session->unset_userdata('userrole');
+		$this->session->unset_userdata('menu');
+		$this->session->unset_userdata('ssmid');
+		$this->session->unset_userdata('depid');
+		$this->session->unset_userdata('depdesc');
+		$this->session->unset_userdata('empdepid');
+		$this->session->unset_userdata('empdepdesc');
+		$this->session->unset_userdata('admindepid');
+		//$this->session->unset_userdata('contdepid');
+
 
 		$data['message'] = 'Thanks for using MyJamia Portal!';
 		$data['messageType'] = 'I';
@@ -89,9 +100,9 @@ class Auth extends CI_Controller {
 	        	//Validation Passes
 	        	//Check Old Password
 	        	$this->load->model('UserModel','UM');
-	        	if($this->UM->isUserAuthorised($_SESSION['login'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
+	        	if($this->UM->isUserAuthorised($_SESSION['user'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
 	        		//If User is authorised, update password
-	        		$this->UM->updatePassword($_SESSION['login'], $this->input->post('frm_New_Password_1'));
+	        		$this->UM->updatePassword($_SESSION['user'], $this->input->post('frm_New_Password_1'));
 
 		        	$array = array(
 		        		'success'					=>	true,

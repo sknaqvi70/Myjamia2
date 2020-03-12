@@ -45,7 +45,7 @@
             <a class="btn btn-warning" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
                 <span   style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $hold ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">Hold Complaints</font>
+                <br>&nbsp;&nbsp;<font size="4">On Hold Complaints</font>
             </a>
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;

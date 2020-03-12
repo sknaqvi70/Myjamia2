@@ -294,6 +294,7 @@ class Welcome extends CI_Controller {
 		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
 
 		$sessionData = array(
+			'user'		=> 	$User,
 			'login'		=> 	$UserID,
         	'username'  => 	$UserName,
         	'useremail' => 	$UserEmail,

@@ -32,8 +32,8 @@
               <td><?php echo $csd->CC_NAME ?></td>
               <td><?php echo $csd->CSC_NAME ?></td>
               <td><?php echo $csd->CM_COMPLAINT_TEXT ?></td>
-              <td><?php echo $csd->CM_COMPLAINT_DATE ?></td>
-              <td><?php echo $csd->CM_COMPLAINT_CLOSE_DATE ?></td>
+              <td><?php echo $csd->REGDATE ?></td>
+              <td><?php echo $csd->CLOSEDDATE ?></td>
             </tr>
             <?php endforeach; ?>
             </tbody>
@@ -43,15 +43,17 @@
           <?php if (isset($comp_status_dtl)) { ?>
           <div id="printThis">
             <center>
-              <p style="font-size:20px; font-family:Calibri;">Ticket History</p>             
-            </center>
+              <p style="font-size:20px; font-family:Calibri;">Ticket History</p>
+              <img src="<?= base_url(); ?>application/assets/images/appllogo1.bmp" alt="JMI" style="width:100px;height:100px;" align="middle">             
+            </center>            
             <div> 
             <?php echo $comp_status_dtl?>
             </div><br>
           </div>
           <div align="center">
-            <a href="<?php echo site_url('Complaint/trackComplaintStatus/');?>" class="btn btn-sm btn-info">Back</a>&nbsp;&nbsp;&nbsp;&nbsp;                      
             <a target="_blank" onclick="printArea('printThis');" class="btn btn-sm btn-info">Print</a>
+            <a href="<?php echo site_url('Complaint/trackComplaintStatus/');?>" class="btn btn-sm btn-danger">Cancel</a>&nbsp;&nbsp;&nbsp;&nbsp;                      
+            
           </div> 
           <script type="text/javascript">     
             function printArea(areaName)
