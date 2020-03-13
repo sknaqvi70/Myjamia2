@@ -135,6 +135,7 @@ class Admin extends CI_Controller {
 	        else {
 
 	        	$data['insert']  = $this->admin->AssignCompalintStatus($cmno,$emp_to_assign, $cm_priority,$cm_no_unit,$tot_Units,$tot_Unit_Assign );
+
 	        	if ($data['insert'] == 'OK') {
 	        	$DepId 			= $_SESSION['admindepid'];	
 				$UserType		= $_SESSION['usertype'];
@@ -314,35 +315,30 @@ class Admin extends CI_Controller {
 
 	        	$data['insert']  = $this->admin->compalintStatusUpdated($cmno,$cm_status, $cm_Remarks,$UserId,$UserName, $tot_Units, $tot_Unit_Closed, $Unit_Assign_hr);
 
-	        	// checking condition for mail when comlaint status closed.
-	        	/*if ($data['insert'] == 'OK' && $cm_status == 'C'){
-	        	if ($tot_Units == $tot_Unit_Closed + $Unit_Assign_hr) {
+	        	if ($data['insert'] == 'OK' && $cm_status == 'C'){	        	
+	        		$DepId 			= $_SESSION['admindepid'];	
+					$UserType		= $_SESSION['usertype'];
+					$EmpName		= $_SESSION['username'];
+					$UserId 		= $_SESSION['login'];
+					$EmpEmailId 	= $_SESSION['useremail'];
+					$cc_no 			=$this->admin->fetch_cc_no($UserType, $DepId);
+	        		$ComplaintData	= $this->admin->getSingleComplaintDetails($cc_no, $cmno);
+		    			foreach($ComplaintData as $cdata):
+							$CM_USER_EMAIL				= $cdata->CM_COMPLAINT_CONTACT_EMAIL;
+							$CM_USER_NANE				= $cdata->NAME;
+							$deptdesc					= $cdata->DEP_DESC;
+							$CM_COMPLAINT_TYPE_DESC 	= $cdata->CC_NAME;
+							$CM_COMPLAINT_SUB_TYPE_DESC = $cdata->CSC_NAME;
+							$CM_COMPLAINT_DESC 			= $cdata->CM_COMPLAINT_TEXT;
+							$CM_USER_LOCATION 			= $cdata->CM_COMPLAINT_LOCATION;
+							$CM_USER_MOBILE 			= $cdata->CM_COMPLAINT_CONTACT_MOBILE;
+							$FtsNo 						= $cdata->CM_COMPLAINT_FTS_NO;
+							$Reg_DATE 					= $cdata->CM_COMPLAINT_DATE;
+						endforeach;	
 	        	
-	        	$DepId 			= $_SESSION['admindepid'];	
-				$UserType		= $_SESSION['usertype'];
-				$cc_no 			=$this->admin->fetch_cc_no($UserType, $DepId);
-	        	$ComplaintData	= $this->admin->getSingleComplaintDetails($cc_no, $cmno);
-		    	foreach($ComplaintData as $cdata):
-					$CM_USER_EMAIL				= $cdata->CM_COMPLAINT_CONTACT_EMAIL;
-					$CM_USER_NANE				= $cdata->NAME;
-					$deptdesc					= $cdata->DEP_DESC;
-					$CM_COMPLAINT_TYPE_DESC 	= $cdata->CC_NAME;
-					$CM_COMPLAINT_SUB_TYPE_DESC = $cdata->CSC_NAME;
-					$CM_COMPLAINT_DESC 			= $cdata->CM_COMPLAINT_TEXT;
-					$CM_USER_LOCATION 			= $cdata->CM_COMPLAINT_LOCATION;
-					$CM_USER_MOBILE 			= $cdata->CM_COMPLAINT_CONTACT_MOBILE;
-					$FtsNo 						= $cdata->CM_COMPLAINT_FTS_NO;
-					$Reg_DATE 					= $cdata->CM_COMPLAINT_DATE;
-				endforeach;	
-	        	$EmpUserData= $this->admin->fetch_emp_details($cmno,$emp_to_assign);
-					foreach($EmpUserData as $eudata):
-						$EmpName 		= $eudata->EMPNAME;
-    					$EmpEmailId 	= $eudata->EMAIL;
-    					$EmpPhnoeNo 	= $eudata->PHONE_NO;
-					endforeach;	
-				$this->SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr);
+					$this->SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr,$tot_Units);
 				}					
-	        	}*/
+	        	
 	        	if ($data['insert'] == 'OK') {
 		        	$array = array(
 		        	'success'		=>	true,
@@ -354,7 +350,7 @@ class Admin extends CI_Controller {
 	        //$this->SendMailToUserAndEngineer($cmno,$emp_to_assign,$cm_priority);	
 	} 
 
-	/*function SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr){		
+	function SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr,$tot_Units){		
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$cc = $EmpEmailId;
@@ -362,8 +358,7 @@ class Admin extends CI_Controller {
 		$from = 'raquib4u@gmail.com';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
-						'With refrence to Your <b>Ticket No '.$cmno.'</b>, raised by you as per details provided below, :<br><br>';
-		$emailContaint .='You are requested to provide the feedback as the services by clicking <a href='.base_url().'Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a><br><br>';		
+						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' raised by you as per details provided below of unit '.$Unit_Assign_hr.' out of total unit '.$tot_Units.' given by you has been Closed by <b>Mr '.$EmpName.'</b>  :<br><br>';			
 		$emailContaint .='Details about your ticket as fellows :<br><br>';
 		$emailContaint .='<table table-striped table-bordered table-hover " width="600"style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">
 						<tr>
@@ -390,9 +385,12 @@ class Admin extends CI_Controller {
 						</tr>
 						</table> <br><br>';
 		
-			$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JMI</b>	
+		if ($FtsNo) {
+			$emailContaint .="You may track your complaint in MIS using File Number :'.$FtsNo.'<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JMI</b>	
 			</body></html>";
-		
+		}else{
+		$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b>	
+			</body></html>";
 		}
 
 		$config['protocol']			='smtp';
@@ -417,8 +415,8 @@ class Admin extends CI_Controller {
 		$this->email->message($emailContaint);
 		$this->email->send();
 		//echo $this->email->print_debugger();
-		 /*https://www.google.com/settings/security
-	}*/
+		 /*https://www.google.com/settings/security*/
+	}
 
 	//function for revert back 
 	public function complaintRevertBack(){

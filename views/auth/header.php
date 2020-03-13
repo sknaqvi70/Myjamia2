@@ -66,9 +66,8 @@
 <div class="row text-center">
 		<div class="col-sm-6 text-center"><img src="<?= base_url(); ?>application/assets/images/logo1.jpg"></div>
 		<div class="col-sm-6 text-left"><img src="<?= base_url(); ?>application/assets/images/logo2.jpg"></div>
-	</div>
+</div>
 <nav class="navbar navbar-inverse">
-
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -79,8 +78,7 @@
       <a class="navbar-brand" href="#">MyJamia</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
-
-<ul class="nav navbar-nav">
+    <ul class="nav navbar-nav">
       <li class="active"><a href="<?= base_url('auth/about');?>">Home</a></li>
       <li><a href="<?= base_url('auth/about');?>">About</a></li>
       <li class="dropdown">
@@ -94,10 +92,9 @@
       </li>
       <li><a href="<?= base_url('auth/contact');?>">Contact</a></li>
     </ul>
-
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><?php echo 'Welcome, ' . $_SESSION['username'] ?></a></li>
-        <li class="dropdown">
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><?php echo 'Welcome, ' . $_SESSION['username'] ?></a></li>
+      <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
         <span class="glyphicon glyphicon-user"></span></a>
         <ul class="dropdown-menu">
@@ -105,28 +102,27 @@
           <!-- checking the user type added by Raquib  -->
          <?php if($_SESSION['usertype'] == 1) { ?> <!-- for student user -->
           <li><a href="<?= base_url('Student/profile');?>">Profile&nbsp;
-              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+              <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if($_SESSION['usertype'] == 2){ ?> <!-- for Employee User -->
           <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
-              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+              <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if($_SESSION['usertype'] == 3){ ?> <!-- for Contractual User -->
           <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
-              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+              <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if ($_SESSION['usertype'] == 4) { ?> <!-- for Pensioner/Retired User -->
           <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
-              <span class="glyphicon glyphicon-info-sign"></span></li></a>
+              <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php } ?>  
           <!-- End -->
           <li><a data-toggle='modal' href='#changePasswordModal'>Change Password&nbsp;
               <span class="glyphicon glyphicon-pencil"></span>
-          </li></a>
+          </a></li>
           <li><a href=<?= base_url('auth/user_logout'); ?>>Logout&nbsp;
               <span class="glyphicon glyphicon-log-out"></span>
-          </li></a>
-        </li>
-        </ul> 
+          </a></li>
+        </ul>
       </li>
-      </ul>
+    </ul> 
     </div>
   </div>
 </nav>

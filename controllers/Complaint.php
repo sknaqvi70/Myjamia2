@@ -238,6 +238,9 @@ class Complaint extends CI_Controller {
 		}
 	}
 
+	public function complaintFeedback(){
+	$this->load->view('public/feedbackForm');	
+	}
 
 }
 ?>

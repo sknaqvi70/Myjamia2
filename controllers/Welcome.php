@@ -248,10 +248,10 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserID =  $this->UM->getUser($User); //added by raquib
 		$UserType =  $this->UM->getUserType($UserID, $User);
-		echo "Usertype".$UserType;
+		//echo "Usertype".$UserType;
 
 		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
-		$UserEmail =  $this->UM->getEmail($UserID); //added by raquib
+		$UserEmail =  $this->UM->getEmail($UserID, $User); //added by raquib
 
 		// this if condition added by raquib
 		if ($UserType == 1 || $UserType == 4) {//User is student and Alimni

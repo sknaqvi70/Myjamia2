@@ -167,6 +167,7 @@ class UserModel extends CI_MODEL {
 		$this->db->where('MJ_USER_LOGIN',$User);
 		$this->db->where('MJ_ID_NO',$UserId);	//added by raquib		
 		$query = $this->db->get();
+		
 		if($query->num_rows() > 0) 
 				return $query->row()->MJ_USER_TYPE;
 			else
@@ -189,14 +190,14 @@ class UserModel extends CI_MODEL {
 	}
 	//Get User Profile. The function fetches User Email from 
 	//the database. added by raquib
-	public function getEmail($UserId) {
+	public function getEmail($UserId, $User) {
 
 		$this->db->select('MJ_REG_EMAIL');
 		$this->db->from('MJ_USER_MST');
-		$this->db->where('MJ_USER_LOGIN',$UserId);
+		$this->db->where('MJ_USER_LOGIN',$User);
+		$this->db->where('MJ_ID_NO',$UserId);
 		
 		$query = $this->db->get();
-
 		if($query->num_rows() > 0) 
 				return $query->row()->MJ_REG_EMAIL;
 			else

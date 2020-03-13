@@ -510,7 +510,7 @@ class AdminModel extends CI_Model {
 		    'MJ_CA_CM_NO' 		=> 	$cmno,
 		    'MJ_CA_ACTION' 		=> 	'Assigned',
 		    //'MJ_CA_ACTION_DATE' => 	$reg_date,
-		    'MJ_CA_REMARKS'		=>	'Complaint for the System of '.$cm_no_unit.' Assigned To User ID- '.$emp_to_assign.', On '.$reg_date,
+		    'MJ_CA_REMARKS'		=>	'Complaint of '.$cmno.' ,for '.$cm_no_unit.' faulty equipment Assigned To User ID- '.$emp_to_assign.', On '.$reg_date,
 		    'MJ_CA_NO_UNIT'		=>	$cm_no_unit
 			);			
 			$result = $this->db->insert('MJ_COMPLAINT_ACTION_DTL', $data);
