@@ -104,13 +104,16 @@
           <li><a href="<?= base_url('Student/profile');?>">Profile&nbsp;
               <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if($_SESSION['usertype'] == 2){ ?> <!-- for Employee User -->
-          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+          <li><a href="<?= base_url('Employee/profile');?>">Profile&nbsp;
               <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if($_SESSION['usertype'] == 3){ ?> <!-- for Contractual User -->
-          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+          <li><a href="<?= base_url('Contractual/profile');?>">Profile&nbsp;
               <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php }if ($_SESSION['usertype'] == 4) { ?> <!-- for Pensioner/Retired User -->
-          <li><a href="https://www.jmi.ac.in/">Profile&nbsp;
+          <li><a href="<?= base_url('Alumnus/profile');?>">Profile&nbsp;
+              <span class="glyphicon glyphicon-info-sign"></span></a></li>
+          <?php }if ($_SESSION['usertype'] == 5) { ?> <!-- for Pensioner/Retired User -->
+          <li><a href="<?= base_url('Pensioner/profile');?>">Profile&nbsp;
               <span class="glyphicon glyphicon-info-sign"></span></a></li>
           <?php } ?>  
           <!-- End -->
