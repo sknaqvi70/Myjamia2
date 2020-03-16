@@ -372,12 +372,12 @@ class Welcome extends CI_Controller {
 		//$this->email->from('kazim.jmi@gmail.com', 'Additional Director, CIT');
 		$this->email->to($to);
 		$subject = 'MyJamia Account Verification Mail.'; //added by raquib
-		$from = 'raquib4u@gmail.com'; //$from_emailid; //added by raquib
+		$from = 'complaints@jmi.ac.in'; //$from_emailid; //added by raquib
 		//$this->email->subject('MyJamia Account Verification Mail.');
 		//$this->email->message(
 		//added by raquib
 		$emailContaint ='<html>Dear Sir/Madam,<br>'.
-							  'With reference to your request for account creation on MyJamia Portal, please click <a href=http://localhost:8080/CI/Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a> to verify your account and set password for your account. <br><br>CIT, JMI</html>';
+							  'With reference to your request for account creation on MyJamia Portal, please click <a href='.base_url().'Welcome/verifyAccount?UID='.$EncryptedUserID.'&rtext='.$RandomChallengeText. '>here</a> to verify your account and set password for your account. <br><br>CIT, JMI</html>';
 		
 		//added by raquib
 		$config['protocol']			='smtp';
@@ -385,8 +385,8 @@ class Welcome extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='raquib4u@gmail.com';
-		$config['smtp_pass']		='Raquib*88';
+		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";

@@ -132,8 +132,8 @@ class Complaint extends CI_Controller {
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$subject = 'MyJamia Complaint Registration.';
-		$from = 'raquib4u@gmail.com'; //$from_emailid;
-		$cc = 'raquib4u@gmail.com'; //$cc_emailid;
+		$from = 'complaints@jmi.ac.in'; //$from_emailid;
+		$cc = $from_emailid;  //cc_emailid;
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';
         /*$emailContaint .= '<center><img src="<?php base_url() ?>application/assets/images/appllogo1.png" alt="JMI" style="width:100px;height:100px;" align="middle"> </center>';*/
@@ -183,8 +183,8 @@ class Complaint extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='raquib4u@gmail.com';
-		$config['smtp_pass']		='Raquib*88';
+		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
@@ -193,10 +193,9 @@ class Complaint extends CI_Controller {
 
 		$this->email->initialize($config);
 		$this->email->set_mailtype("html");
-		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->from($from);
 		$this->email->to($to);
 		$this->email->cc($cc);
-		//$this->email->cc($ccmail);
 		$this->email->subject($subject);
 		$this->email->message($emailContaint);
 		$this->email->send();
@@ -238,9 +237,6 @@ class Complaint extends CI_Controller {
 		}
 	}
 
-	public function complaintFeedback(){
-	$this->load->view('public/feedbackForm');	
-	}
-
+	
 }
 ?>

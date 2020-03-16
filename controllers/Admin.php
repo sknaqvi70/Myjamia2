@@ -176,8 +176,8 @@ class Admin extends CI_Controller {
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$cc = $EmpEmailId;
-		$subject = 'MyJamia Complaint Registration.';
-		$from = 'raquib4u@gmail.com';
+		$subject = 'MyJamia Complaint Notification for Assign to Resource.';
+		$from = 'complaints@jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
 						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' this is to update you that the ticket has been assigned to <b>Mr '.$EmpName.'</b>  :<br><br>';
@@ -220,8 +220,8 @@ class Admin extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='raquib4u@gmail.com';
-		$config['smtp_pass']		='Raquib*88';
+		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
@@ -319,11 +319,12 @@ class Admin extends CI_Controller {
 	        		$DepId 			= $_SESSION['admindepid'];	
 					$UserType		= $_SESSION['usertype'];
 					$EmpName		= $_SESSION['username'];
-					$UserId 		= $_SESSION['login'];
+					$ResourceId 			= $_SESSION['login'];
 					$EmpEmailId 	= $_SESSION['useremail'];
 					$cc_no 			=$this->admin->fetch_cc_no($UserType, $DepId);
 	        		$ComplaintData	= $this->admin->getSingleComplaintDetails($cc_no, $cmno);
 		    			foreach($ComplaintData as $cdata):
+							$COMPLAINT_USER_ID 			= $cdata->COMPLAINT_USER_ID;
 							$CM_USER_EMAIL				= $cdata->CM_COMPLAINT_CONTACT_EMAIL;
 							$CM_USER_NANE				= $cdata->NAME;
 							$deptdesc					= $cdata->DEP_DESC;
@@ -337,6 +338,9 @@ class Admin extends CI_Controller {
 						endforeach;	
 	        	
 					$this->SendMailForStatus($cmno,$EmpName,$EmpEmailId,$CM_USER_EMAIL,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$Reg_DATE,$Unit_Assign_hr,$tot_Units);
+
+					$VerificationString	= $this->admin->getVerificationString($cmno);
+					$this->SendMailForFeedback($cmno,$EmpName,$ResourceId,$VerificationString,$CM_USER_EMAIL,$COMPLAINT_USER_ID,$CM_USER_NANE,$Unit_Assign_hr,$tot_Units);
 				}					
 	        	
 	        	if ($data['insert'] == 'OK') {
@@ -354,8 +358,8 @@ class Admin extends CI_Controller {
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$cc = $EmpEmailId;
-		$subject = 'MyJamia Complaint Registration.';
-		$from = 'raquib4u@gmail.com';
+		$subject = 'MyJamia Complaint Notification for Close.';
+		$from = 'complaints@jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
 						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' raised by you as per details provided below of unit '.$Unit_Assign_hr.' out of total unit '.$tot_Units.' given by you has been Closed by <b>Mr '.$EmpName.'</b>  :<br><br>';			
@@ -398,8 +402,8 @@ class Admin extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='raquib4u@gmail.com';
-		$config['smtp_pass']		='Raquib*88';
+		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
@@ -417,6 +421,74 @@ class Admin extends CI_Controller {
 		//echo $this->email->print_debugger();
 		 /*https://www.google.com/settings/security*/
 	}
+
+	// this function is used for to shoot mail for feedback
+	function SendMailForFeedback($cmno,$ResourceName,$ResourceId,$RandomChallengeText,$sendto,$complaint_user_id,$complaint_user_name,$Unit_Assign_hr,$tot_Units){
+		//Encode UserID
+		$EncryptedResourceID 	= $this->MyJamiaEncrypt($ResourceId);
+		$EncryptedRName 		= $this->MyJamiaEncrypt($ResourceName);
+		$EncryptedCUserID 		= $this->MyJamiaEncrypt($complaint_user_id);
+		$Encryptedsendto 		= $this->MyJamiaEncrypt($sendto);
+		date_default_timezone_set('Asia/Kolkata');
+		$currentTime = $this->MyJamiaEncrypt(date( 'd-m-Y h:i:s A', time () ));
+
+
+		$this->load->library('email');
+		$to 			= $sendto;
+		$subject 		= 'MyJamia Complaint Notification for feedback.';
+		$from 			= 'complaints@jmi.ac.in';
+		$emailContaint 	='<!DOCTYPE><html><head></head><body>';       
+        $emailContaint .='Dear '.$complaint_user_name.',<br><br>'.
+							  'With reference to your complaint ticket No.<b> '.$cmno.'</b>, you are requested to provide the feeback about the services of <b>Mr. '.$ResourceName.'</b>, by <a href='.base_url().'Feedback/complaintFeedback?RID='.$EncryptedResourceID.'&rntext='.$EncryptedRName.'&rtext='.$RandomChallengeText.'&CM='.$cmno.'&CUID='.$EncryptedCUserID.'&to='.$Encryptedsendto.'&cttext='.$currentTime. '>clicking here</a> for '.$Unit_Assign_hr.' Unit of equipment/services out of total complaint Units '.$tot_Units.'.<br><br>';
+		$emailContaint .='<br><font color="red">Please note that feedback link will remain active for 48 hours. In case no feedback is received from your side will assume that you were satisfied with the services.</font>';
+		$emailContaint .="<br><br><br>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b></body></html>";
+		
+		//added by raquib
+		$config['protocol']			='smtp';
+		$config['smtp_host']		='ssl://smtp.googlemail.com';
+		$config['smtp_port']		='465';
+		$config['smtp_timeout']		='60';
+
+		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_pass']		='Comp!@#123';
+
+		$config['charset']			='utf-8';
+		$config['newline']			="\r\n";
+		$config['mailtype']			='html';
+		$config['validation']		=TRUE;
+		//added by raquib
+		$this->email->initialize($config);
+		$this->email->set_mailtype("html");
+		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->to($to);
+		$this->email->subject($subject);
+		$this->email->message($emailContaint);
+
+		$this->email->send();
+		//echo $this->email->print_debugger();
+
+	}
+
+	//Function to Enrypt a string
+	function MyJamiaEncrypt($str) {
+		
+		// Store the cipher method 
+		$ciphering = "AES-128-CTR"; 
+  
+		// Use OpenSSl Encryption method 
+		$iv_length = openssl_cipher_iv_length($ciphering); 
+		$options = 0; 
+  
+		// Non-NULL Initialization Vector for encryption 
+		$encryption_iv = '1234567891011121'; 
+  
+		// Store the encryption key 
+		$encryption_key = "MyJamiaEncryptionString"; 
+  
+		// Use openssl_encrypt() function to encrypt the data 
+		return openssl_encrypt($str, $ciphering, 
+		            $encryption_key, $options, $encryption_iv); 
+  	}
 
 	//function for revert back 
 	public function complaintRevertBack(){

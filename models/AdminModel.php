@@ -356,7 +356,7 @@ class AdminModel extends CI_Model {
 	//for Employee 
 		//$IsNoNull	=	"MJ_CAD_CM_NO_UNIT IS NOT NULL";
 		$where = "CM_EMP_ID IS NOT NULL";         			
-		$this->db->select('CM_NO, "DEP_DESC", EMP_NAME(A.CM_EMP_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT,CM_COMPLAINT_LOCATION,CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT');
+		$this->db->select('CM_NO, "DEP_DESC", EMP_NAME(A.CM_EMP_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT,CM_COMPLAINT_LOCATION,CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT,CM_EMP_ID COMPLAINT_USER_ID');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -370,7 +370,7 @@ class AdminModel extends CI_Model {
 
 		//for Student 
 		$where = "CM_STU_ID IS NOT NULL";
-		$this->db->select('CM_NO, "DEP_DESC", STU_NAME(A.CM_STU_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT');
+		$this->db->select('CM_NO, "DEP_DESC", STU_NAME(A.CM_STU_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT,CM_STU_ID COMPLAINT_USER_ID');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -384,7 +384,7 @@ class AdminModel extends CI_Model {
 
 		//for contrator and profession staff
 		$where = "CM_CMM_ID IS NOT NULL";
-		$this->db->select('CM_NO, "DEP_DESC", CMM_DESC NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT');
+		$this->db->select('CM_NO, "DEP_DESC", CMM_DESC NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,CM_COMPLAINT_DATE,CM_NO_UNIT,A.CM_CMM_ID COMPLAINT_USER_ID');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
@@ -453,7 +453,6 @@ class AdminModel extends CI_Model {
 		    'MJ_CAD_CM_NO' 				=> 	$cmno,
 		    'MJ_CAD_EMP_ID' 			=> 	$emp_to_assign,
 		    'MJ_CAD_CMM_ID' 			=> 	'',
-		    //'MJ_CAD_ASSIGN_DATE' 		=> 	$reg_date,
 		    'MJ_CAD_COMPLAINT_STATUS'	=>	'Assigned',	// Assign to Engineer
 		    'MJ_CAD_CLOSED_DATE' 		=>	'',
 		    'MJ_CAD_PRIORITY'			=>	$cm_priority,
@@ -640,6 +639,20 @@ class AdminModel extends CI_Model {
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
 		return $data->result();
 		}
+
+	// to get Verificationstring from complaint mst table crosponding complaint number
+	public function getVerificationString($cmno){
+		$this->db->select('VERIFICATIONSTRING');
+		$this->db->from('COMPLAINT_MST');
+		$this->db->where('CM_NO',$cmno);
+		$query = $this->db->get();
+				
+		if($query->num_rows() > 0) 
+				return $query->row()->VERIFICATIONSTRING;
+			else
+				return '0'; //Error	
+
+	}
 		
 //-----------------------------------------------------------------------------------------------------
 			//For Assign Engineer Model codeigniter

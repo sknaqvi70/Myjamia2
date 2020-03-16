@@ -420,6 +420,17 @@ class ComplaintModel extends CI_Model {
 		if (isset($row))
 		     return $row->DEP_EMAIL;
 	}
+	// This function find departmental email id for from email id
+	public function fetch_cm_department($CM_COMPLAINT_TYPE){
+		$this->db->distinct('DEP_DESC');
+		$this->db->select('DEP_DESC');
+		$this->db->join('MJ_USER_COMP_TYPE_AUTH M','M.MJ_UCTA_DEPID=A.DEP_ID');
+		$this->db->where('M.MJ_CC_NO',$CM_COMPLAINT_TYPE);
+		$query = $this->db->get('ALL_DEP_MST A');
+  		$row = $query->row();
+		if (isset($row))
+		     return $row->DEP_DESC;
+	}
 
 	// This function find complaint sub type desc from complaint_category table
 	public function fetch_from_email_id($CM_COMPLAINT_SUB_TYPE){
@@ -448,7 +459,7 @@ class ComplaintModel extends CI_Model {
 	public function getComplaintDtl($UserId){
 		$orderBy = "CM_NO DESC";
 		$condition_date = "01-JAN-2020";
-		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MM:SS am";
+		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MI:SS am";
 		//for Employee 
 		$where = "CM_EMP_ID IS NOT NULL";         			
 		$this->db->select('CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE');
@@ -492,7 +503,7 @@ class ComplaintModel extends CI_Model {
 	//this function used for fetch sigle fee details to view and print
 	public function getSingleComplaintDetails($COM_NO,$UserId){
 		$orderBy = "MJ_CA_ID DESC";	
-		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MM:SS am";
+		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MI:SS am";
 		$where = "CM_EMP_ID IS NOT NULL";         			
 		$this->db->select('MJ_CA_ID,CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,MJ_CA_REMARKS,
 			MJ_CA_ACTION,CM_COMPLAINT_DATE,	CM_COMPLAINT_CLOSE_DATE,TO_CHAR(MJ_CA_ACTION_DATE, '."'$dateFormate'".') ACTIONDATE');
