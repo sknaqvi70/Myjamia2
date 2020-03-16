@@ -177,7 +177,7 @@ class Admin extends CI_Controller {
 		$to = $CM_USER_EMAIL;
 		$cc = $EmpEmailId;
 		$subject = 'MyJamia Complaint Notification for Assign to Resource.';
-		$from = 'complaints@jmi.ac.in';
+		$from = 'admin.myjamia@jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
 						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' this is to update you that the ticket has been assigned to <b>Mr '.$EmpName.'</b>  :<br><br>';
@@ -220,7 +220,7 @@ class Admin extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
 		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
@@ -230,7 +230,7 @@ class Admin extends CI_Controller {
 
 		$this->email->initialize($config);
 		$this->email->set_mailtype("html");
-		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->from($from, 'Complaint Admin, JMI');
 		$this->email->to($to);
 		$this->email->cc($cc);
 		$this->email->subject($subject);
@@ -359,7 +359,7 @@ class Admin extends CI_Controller {
 		$to = $CM_USER_EMAIL;
 		$cc = $EmpEmailId;
 		$subject = 'MyJamia Complaint Notification for Close.';
-		$from = 'complaints@jmi.ac.in';
+		$from = 'admin.myjamia@jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$CM_USER_NANE.',<br><br>'.
 						'With refrence to Your <b>Ticket No '.$cmno.'</b>, dated '.$Reg_DATE.' raised by you as per details provided below of unit '.$Unit_Assign_hr.' out of total unit '.$tot_Units.' given by you has been Closed by <b>Mr '.$EmpName.'</b>  :<br><br>';			
@@ -402,7 +402,7 @@ class Admin extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
 		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
@@ -412,7 +412,7 @@ class Admin extends CI_Controller {
 
 		$this->email->initialize($config);
 		$this->email->set_mailtype("html");
-		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->from($from, 'Complaint Admin, JMI');
 		$this->email->to($to);
 		$this->email->cc($cc);
 		$this->email->subject($subject);
@@ -436,7 +436,7 @@ class Admin extends CI_Controller {
 		$this->load->library('email');
 		$to 			= $sendto;
 		$subject 		= 'MyJamia Complaint Notification for feedback.';
-		$from 			= 'complaints@jmi.ac.in';
+		$from 			= 'admin.myjamia@jmi.ac.in';
 		$emailContaint 	='<!DOCTYPE><html><head></head><body>';       
         $emailContaint .='Dear '.$complaint_user_name.',<br><br>'.
 							  'With reference to your complaint ticket No.<b> '.$cmno.'</b>, you are requested to provide the feeback about the services of <b>Mr. '.$ResourceName.'</b>, by <a href='.base_url().'Feedback/complaintFeedback?RID='.$EncryptedResourceID.'&rntext='.$EncryptedRName.'&rtext='.$RandomChallengeText.'&CM='.$cmno.'&CUID='.$EncryptedCUserID.'&to='.$Encryptedsendto.'&cttext='.$currentTime. '>clicking here</a> for '.$Unit_Assign_hr.' Unit of equipment/services out of total complaint Units '.$tot_Units.'.<br><br>';
@@ -449,7 +449,7 @@ class Admin extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
 		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
@@ -459,7 +459,7 @@ class Admin extends CI_Controller {
 		//added by raquib
 		$this->email->initialize($config);
 		$this->email->set_mailtype("html");
-		$this->email->from($from, 'Additional Director, CIT');
+		$this->email->from($from, 'Complaint Admin JMI');
 		$this->email->to($to);
 		$this->email->subject($subject);
 		$this->email->message($emailContaint);

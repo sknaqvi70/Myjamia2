@@ -132,7 +132,7 @@ class Complaint extends CI_Controller {
 		$this->load->library('email');
 		$to = $CM_USER_EMAIL;
 		$subject = 'MyJamia Complaint Registration.';
-		$from = 'complaints@jmi.ac.in'; //$from_emailid;
+		$from = 'admin.myjamia@jmi.ac.in'; //$from_emailid;
 		$cc = $from_emailid;  //cc_emailid;
 		//$ccmail = 'rkhaleeque.jmi.ac.in';
 		$emailContaint ='<!DOCTYPE><html><head></head><body>';
@@ -183,7 +183,7 @@ class Complaint extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
 		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
@@ -193,7 +193,7 @@ class Complaint extends CI_Controller {
 
 		$this->email->initialize($config);
 		$this->email->set_mailtype("html");
-		$this->email->from($from);
+		$this->email->from($from, 'Complaint Admin, JMI');
 		$this->email->to($to);
 		$this->email->cc($cc);
 		$this->email->subject($subject);

@@ -372,7 +372,7 @@ class Welcome extends CI_Controller {
 		//$this->email->from('kazim.jmi@gmail.com', 'Additional Director, CIT');
 		$this->email->to($to);
 		$subject = 'MyJamia Account Verification Mail.'; //added by raquib
-		$from = 'complaints@jmi.ac.in'; //$from_emailid; //added by raquib
+		$from = 'admin.myjamia@jmi.ac.in'; //$from_emailid; //added by raquib
 		//$this->email->subject('MyJamia Account Verification Mail.');
 		//$this->email->message(
 		//added by raquib
@@ -385,7 +385,7 @@ class Welcome extends CI_Controller {
 		$config['smtp_port']		='465';
 		$config['smtp_timeout']		='60';
 
-		$config['smtp_user']		='complaints@jmi.ac.in';
+		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
 		$config['smtp_pass']		='Comp!@#123';
 
 		$config['charset']			='utf-8';
