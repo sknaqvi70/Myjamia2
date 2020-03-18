@@ -116,8 +116,112 @@ class Complaint extends CI_Controller {
 				}
 	}
 
-	public function ComplaintRegistered(){
+	public function ComplaintRegisteredOnCall(){
+	// 1 Contact Person Name cannot be blank
+			$this->form_validation->set_rules('CM_USER_NANE','Contact Person Name','required|alpha_numeric_spaces|max_length[50]');
+
+			// 2 E-Mail Id cannot be blank 			
+			$this->form_validation->set_rules('CM_USER_EMAIL','E-Mail Id','required|valid_email');
+
+			//3 Mobile Number cannot be blank
+			$this->form_validation->set_rules('CM_USER_MOBILE','Mobile Number','required|max_length[10]');
+
+			//4 Complaint Location cannot be blank
+			$this->form_validation->set_rules('CM_USER_LOCATION','Complaint Location','required');
+
+			//5 Complaint Type must be Selected
+			$this->form_validation->set_rules('CM_COMPLAINT_TYPE','Complaint Type','required|is_natural_no_zero');
+
+			//6 Complaint Sub Type must be Selected
+			$this->form_validation->set_rules('CM_COMPLAINT_SUB_TYPE','Complaint Sub Type','required|is_natural_no_zero');
+
+			//7 Brief Description of Complaint is required
+			$this->form_validation->set_rules('CM_COMPLAINT_DESC','Brief Description of Complaint','required|max_length[400]');
+
+			//8 No Of Unit cannot be blank
+			$this->form_validation->set_rules('CM_NO_UNIT','Number of Faulty Equipment','trim|is_natural_no_zero');
+
+			//Set Error Delimeter
+
+			$this->form_validation->set_error_delimiters("<p class='text-danger'>",'</p>');
+
+			$UserType= $_SESSION['usertype'];
+			$data['ComplaintTypeList'] = $this->CM->getComplaintCat($UserType);
+			$data['DepartmentList'] = $this->CM->getDepartmentList();
+			
+			if ($this->form_validation->run() == FALSE) {		               
+	     		
+				$this->load->view('auth/complaintRegOnCall',$data);
+
+	        }
+	        else {
+
+	       		$VerificationString = '';
+	       		$TicketNo = '';
+	       		$FtsNo = '';
+	       		if ($UserType == 1 || $UserType == 4){
+	       			$dept = $_SESSION['depid'];
+	       			$deptdesc = $_SESSION['depdesc'];
+	       		}elseif ($UserType == 2 || $UserType == 5){
+	       			$dept = $_SESSION['empdepid'];
+	       			$deptdesc = $_SESSION['empdepdesc'];
+	       		}else{
+	       			$dept = $_SESSION['admindepid'];
+	       			$deptdesc = $_SESSION['empdepdesc'];
+	       		}
+	       		
+	       		$UserId= $_SESSION['login'];
+	       		$CM_USER_NANE			= $this->input->post('CM_USER_NANE');
+	       		$CM_USER_EMAIL			= $this->input->post('CM_USER_EMAIL');
+	       		$CM_USER_MOBILE			= $this->input->post('CM_USER_MOBILE');
+	       		$CM_USER_LOCATION		= $this->input->post('CM_USER_LOCATION');
+	       		$CM_COMPLAINT_TYPE 		= $this->input->post('CM_COMPLAINT_TYPE');
+	       		$CM_COMPLAINT_SUB_TYPE 	= $this->input->post('CM_COMPLAINT_SUB_TYPE');
+	       		$CM_COMPLAINT_DESC		= $this->input->post('CM_COMPLAINT_DESC'); 
+	       		$CM_NO_UNIT				= $this->input->post('CM_NO_UNIT');
+				$data['message']  = $this->CM->RegisterComplaint(
+	       				$dept,
+	       				$UserId,
+	       				$CM_COMPLAINT_TYPE,
+	       				$CM_COMPLAINT_SUB_TYPE,
+	       				$CM_COMPLAINT_DESC,
+	       				$CM_USER_LOCATION,
+	       				$CM_USER_NANE,
+	       				$CM_USER_MOBILE,
+	       				$CM_USER_EMAIL,	       				
+						$VerificationString,
+						$TicketNo,
+						$FtsNo,
+						$CM_NO_UNIT
+				);
+				if ($data['message'] == 'OK') {
+
+					$CM_COMPLAINT_TYPE_DESC= $this->CM->fetch_complaint_type_desc($CM_COMPLAINT_TYPE);
+
+					$CM_COMPLAINT_SUB_TYPE_DESC= $this->CM->fetch_complaint_sub_type_desc($CM_COMPLAINT_SUB_TYPE);
+
+					$cc_emailid = $this->CM->fetch_cc_email_id($CM_COMPLAINT_TYPE);
+
+					$from_emailid = $this->CM->fetch_from_email_id($CM_COMPLAINT_SUB_TYPE);
+
+					$this->SendMailToUser($CM_USER_EMAIL,$TicketNo,$CM_USER_NANE,$deptdesc,$CM_COMPLAINT_TYPE_DESC,$CM_COMPLAINT_SUB_TYPE_DESC,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_MOBILE,$FtsNo,$from_emailid,$cc_emailid);
+					if ($FtsNo) {
+					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.' And FTS Number is '.$FtsNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
+					}else{
+					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
+					}
+					$this->session->set_flashdata('message',$data);
+					redirect('Complaint/ComplaintRegisteredOnCall');					
+					
+				}
+				}
 		
+	}
+	//get employee name for on call complaint registration
+	public function getEmployeeList(){
+		$postData = $this->input->post('v_CM_COMPLAINT_DEP');
+		$data = $this->CM->getEmployeeList($postData);
+		echo json_encode($data);
 	}
 	// This function performs to fetch sub category of complaint
 	public function getComplaintSubCategory(){

@@ -6,6 +6,27 @@ class ComplaintModel extends CI_Model {
 		parent::__construct();
 		$this->load->database();		
 	}
+	//
+	public function getDepartmentList(){
+		$this->db->select('DEP_ID, DEP_DESC');
+		$this->db->from('ALL_DEP_MST');
+		$query = $this->db->get();
+
+		$DList[0] = 'Select Department';      	
+      	foreach($query->result() as $Dept) 
+        	$DList[$Dept->DEP_ID] = $Dept->DEP_DESC;     
+    	return $DList;
+	}
+	//get employee list for on call comlaint registration from database
+	public function getEmployeeList($postData){
+		$this->db->select('EMP_ID, EMP_NAME');
+		$this->db->from('ALL_EMP_MST A');
+		$this->db->where(['A.EMP_DEP_ID'=>$postData]);
+		$q = $this->db->get();				
+    	$response = $q->result_array();
+    	return $response;
+	}
+
 	//this function is use to fetch complaint category
 	public function getComplaintCat($UserType){
     	$response = array();
