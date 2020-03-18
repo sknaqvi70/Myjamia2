@@ -43,7 +43,7 @@ class Student extends CI_Controller {
 			$html_content = '<center>
                 <h3>JAMIA MILLIA ISLAMIA</h3>
                 <h4>Fee Payment Acknowledge Receipt</h4>
-                <img src="'.base_url().'Assets/img/appllogo1.jpg" alt="" style="width: 100px; height: 100px;">                                
+                <img  src="'.__DIR__.'/../assets/images/appllogo1.png" alt="" style="width: 100px; height:100px;">                                
                 <br><br>
             	</center>
             	<p align="left" style="font-size:14px; font-family:Calibri;">This is to acknowledge the receipt of fee as per the</p>

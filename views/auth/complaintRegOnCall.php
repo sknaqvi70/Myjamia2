@@ -5,7 +5,7 @@
       <div class="panel panel-info">
         <div class="panel-heading" style="text-align: center;"><h4>Complaint Registration</h4></div>       
           <div class="panel-body table-responsive"> 
-          <?php echo form_open('/Complaint/complaintRegistration'); ?> 
+          <?php echo form_open('/Complaint/ComplaintRegisteredOnCall'); ?> 
           <?php $message=$this->session->flashdata('message'); if (isset($message)) { ?>
           <?php  echo '<div class="alert  alert-success">';                  
             echo '<strong>'.$message.'</strong>';

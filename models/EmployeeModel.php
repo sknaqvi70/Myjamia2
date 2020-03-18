@@ -290,4 +290,19 @@ class EmployeeModel extends CI_Model {
 		return $output;
 
 	}
+
+	// this function is used for fetch DOB of employee
+	public function empDob($UserId){
+		$select = "TO_CHAR(EMP_DOB, 'DDMMYYYY') DOB";
+		$this->db->select($select);
+		$this->db->from('EMP_MST');
+		$this->db->where(['EMP_ID'=>'EMP\\'.$UserId]);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->DOB;
+			else
+				return '0'; //Error
+		
+
+	}
 }

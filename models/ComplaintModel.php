@@ -410,6 +410,19 @@ class ComplaintModel extends CI_Model {
 		     return $row->FM_FILE_ID + 1;
 	}
 
+	// this function fetch emp department
+	public function getEmpDep($dept){
+		$this->db->select('DEP_DESC');
+		$this->db->from('ALL_DEP_MST');
+		$this->db->where('DEP_ID',$dept);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->DEP_DESC;
+			else
+				return '0';
+
+	}
+
 	// This function find complaint type desc from complaint_category table
 	public function fetch_complaint_type_desc($CM_COMPLAINT_TYPE){
 		$this->db->select('CC_NAME');

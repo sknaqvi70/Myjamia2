@@ -117,8 +117,9 @@ class Complaint extends CI_Controller {
 	}
 
 	public function ComplaintRegisteredOnCall(){
+			$this->form_validation->set_rules('CM_COMPLAINT_DEP','Department','required|is_natural_no_zero');
 	// 1 Contact Person Name cannot be blank
-			$this->form_validation->set_rules('CM_USER_NANE','Contact Person Name','required|alpha_numeric_spaces|max_length[50]');
+			$this->form_validation->set_rules('CM_USER_NANE','Contact Person Name','required|is_natural_no_zero');
 
 			// 2 E-Mail Id cannot be blank 			
 			$this->form_validation->set_rules('CM_USER_EMAIL','E-Mail Id','required|valid_email');
@@ -158,19 +159,10 @@ class Complaint extends CI_Controller {
 
 	       		$VerificationString = '';
 	       		$TicketNo = '';
-	       		$FtsNo = '';
-	       		if ($UserType == 1 || $UserType == 4){
-	       			$dept = $_SESSION['depid'];
-	       			$deptdesc = $_SESSION['depdesc'];
-	       		}elseif ($UserType == 2 || $UserType == 5){
-	       			$dept = $_SESSION['empdepid'];
-	       			$deptdesc = $_SESSION['empdepdesc'];
-	       		}else{
-	       			$dept = $_SESSION['admindepid'];
-	       			$deptdesc = $_SESSION['empdepdesc'];
-	       		}
+	       		$FtsNo = ''; 		
 	       		
 	       		$UserId= $_SESSION['login'];
+	       		$dept 					= $this->input->post('CM_COMPLAINT_DEP');
 	       		$CM_USER_NANE			= $this->input->post('CM_USER_NANE');
 	       		$CM_USER_EMAIL			= $this->input->post('CM_USER_EMAIL');
 	       		$CM_USER_MOBILE			= $this->input->post('CM_USER_MOBILE');
@@ -196,6 +188,8 @@ class Complaint extends CI_Controller {
 				);
 				if ($data['message'] == 'OK') {
 
+					$deptdesc = $this->CM->getEmpDep($dept);
+					
 					$CM_COMPLAINT_TYPE_DESC= $this->CM->fetch_complaint_type_desc($CM_COMPLAINT_TYPE);
 
 					$CM_COMPLAINT_SUB_TYPE_DESC= $this->CM->fetch_complaint_sub_type_desc($CM_COMPLAINT_SUB_TYPE);

@@ -52,6 +52,7 @@ class Employee extends CI_Controller {
 			$start_date='01-'.$month.'-'.$year;
 			$last_day= date('t',strtotime($start_date));
 			$end_date=$last_day.'-'.$month.'-'.$year;
+			$empDob = $this->emp->empDob($UserId);
 
 			$html_content = '<!DOCTYPE html><html><body>
 			<div class="container-fluid" id="listdown">
@@ -59,7 +60,7 @@ class Employee extends CI_Controller {
 			<center>
             	<p style="font-size:25px; font-family:Calibri;">JAMIA MILLIA ISLAMIA</p>
             	<p style="font-size:20px; font-family:Calibri;">Finance & Account Office</p>
-            	<img src="'.base_url().'Assets/img/appllogo1.jpg" alt="" style="width: 100px; height: 100px;">                                
+            	<img  src="'.__DIR__.'/../assets/images/appllogo1.png" alt="" style="width: 100px; height: 100px;">                                
             	<br><br>
           	</center>';
 
@@ -69,8 +70,11 @@ class Employee extends CI_Controller {
 			$html_content .='</div></div></body></html>';
 			$this->pdf->loadHtml($html_content);
             $this->pdf->render();
+            $password =$UserId.'@'.$empDob;
+            $this->pdf->get_canvas()->get_cpdf()->setEncryption($password, $password);
             ob_end_clean();
             ob_start();
+
             $this->pdf->stream("".$UserId."'_'".$end_date.".pdf",array('Attachment' =>0));
 		}
 	}
