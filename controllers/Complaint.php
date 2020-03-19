@@ -107,7 +107,7 @@ class Complaint extends CI_Controller {
 					if ($FtsNo) {
 					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.' And FTS Number is '.$FtsNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
 					}else{
-					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
+					$data= "Your comlaint has been registered with Ticket No - ".$TicketNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. We shall keep you posted about the ticket on your email.';
 					}
 					$this->session->set_flashdata('message',$data);
 					redirect('Complaint/complaintRegistration');					
@@ -165,7 +165,7 @@ class Complaint extends CI_Controller {
 	       		
 	       		$dept 					= $this->input->post('CM_COMPLAINT_DEP');
 	       		$CM_USER_ID				= $this->input->post('CM_USER_NANE');
-	       		$UserId					= substr($UserId, 4);
+	       		$UserId					= substr($CM_USER_ID, 4);
 	       		$CM_USER_NANE 			= $this->CM->getEmpName($UserId);
 	       		$CM_USER_EMAIL			= $this->input->post('CM_USER_EMAIL');
 	       		$CM_USER_MOBILE			= $this->input->post('CM_USER_MOBILE');
@@ -208,7 +208,7 @@ class Complaint extends CI_Controller {
 					if ($FtsNo) {
 					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.' And FTS Number is '.$FtsNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
 					}else{
-					$data= "Your Ticket No. - ".$TicketNo.' For Complain '.$CM_COMPLAINT_SUB_TYPE_DESC.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. Please login to your mailbox to see your complaint Details.';
+					$data= "Your comlaint has been registered with Ticket No - ".$TicketNo.'. An email has been sent to '.$this->MaskUserEMail($CM_USER_EMAIL). '. We shall keep you posted about the ticket on your email.';
 					}
 					$this->session->set_flashdata('message',$data);
 					redirect('Complaint/ComplaintRegisteredOnCall');					

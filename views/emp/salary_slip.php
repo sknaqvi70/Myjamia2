@@ -1,4 +1,15 @@
 <?php require __DIR__.'/../auth/header.php'; ?>
+<style>
+
+.previous {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.round {
+  border-radius: 100%;
+}
+</style>
 
 <br/>
     <div class="col-sm-8 text-left"> 
@@ -26,8 +37,8 @@
 
         <?php if(isset($month)) {?>
         <!-- this table is used for fee details display -->
-        <font size="4" color="red">Note : </font> Password of pdf is in EmployeeID@DateOfBirth format (DDMMYYYY)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="user-link" aling="text-left" href="<?php echo site_url('Employee/salary_slip/');?>"><font size="4" color="red">Back to Pay slip</font></a><br>
+        <font size="4" color="red">Note : </font> Password of pdf is in the Format of <font size="3" color="red">'EmployeeID@DateOfBirth(DDMMYYYY)'</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a aling="text-left" href="<?php echo site_url('Employee/salary_slip/');?>"class="previous">&laquo;Back</a><br>
         <p align="center"><font size="5" color="blue"><?php echo 'Pay Slip of year - '.$selectedyear ?></font></p>
           <table class="table table-striped table-hover" align="center" style="font-size:15px; font-family:Calibri;">          
           <tr>
