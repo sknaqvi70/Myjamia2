@@ -62,6 +62,7 @@ class ComplaintModel extends CI_Model {
   	//this function is to insert complaint into complaint_mst table and when check_fts_based is N then it also inserted complaint into FILE_MST and FILE_MV_DTL table
   	public function RegisterComplaint($dept,$UserId,$CM_COMPLAINT_TYPE,$CM_COMPLAINT_SUB_TYPE,$CM_COMPLAINT_DESC,$CM_USER_LOCATION,$CM_USER_NANE,$CM_USER_MOBILE,$CM_USER_EMAIL,&$VerificationString,&$TicketNo,&$FtsNo,$CM_NO_UNIT){
   		//current date of register
+  	
   		$reg_date=date('d-m-Y'); //date('d-m-Y H:i:s');
   		//Generate random string for email account verification
 		$str = rand(); 
@@ -408,6 +409,18 @@ class ComplaintModel extends CI_Model {
 
 		if (isset($row))
 		     return $row->FM_FILE_ID + 1;
+	}
+
+	//get employee Name for on call comlaint registration from database
+	public function getEmpName($UserId){
+		$this->db->select('EMP_NAME');
+		$this->db->from('ALL_EMP_MST A');
+		$this->db->where(['A.EMP_ID'=>'EMP\\'.$UserId]);
+		$query = $this->db->get();				
+    	$row = $query->row();
+
+		if (isset($row))
+		     return $row->EMP_NAME;
 	}
 
 	// this function fetch emp department

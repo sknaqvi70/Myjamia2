@@ -57,9 +57,7 @@
                         <option>Select Complaint sub Type</option>
                       </select>
                     </td>
-                  </tr>
-                  <?php $userType = $_SESSION['usertype'];
-                  if($userType == 2 || $userType == 3 || $userType == 6 || $userType == 8){?>
+                  </tr>                  
                   <tr>
                     <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;No of Faulty Equipment: </strong></td>
                     <td valign="top" align="left">
@@ -70,19 +68,7 @@
                       <?php echo form_input(['name'=>'CM_USER_LOCATION','class'=>'form-control', 'id'=>'id_CM_USER_LOCATION','placeholder'=>'Complaint Location', 'value'=>set_value('CM_USER_LOCATION')]); echo form_error('CM_USER_LOCATION');?>
                     </td>
                   </tr>
-                  <?php }else { ?>
-                  <tr>
-                    <td valign="top" height="20" align="left"><strong>&nbsp;&nbsp;No of Faulty Equipment: </strong></td>
-                    <td valign="top" align="left">
-                      <?php echo form_input(['name'=>'CM_NO_UNIT','class'=>'form-control', 'id'=>'id_CM_NO_UNIT','readonly'=>'true','placeholder'=>'Enter Number of Faulty Equipment', 'value'=>set_value('CM_NO_UNIT')]); echo form_error('CM_NO_UNIT');?>
-                    </td>
-                    <td valign="top" align="left"><strong>&nbsp;Complaint Location : </strong></td>
-                    <td valign="top" align="left">
-                      <?php echo form_input(['name'=>'CM_USER_LOCATION','class'=>'form-control', 'id'=>'id_CM_USER_LOCATION','placeholder'=>'Complaint Location', 'value'=>set_value('CM_USER_LOCATION')]); echo form_error('CM_USER_LOCATION');?>
-                    </td>
-                    
-                  </tr>
-                  <?php } ?>
+                  
                   <tr>
                     <td colspan="2" valign="top" height="20" align="left"><strong>&nbsp;&nbsp;<font color="red">  No of Faulty Equipment Field Not Applicable for Wifi related Complaint </font></strong></td>
                     <td></td>

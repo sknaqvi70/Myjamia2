@@ -117,9 +117,9 @@ class Complaint extends CI_Controller {
 	}
 
 	public function ComplaintRegisteredOnCall(){
-			$this->form_validation->set_rules('CM_COMPLAINT_DEP','Department','required|is_natural_no_zero');
+			$this->form_validation->set_rules('CM_COMPLAINT_DEP','Department','required');
 	// 1 Contact Person Name cannot be blank
-			$this->form_validation->set_rules('CM_USER_NANE','Contact Person Name','required|is_natural_no_zero');
+			$this->form_validation->set_rules('CM_USER_NANE','Contact Person Name','required');
 
 			// 2 E-Mail Id cannot be blank 			
 			$this->form_validation->set_rules('CM_USER_EMAIL','E-Mail Id','required|valid_email');
@@ -149,6 +149,7 @@ class Complaint extends CI_Controller {
 			$UserType= $_SESSION['usertype'];
 			$data['ComplaintTypeList'] = $this->CM->getComplaintCat($UserType);
 			$data['DepartmentList'] = $this->CM->getDepartmentList();
+
 			
 			if ($this->form_validation->run() == FALSE) {		               
 	     		
@@ -161,14 +162,19 @@ class Complaint extends CI_Controller {
 	       		$TicketNo = '';
 	       		$FtsNo = ''; 		
 	       		
-	       		$UserId= $_SESSION['login'];
+	       		
 	       		$dept 					= $this->input->post('CM_COMPLAINT_DEP');
-	       		$CM_USER_NANE			= $this->input->post('CM_USER_NANE');
+	       		$CM_USER_ID				= $this->input->post('CM_USER_NANE');
+	       		$UserId					= substr($UserId, 4);
+	       		$CM_USER_NANE 			= $this->CM->getEmpName($UserId);
 	       		$CM_USER_EMAIL			= $this->input->post('CM_USER_EMAIL');
 	       		$CM_USER_MOBILE			= $this->input->post('CM_USER_MOBILE');
 	       		$CM_USER_LOCATION		= $this->input->post('CM_USER_LOCATION');
 	       		$CM_COMPLAINT_TYPE 		= $this->input->post('CM_COMPLAINT_TYPE');
+	       		//echo " ,Complaint type ".$CM_COMPLAINT_TYPE;
 	       		$CM_COMPLAINT_SUB_TYPE 	= $this->input->post('CM_COMPLAINT_SUB_TYPE');
+	       		//echo " ,Complaint sub type ".$dept;
+	       		//exit();
 	       		$CM_COMPLAINT_DESC		= $this->input->post('CM_COMPLAINT_DESC'); 
 	       		$CM_NO_UNIT				= $this->input->post('CM_NO_UNIT');
 				$data['message']  = $this->CM->RegisterComplaint(
