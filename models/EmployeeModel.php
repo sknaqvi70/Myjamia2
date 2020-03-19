@@ -64,9 +64,9 @@ class EmployeeModel extends CI_Model {
 		$this->db->where('EMP_POST_DEP',$EmpDepid);
 		$this->db->where_in('EDH.EDH_AMT', $array_edh_amt);
 		$this->db->where('EMP_JOINING_TYPE','CONFIRMED');
-		$this->db->where('EMP_ID','EMP\\'.$UserId);  
-	
+		$this->db->where('EMP_ID','EMP\\'.$UserId); 	
 		$query = $this->db->get();
+		
 		$output = '<table class="table table-striped table-hover" width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">';
 		 	foreach($query->result() as $v_sdtl){
 		 	$output .='<tbody>

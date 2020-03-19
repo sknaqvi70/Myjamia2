@@ -267,7 +267,7 @@ class Welcome extends CI_Controller {
 			$EmpUserData =  $this->UM->getEmpData($UserID);
 			foreach($EmpUserData as $eudata):
 			$UserName= $eudata->EMPNAME;
-    		$EmpDepId= $eudata->EMP_DEPARTMENT;
+    		$EmpDepId= $eudata->EMP_POST_DEP;
     		$EmpDepDesc= $eudata->DEP_DESC;
 			endforeach;
 

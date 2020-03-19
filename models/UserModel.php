@@ -253,7 +253,7 @@ class UserModel extends CI_MODEL {
 	//This function fectches User ( User Type 6,7,8,9) Name added by raquib
 	public function getAdminName($UserId) {
 
-		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_DEPARTMENT DEPID');
+		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_POST_DEP DEPID');
 		$this->db->where('EMP_ID','EMP\\'.$UserId);		 
 		$query1 = $this->db->get_compiled_select('EMP_MST');
 		    		
@@ -359,12 +359,11 @@ class UserModel extends CI_MODEL {
 
 	// this function is used for fetch employee data from database added by raquib
 	public function getEmpData($UserId){	          			
-		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,A.EMP_DEPARTMENT,C.DEP_DESC');
+		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,A.EMP_POST_DEP,C.DEP_DESC');
 		$this->db->from('EMP_MST A');
-		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
+		$this->db->join('DEP_MST C', 'A.EMP_POST_DEP= C.DEP_ID ');
 		$this->db->where(['A.EMP_ID'=>'EMP\\'.$UserId]);
-		$query = $this->db->get();	
-		$str = $this->db->last_query();
+		$query = $this->db->get();
 		if($query->num_rows() > 0) 
 				return $query->result();
 			else
