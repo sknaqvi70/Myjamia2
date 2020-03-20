@@ -54,15 +54,34 @@ class Employee extends CI_Controller {
 			$end_date=$last_day.'-'.$month.'-'.$year;
 			$empDob = $this->emp->empDob($UserId);
 
-			$html_content = '<!DOCTYPE html><html><body>
+			$html_content = '<!DOCTYPE html><html>
+			<head>
+				<style>
+				#logoimage {
+ 					float: left ;
+				}
+				#headertext {
+  					float: left ;
+				}
+				#headercontainer {
+  					width: 400px ;
+  					max-width: 100% ;
+  					margin-left: auto ;
+  					margin-right: auto ;
+				}
+				</style>
+			</head>
+			<body>
 			<div class="container-fluid" id="listdown">
 			<div class="col-md-8 ">
-			<center>
-            	<p style="font-size:25px; font-family:Calibri;">JAMIA MILLIA ISLAMIA</p>
-            	<p style="font-size:20px; font-family:Calibri;">Finance & Account Office</p>
-            	<img  src="'.__DIR__.'/../assets/images/appllogo1.png" alt="" style="width: 100px; height: 100px;">                                
-            	<br><br>
-          	</center>';
+			<div id="headercontainer">
+				<img id="logoimage" src="'.__DIR__.'/../assets/images/appllogo1.png" alt="" style="width: 80px; height: 80px;">
+					<ul id="headertext">
+					<font size="25px" font-family:Calibri;">Finance & Account Office</font><br>
+					<font size="20px" font-family:Calibri;">Jamia Millia Islamia,New Delhi</font>
+					</ul>
+					<br style="clear: both;">
+				</div>';
 
 			//$data['emp_dtl']=$this->emp->emp_info($UserId);
 			$html_content .= $this->emp->salary_info($UserId,$EmpDepid,$end_date,$month,$year);

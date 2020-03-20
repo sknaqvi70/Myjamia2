@@ -54,7 +54,7 @@
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Blood Group </span></td>
-              <td colspan="2"></label></td>
+              <td colspan="2"><?php echo strtoupper("$v_sdtl->EMP_BLOOD_GROUP") ?></td>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Date of Birth </span></td>
@@ -108,7 +108,7 @@
               </tr>
               <tr>
                 <td valign="top" align="left"><strong>Mobile No: </strong></td>
-                <td valign="top" align="left"><?php echo "+".$v_sdtl->C_MOBILE ?></td>
+                <td valign="top" align="left"><?php echo $v_sdtl->C_MOBILE ?></td>
               </tr>
               </tbody>
               </table>
@@ -147,7 +147,7 @@
               </tr>
               <tr>
                 <td valign="top" align="left"><strong>Mobile No: </strong></td>
-                <td valign="top" align="left"><?php echo "+".$v_sdtl->P_MOBILE ?></td>
+                <td valign="top" align="left"><?php echo $v_sdtl->P_MOBILE ?></td>
               </tr>
               </tbody>
               </table>

@@ -23,11 +23,11 @@
           <?php 
             $i = 0;
             foreach ($year as $yr) {
-            if ($i % 5 === 0) {
+            if ($i % 6 === 0) {
             echo '</tr><tr>';
             } ?>        
-            <td align="left"><br><a class="user-link" href="<?php echo site_url('Employee/getSalMonth/'.$yr->YEAR);?>"><img src="<?= base_url(); ?>application/assets/images/payslip.png" alt="JMI" style="width:100px;height:100px;" align="middle"></a><br>&nbsp;&nbsp;&nbsp;&nbsp;
-                <?php echo '<font size="6" color="#13A6DD">'.$yr->YEAR.'</font>' ?><br><br>
+            <td align="left"><br><a class="user-link" href="<?php echo site_url('Employee/getSalMonth/'.$yr->YEAR);?>"><img src="<?= base_url(); ?>application/assets/images/payslip.png" alt="JMI" style="width:60px;height:60px;" align="middle"></a><br>&nbsp;
+                <?php echo '<font size="5" color="#13A6DD">'.$yr->YEAR.'</font>' ?><br><br>
             </td>
             <?php $i++;
         }?> 

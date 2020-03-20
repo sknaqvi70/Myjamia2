@@ -8,7 +8,7 @@ class EmployeeModel extends CI_Model {
 	}
 	//this function used for to view profile information
 	public function emp_info($UserId){	          			
-		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME, EMP_DOB,EMP_RET_DATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID');
+		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME, EMP_DOB,EMP_RET_DATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID,EMP_BLOOD_GROUP');
 		$this->db->from('EMP_MST A');
 		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
 		$this->db->join('OFF_FAC_MST D', 'C.DEP_OFA_ID=D.OFA_ID ');		
@@ -55,10 +55,10 @@ class EmployeeModel extends CI_Model {
 		 	               EDH.EDH_JOINING_TYPE STATUS,EMP.EMP_TITLE,EMP.EMP_PAN, 
 		 	               OFA_DESC,EDH.EDH_DATE');
 		$this->db->from('EMP_MST EMP');
-		$this->db->join('DSG_MST DSG', 'DSG.DSG_ID = EMP.EMP_DESIGNATION');
+		$this->db->join('EMP_EARN_DED_HIST EDH', 'EDH.EDH_EMP_ID = EMP.EMP_ID');
+		$this->db->join('DSG_MST DSG', 'DSG.DSG_ID = EDH.EDH_DSG_ID');
 		$this->db->join('DEP_MST DEP', 'DEP.DEP_ID = EMP.EMP_DEPARTMENT');
 		$this->db->join('OFF_FAC_MST', 'OFA_ID= EMP.EMP_OFFICE');
-		$this->db->join('EMP_EARN_DED_HIST EDH', 'EDH.EDH_EMP_ID = EMP.EMP_ID');
 		$this->db->where('EDH.EDH_EDM_ID','O004');
 		$this->db->where('EDH.EDH_DATE',$end_date);
 		$this->db->where('EMP_POST_DEP',$EmpDepid);
@@ -73,7 +73,7 @@ class EmployeeModel extends CI_Model {
               <tr>
                 <td valign="top" height="20" align="left"><strong>&nbsp;Name: </strong></td>
                 <td valign="top" align="left"><b>'.$v_sdtl->EMP_TITLE.' '.ucwords(strtolower("$v_sdtl->NAME")).'</b></td>
-                <td valign="top" align="left"><strong>&nbsp;Designation <font style="font-size:14px;color: red;font-weight: bold;">* </font>: </strong></td>
+                <td valign="top" align="left"><strong>&nbsp;Designation: </strong></td>
                 <td valign="top" align="left">'.ucwords(strtolower("$v_sdtl->DESIGNATION")).'</td>
                 <td valign="top" align="left"><strong>&nbsp;Month: </strong></td>
                 <td valign="top" align="left">'.$month.', '.$year.'</td>
@@ -105,12 +105,7 @@ class EmployeeModel extends CI_Model {
                 <td valign="top" align="left">'.ucwords(strtolower("$v_sdtl->EMP_POST_DEP")).'</td>
                 <td valign="top" align="left"><strong>&nbsp;Sal Dep: </strong></td>
                 <td valign="top" align="left" colspan="3">'.ucwords(strtolower("$v_sdtl->DEPARTMENT")).'</td>
-              </tr> 
-              <tr>
-                <td valign="top" height="20" align="left">&nbsp;<font style="font-size:12px;font-family:Calibri;color: red;font-weight: bold;">NOTE:  Designation</font>
-                </td>
               </tr>
-
             </tbody>
               ';
 		 	} 
@@ -210,9 +205,9 @@ class EmployeeModel extends CI_Model {
   		<div class="col-sm-2 table-responsive">
   		<table class="table table-striped table-hover"  align="center"width="550" style="font-size:14px; font-family:Calibri; border-radius: 10px; border: 1px solid;">';
   		$output .= '<tr>
-	  					<th   align="left">------------E A R N I N G S------------</th>
+	  					<th   align="left">-----------------E A R N I N G S-----------------</th>
 	  					<th>&nbsp;&nbsp;</th>
-	  					<th   align="left">-----------------D E D U C T I O N S-----------------</th>
+	  					<th   align="left">--------------D E D U C T I O N S--------------</th>
   					</tr>';
   		$output .= '<tr><td  valign="top">';
 
