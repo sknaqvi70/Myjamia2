@@ -8,9 +8,11 @@
           <table class="table table-striped table-bordered table-hover">
           <tbody>
             <tr>
-              <td rowspan='5'> 
+              <td rowspan='5'>
+              <?php $filePath='\\\\'."10.2.0.41\mis_stu_photo".'\\'.$v_sdtl->STU_ID.".JFIF"; ?> 
+            
               <img class="media-object img-thumbnail user-img" style="width: 150px;"
-              src="<?= base_url("Assets/img/user_icon.png")?>" /> 
+              src="<?php echo $filePath ?>" /> 
               </td>
             </tr>
             <tr>
@@ -54,7 +56,7 @@
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Blood Group </span></td>
-              <td colspan="2"><?php echo $v_sdtl->STU_BLOOD_GR ?></label></td>
+              <td colspan="2"><?php echo $v_sdtl->STU_BLOOD_GR ?></td>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Date of Birth </span></td>

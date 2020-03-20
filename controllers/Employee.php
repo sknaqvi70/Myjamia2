@@ -14,7 +14,17 @@ class Employee extends CI_Controller {
 	//this function used for to view profile
 	public function profile(){
 		$UserId= $_SESSION['login'];
-		$data['stu_dtl']=$this->emp->emp_info($UserId);
+		$data['emp_dtl']=$this->emp->emp_info($UserId);	
+		$showrow=$this->emp->getEmpPic($UserId);/*
+		
+		if(!$showrow){
+			return 'No Image';
+		}else{
+			$image=$showrow->load();
+			header("Content-type: image/BMP");
+			print $image;
+		}
+		exit();*/
 		$this->load->view('emp/profile', $data);
 	}
 
@@ -89,12 +99,13 @@ class Employee extends CI_Controller {
 			$html_content .='</div></div></body></html>';
 			$this->pdf->loadHtml($html_content);
             $this->pdf->render();
-            $password =$UserId.'@'.$empDob;
+            //$password =$UserId.'@'.$empDob;
+            $password =$this->emp->loginPwd($UserId);
             $this->pdf->get_canvas()->get_cpdf()->setEncryption($password, $password);
             ob_end_clean();
             ob_start();
 
-            $this->pdf->stream("".$UserId."'_'".$end_date.".pdf",array('Attachment' =>0));
+            $this->pdf->stream("".$UserId."'_PaySlip_'".$month."-".$year.".pdf",array('Attachment' =>1));
 		}
 	}
 }

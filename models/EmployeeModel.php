@@ -8,7 +8,7 @@ class EmployeeModel extends CI_Model {
 	}
 	//this function used for to view profile information
 	public function emp_info($UserId){	          			
-		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME, EMP_DOB,EMP_RET_DATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID,EMP_BLOOD_GROUP');
+		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME, EMP_DOB,EMP_RET_DATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID,EMP_BLOOD_GROUP,EMP_PIC');
 		$this->db->from('EMP_MST A');
 		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
 		$this->db->join('OFF_FAC_MST D', 'C.DEP_OFA_ID=D.OFA_ID ');		
@@ -18,6 +18,16 @@ class EmployeeModel extends CI_Model {
 		$this->db->where('EMP_STATUS','C');
 		$query = $this->db->get();
 		return $query->result();			
+	}
+
+	//this function is used to fetch employee pic from database
+	public function getEmpPic($UserId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT EIC_PICS FROM emp_id_card
+					WHERE EIC_ISS_DATE=(SELECT MAX(EIC_ISS_DATE) FROM emp_id_card
+					WHERE EIC_EMP_ID='$empid')
+					AND EIC_EMP_ID='$empid'")->result();
+		return $response;
 	}
 
 	public function getSalYear($UserId){
@@ -53,7 +63,7 @@ class EmployeeModel extends CI_Model {
 		 	               DEPARTMENT, EMP.EMP_AGENCY, EDH.EDH_STATUS,EDH. 
 		 	               EDH_PAYSCALE , EDH.EDH_ACC_NO,EDH.EDH_PF_NO,EDH.EDH_DNI,
 		 	               EDH.EDH_JOINING_TYPE STATUS,EMP.EMP_TITLE,EMP.EMP_PAN, 
-		 	               OFA_DESC,EDH.EDH_DATE');
+		 	               OFA_DESC,EDH.EDH_DATE,EMP_PF_NO');
 		$this->db->from('EMP_MST EMP');
 		$this->db->join('EMP_EARN_DED_HIST EDH', 'EDH.EDH_EMP_ID = EMP.EMP_ID');
 		$this->db->join('DSG_MST DSG', 'DSG.DSG_ID = EDH.EDH_DSG_ID');
@@ -103,8 +113,8 @@ class EmployeeModel extends CI_Model {
               <tr>
                 <td valign="top" height="20" align="left"><strong>&nbsp;Post Dep: </strong></td>
                 <td valign="top" align="left">'.ucwords(strtolower("$v_sdtl->EMP_POST_DEP")).'</td>
-                <td valign="top" align="left"><strong>&nbsp;Sal Dep: </strong></td>
-                <td valign="top" align="left" colspan="3">'.ucwords(strtolower("$v_sdtl->DEPARTMENT")).'</td>
+                <td valign="top" align="left"><strong>&nbsp;Sal Dep: <br><br>&nbsp;PF No:</strong></td>
+                <td valign="top" align="left" colspan="3">'.ucwords(strtolower("$v_sdtl->DEPARTMENT")).'<br><br>'.($v_sdtl->EMP_PF_NO).'</td>
               </tr>
             </tbody>
               ';
@@ -215,23 +225,13 @@ class EmployeeModel extends CI_Model {
   		$column = 1;
   			foreach ($response as $v_ehead) {
 
-  				if($column == 1) {
-			  		$output .= '<tr><td align="left">';
-			  		$output .= $v_ehead->EDM_SHORT_DESC; 
-			  		$output .= '</td><td>&nbsp;&nbsp;</td><td align="right">';
-			  		$output .= $v_ehead->EDH_AMT;
-			  		$output .= '</td><td>&nbsp;&nbsp;</td>';
-			  		$column = 2;
-			  	} else {
-			  		$output .= '<td align="left">';
-			  		$output .= $v_ehead->EDM_SHORT_DESC; 
-			  		$output .= '</td><td>&nbsp;&nbsp;</td><td align="right">';
-			  		$output .= $v_ehead->EDH_AMT;
-			  		$output .= '</td></tr>';
-			  		$column = 1;
-			  	}
-			  	
-		  	}
+  				$output .= '<tr><td align="left">';
+			  	$output .= $v_ehead->EDM_SHORT_DESC; 
+			  	$output .= '</td><td>&nbsp;&nbsp;</td><td align="right">';
+			  	$output .= $v_ehead->EDH_AMT;
+			  	$output .= '</td><td>&nbsp;&nbsp;</td>';
+			}		  	
+		  	
   		$output .= '</table><td>&nbsp;&nbsp;</td><td>';
 
   		$output .= '<table>';
@@ -261,18 +261,21 @@ class EmployeeModel extends CI_Model {
   		foreach($response2 as $v_gpay){
   		$output .='<tfoot>
         	<tr>
-	            <th scope="row">&nbsp;Gross Pay:&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	            <th scope="row">&nbsp;Gross Pay:</th>
 	            <td>'.($v_gpay->AMT).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-	        foreach($response3 as $v_dpay){
-	        $output .='<th scope="row">&nbsp;Deductions:&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	    foreach($response3 as $v_dpay){
+	    $output .='<th scope="row">&nbsp;&nbsp;&nbsp;</th>
+	        	<td>&nbsp;&nbsp;&nbsp;</td>
+	        	<th scope="row">&nbsp;&nbsp;&nbsp;</th>
+	        	<td>&nbsp;&nbsp;&nbsp;</td>
+	        	<th scope="row">&nbsp;&nbsp;&nbsp;</th>
+	        	<td>&nbsp;&nbsp;&nbsp;</td>
+	        	<th scope="row">&nbsp;Deductions:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
 	            <td>'.$v_dpay->AMT.'</td>';
 	         }
-	        $output .='<th scope="row">Net Pay:&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	    $output .='<th scope="row">Net Pay:&nbsp;&nbsp;&nbsp;&nbsp;</th>
 	            <td>'.(($v_gpay->AMT)-($v_dpay->AMT)).'</td>';
-       	 	foreach($response4 as $v_pfno){
-       	 	$output .='<th scope="row">&nbsp;PF No:&nbsp;&nbsp;&nbsp;&nbsp;</th>
-            	<td>'.($v_pfno->EMP_PF_NO).'</td>';
-       	 	}
+       	 	
         $output .='</tr></tfoot>';
   		}
   		$output .='</table></div>';
@@ -298,6 +301,21 @@ class EmployeeModel extends CI_Model {
 			else
 				return '0'; //Error
 		
+
+	}
+
+	//this function is used to get login password
+	public function loginPwd($UserId){
+		$this->db->select('MJ_USER_PASSWORD PWD');
+		$this->db->from('MJ_USER_MST');
+		$this->db->where(['MJ_USER_LOGIN'=>$UserId]);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->PWD;
+			else
+				return '0'; //Error
+		
+
 
 	}
 }
