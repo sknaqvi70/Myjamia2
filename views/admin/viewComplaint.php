@@ -42,7 +42,19 @@
           <tr>
             <td><b>No of faulty Equipment/Services</b></td>
             <td><?php echo $v_single->CM_NO_UNIT ?></td>            
-          </tr>                                 
+          </tr> 
+          <?php foreach($action_dtl as $v_action){ ?>
+          <tr>
+            <td><b>Complaint Priority</b></td>
+            <?php if ($v_action->MJ_CAD_PRIORITY == 'T') {?>
+            <td><font color="red"><b>Top Priority</b></font></td>  
+            <?php } elseif ($v_action->MJ_CAD_PRIORITY == 'M') { ?>
+              <td>Medium Priority</td>
+            <?php } else { ?> 
+              <td>Normal Priority</td>  
+            <?php } ?>   
+          </tr>  
+          <?php } ?>                                
         </table>
       </div>
       <div class="col-lg-6">
@@ -72,7 +84,25 @@
             <td><b>Registration Date</b></td>
             <td><?php echo $v_single->CM_COMPLAINT_DATE ?></td>            
           </tr>                                  
-        </table>       
+        </table>  
+        <th colspan="8" align="center"><---------------- ACTION DETAILS ----------------></th>
+        <?php foreach($action_dtl as $v_action){ ?>
+        <table class="table table-bordered" style="text-align: left;">
+          <tr>
+            <td><b>Updated By</b></td>
+            <td><?php echo $v_action->EMPNAME ?></td>            
+          </tr>
+          <tr>
+            <td><b>Last Action Date</b></td>
+            <td><?php echo $v_action->ACTIONDATE ?></td>            
+          </tr>
+          <tr>
+            <td><b>Last Updated Remarks</b></td>
+            <td><?php echo $v_action->MJ_CAD_REMARKS ?></td>            
+          </tr>
+                                           
+        </table>
+        <?php } ?>     
       </div>
     <?php } ?>
 </div>

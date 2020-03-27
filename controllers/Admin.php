@@ -109,8 +109,23 @@ class Admin extends CI_Controller {
 		$DepId 					= $_SESSION['admindepid'];
 		$UserType				= $_SESSION['usertype'];
 		$cc_no 					=$this->admin->fetch_cc_no($UserType,$DepId);
+		$data['action_dtl']		=$this->admin->getActionDetails($cmData);
 		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
 		$this->load->view('admin/viewComplaint', $data);
+		}
+	}
+
+// This function use for to fetch single data to view in details
+	public function viewComplaintDetailsHR(){
+		$cmData = $this->input->post('v_cm_no');
+		if(isset($cmData) and !empty($cmData)){
+		$DepId 					= $_SESSION['admindepid'];
+		$UserId 				= $_SESSION['login'];
+		$UserType				= $_SESSION['usertype'];
+		$cc_no 					=$this->admin->fetch_cc_no($UserType,$DepId);
+		$data['action_dtl']		=$this->admin->getActionDetailsHR($cmData,$UserId);
+		$data['single_comp']	=$this->admin->getSingleComplaintDetails($cc_no, $cmData);
+		$this->load->view('admin/viewComplaintHR', $data);
 		}
 	}
 

@@ -296,7 +296,7 @@ $(document).ready(function() {
                 // Start AJAX function
                 $.ajax({
                  // Path for controller function which fetches selected phone data
-                    url: "<?php echo base_url() ?>Admin/viewComplaintDetails",
+                    url: "<?php echo base_url() ?>Admin/viewComplaintDetailsHR",
                     // Method of getting data
                     method: "POST",
                     // Data is sent to the server

@@ -562,6 +562,43 @@ class AdminModel extends CI_Model {
 		return $query->result();			
 	}
 
+	//this function get the action detalis from mj_assign_dtl table
+	public function getActionDetails($cmData){
+		$dateFormate 	= "DD-Mon-YYYY HH:MM:SS am";
+		$this->db->select('CMM_DESC EMPNAME,MJ_CAD_REMARKS,TO_CHAR(MJ_CAD_ASSIGN_DATE, '."'$dateFormate'".') ACTIONDATE,MJ_CAD_PRIORITY');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('COMPANY_MST F', 'A.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $cmData);
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,MJ_CAD_REMARKS,TO_CHAR(MJ_CAD_ASSIGN_DATE, '."'$dateFormate'".') ACTIONDATE,MJ_CAD_PRIORITY');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('EMP_MST E', 'A.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $cmData);
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();
+	}
+
+	//
+	public function getActionDetailsHR($cmData,$UserId){
+		$dateFormate 	= "DD-Mon-YYYY HH:MM:SS am";
+		$this->db->select('CMM_DESC EMPNAME,MJ_CAD_REMARKS,TO_CHAR(MJ_CAD_ASSIGN_DATE, '."'$dateFormate'".') ACTIONDATE,MJ_CAD_COMPLAINT_STATUS, MJ_CAD_PRIORITY,MJ_CAD_CM_NO_UNIT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('COMPANY_MST F', 'A.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $cmData);
+		$this->db->where('A.MJ_CAD_CMM_ID', $UserId);
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,MJ_CAD_REMARKS,TO_CHAR(MJ_CAD_ASSIGN_DATE, '."'$dateFormate'".') ACTIONDATE,MJ_CAD_COMPLAINT_STATUS, MJ_CAD_PRIORITY,MJ_CAD_CM_NO_UNIT');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('EMP_MST E', 'A.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $cmData);
+		$this->db->where('A.MJ_CAD_EMP_ID', $UserId);
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();	
+	}
 	public function getSingleComplaintDetails($cc_no, $cmData){	
 	//for Employee 
 		//$IsNoNull	=	"MJ_CAD_CM_NO_UNIT IS NOT NULL";
