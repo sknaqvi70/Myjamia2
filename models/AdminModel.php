@@ -30,6 +30,16 @@ class AdminModel extends CI_Model {
     	return $YrList; 			
 	}
 
+	// this function is used for get department name from all_dep_mst
+	public function getDeptName($DepId){
+		$this->db->select('DEP_DESC');
+		$this->db->where('DEP_ID',$DepId);
+		$data =$this->db->get('ALL_DEP_MST');
+		$row = $data->row();
+		if (isset($row))
+		     return $row->DEP_DESC;
+	}
+
 	// This function find departmental email id for from email id
 	public function fetch_cc_no($UserType, $DepId){
 		$this->db->distinct('CSC_CC_NO');
@@ -48,6 +58,85 @@ class AdminModel extends CI_Model {
 		     return $row->CCNO;
 	}
 	//this function is use for fetch open complaints
+	public function getOpenCompDept($cc_no){
+		$where = "CM_COMPLAINT_STATUS IN ('R')";
+        $this->db->select('count(*) OPEN_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();		
+		if($query->num_rows() > 0) 
+				return $query->row()->OPEN_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch pending for Acceptance 
+	public function getPendingForAcpt($cc_no){
+		$where = "CM_COMPLAINT_STATUS IN ('A')";
+        $this->db->select('count(*) PENDING_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->PENDING_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch pending for Acceptance 
+	public function getPendingCompDept($cc_no){
+		$where = "CM_COMPLAINT_STATUS IN ('P')";
+        $this->db->select('count(*) PENDING_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->PENDING_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch on hold complaints due to shortage of parts
+	public function getHoldCompDept($cc_no){
+		$where = "CM_COMPLAINT_STATUS IN ('H')";
+        $this->db->select('count(*) HOLD_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->HOLD_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch closed complaints
+	public function getClosedCompByDept($cc_no){
+		$where = "CM_COMPLAINT_STATUS IN ('C')";
+        $this->db->select('count(*) CLOSED_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->CLOSED_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+	//this function is use for fetch total complaints
+	public function getTotalComplaintDept($cc_no){
+		$where = "CM_COMPLAINT_STATUS NOT IN ('O')";
+        $this->db->select('count(*) TOTAL_COMPLAINT');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0) 
+				return $query->row()->TOTAL_COMPLAINT;
+			else
+				return '0'; //Error	
+	}
+
+	//this function is use for fetch open complaints
 	public function getOpenComplaint($cc_no, $UserType){
 		$where = "CM_COMPLAINT_STATUS IN ('R')";
         $this->db->select('count(*) OPEN_COMPLAINT');
@@ -65,7 +154,7 @@ class AdminModel extends CI_Model {
 	//this function is use for fetch pending for Acceptance 
 	public function getPendingAcceptance($cc_no, $UserType){
 		$where = "CM_COMPLAINT_STATUS IN ('A')";
-        $this->db->select('count(*) PENDING_COMPLAINT');
+        $this->db->select('count(*) ASSIGN_COMPLAINT');
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=A.CM_COMPLAINT_SUB_CATEGORY');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
@@ -73,8 +162,8 @@ class AdminModel extends CI_Model {
 		$this->db->where($where);
 		$query = $this->db->get();
 		if($query->num_rows() > 0) 
-				return $query->row()->PENDING_COMPLAINT;
-			else
+				return $query->row()->ASSIGN_COMPLAINT;
+
 				return '0'; //Error	
 	}
 	//this function is use for fetch pending for Acceptance 
@@ -95,7 +184,7 @@ class AdminModel extends CI_Model {
 	//this function is use for fetch on hold complaints due to shortage of parts
 	public function getHoldComplaint($cc_no, $UserType){
 		$where = "CM_COMPLAINT_STATUS IN ('H')";
-        $this->db->select('count(*) PENDING_COMPLAINT');
+        $this->db->select('count(*) HOLD_COMPLAINT');
         $this->db->join('COMPLAINT_SUB_CATEGORY C','C.CSC_NO=A.CM_COMPLAINT_SUB_CATEGORY');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
@@ -103,7 +192,7 @@ class AdminModel extends CI_Model {
 		$this->db->where($where);
 		$query = $this->db->get();
 		if($query->num_rows() > 0) 
-				return $query->row()->PENDING_COMPLAINT;
+				return $query->row()->HOLD_COMPLAINT;
 			else
 				return '0'; //Error	
 	}
@@ -137,7 +226,21 @@ class AdminModel extends CI_Model {
 			else
 				return '0'; //Error	
 	}
-	
+	//this function is use for fetch details Open Complaints department wise 
+	public function getOpenComplaintDep($cc_no){
+		$dateFormate 	= "DD-Mon-YYYY HH:MM:SS am";          			
+		$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,D.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE D', 'D.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('A.CM_COMPLAINT_STATUS','R');
+		$this->db->order_by('CM_NO', 'DESC');
+		$query = $this->db->get();
+		return $query->result();			
+	}
+
 	//this function is use for fetch details Open Complaints 
 	public function getOpenComplaints($cc_no, $UserType){
 		$dateFormate 	= "DD-Mon-YYYY HH:MM:SS am";          			
@@ -153,6 +256,40 @@ class AdminModel extends CI_Model {
 		$this->db->order_by('CM_NO', 'DESC');
 		$query = $this->db->get();
 		return $query->result();			
+	}
+
+	//this function is use for fetch details getPendingAtEngineer
+	public function getPendingAtEngineerDep($cc_no){          			
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');		
+		$this->db->join('MJ_USER_TYPE E', 'E.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Assigned');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME,
+		A.CM_COMPLAINT_TEXT,CMM_DESC,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,
+			A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE F', 'F.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Assigned');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_ID,
+			A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();			
 	}
 
 	//this function is use for fetch details getPendingAtEngineer
@@ -188,6 +325,40 @@ class AdminModel extends CI_Model {
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
 		return $data->result();			
 	}
+
+	//this function is use for fetch details Pending Complaints
+	public function getPendingComplaintsDep($cc_no){  
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE E', 'E.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Accepted');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME,
+		A.CM_COMPLAINT_TEXT,CMM_DESC,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE F', 'F.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Accepted');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_ID,
+			A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();	
+	}
+
 	//this function is use for fetch details Pending Complaints
 	public function getPendingComplaints($cc_no, $UserType){  
 		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL');
@@ -219,34 +390,43 @@ class AdminModel extends CI_Model {
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query2 = $this->db->get_compiled_select();
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
-		return $data->result();	
+		return $data->result();		
+	}
 
-		/*$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
+	//this function is use for fetch details Hold Complaints
+	public function getHoldComplaintsDep($cc_no){ 
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE E', 'E.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
 		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
 		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
 		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
-		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','P');
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Put On Hold');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME,
+		A.CM_COMPLAINT_TEXT,CMM_DESC,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query1 = $this->db->get_compiled_select();
 
-		$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE F', 'F.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
 		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
 		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
 		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
-		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','P');
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Put On Hold');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_ID,
+			A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
 		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query2 = $this->db->get_compiled_select();
-		$data = $this->db->query($query1 . ' UNION ' . $query2);		
-		return $data->result();	*/		
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		
+		return $data->result();
 	}
+
 	//this function is use for fetch details Hold Complaints
 	public function getHoldComplaints($cc_no, $UserType){ 
 		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL');
@@ -280,18 +460,43 @@ class AdminModel extends CI_Model {
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
 		
 		return $data->result();
-		 
-		/*$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
+		 			
+	}
+
+	//this function is use for fetch details Closed Complaints
+	public function getClosedComplaintsDep($cc_no){ 
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
-		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');
+		$this->db->join('MJ_USER_TYPE E', 'E.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
-		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','H');
-		$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
-		$query = $this->db->get();		
-		return $query->result();*/			
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Closed');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME,
+		A.CM_COMPLAINT_TEXT,CMM_DESC,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,E.MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE F', 'F.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('C.MJ_CAD_COMPLAINT_STATUS','Closed');
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_ID,
+			A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,F.MJ_USER_TYPE_NAME');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		
+		return $data->result();
 	}
+
 	//this function is use for fetch details Closed Complaints
 	public function getClosedComplaints($cc_no, $UserType){ 
 		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL');
@@ -325,18 +530,23 @@ class AdminModel extends CI_Model {
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
 		
 		return $data->result();
+	}
 
-		/*$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,					A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE, 				A.CM_COMPLAINT_CONTACT_EMAIL');
+	//this function is use for fetch details Total Complaints
+	public function getTotalNoComplaintsDep($cc_no){	     
+		$where = "CM_COMPLAINT_STATUS NOT IN ('O')";     			
+		$this->db->select('A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,D.MJ_USER_TYPE_NAME');
 		$this->db->from('COMPLAINT_MST A');
 		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_USER_TYPE D', 'D.MJ_USER_TYPE_ID=B.CSC_USER_TYPE');
 		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');
 		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
-		$this->db->where('B.CSC_USER_TYPE', $UserType);
-		$this->db->where('A.CM_COMPLAINT_STATUS','C');
+		$this->db->where($where);
 		$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
 		$query = $this->db->get();		
-		return $query->result();*/			
+		return $query->result();			
 	}
+
 	//this function is use for fetch details Total Complaints
 	public function getTotalNoComplaints($cc_no, $UserType){	     
 		$where = "CM_COMPLAINT_STATUS NOT IN ('O')";     			
@@ -964,7 +1174,7 @@ class AdminModel extends CI_Model {
 
 			if ($respose) {
 			$User = substr($UserId, 1,1);
-				if (ord($User) >= 65 && ord($User) <= 90 ) {//checking user
+			if (ord($User) >= 65 && ord($User) <= 90 ) {//checking user
 				$status 	= 'Put On Hold';
 				$this->db->set('MJ_CAD_COMPLAINT_STATUS', $status);
 				$this->db->set('MJ_CAD_REMARKS', $cm_Remarks.' (Updated by '.$UserName.' )');

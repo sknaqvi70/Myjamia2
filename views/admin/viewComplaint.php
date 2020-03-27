@@ -1,7 +1,4 @@
 <div class="row">
-  <center>
-    <img style="width:80px; height: 80px;"src="<?= base_url(); ?>application/assets/images/appllogo1.bmp">
-  </center><br>
     <?php foreach($single_comp as $v_single){ ?>
       <div class="col-lg-6 table-responsive">
         <th colspan="8" align="center"><---------------- COMPLAINT DETAILS ----------------></th>
@@ -41,7 +38,11 @@
             <?php } else { ?> 
               <td>On Hold</td>  
             <?php } ?>   
-          </tr>                                  
+          </tr> 
+          <tr>
+            <td><b>No of faulty Equipment/Services</b></td>
+            <td><?php echo $v_single->CM_NO_UNIT ?></td>            
+          </tr>                                 
         </table>
       </div>
       <div class="col-lg-6">

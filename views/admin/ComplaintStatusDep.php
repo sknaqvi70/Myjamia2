@@ -27,6 +27,9 @@ $(document).ready(function() {
     $('#pending_comp').DataTable();
 } );
 $(document).ready(function() {
+    $('#comp_on_hold').DataTable();
+} );
+$(document).ready(function() {
     $('#closed_comp').DataTable();
 } );
 $(document).ready(function() {
@@ -68,9 +71,8 @@ $(document).ready(function() {
               <th>S.No</th>
               <th>Complaint No</th>
               <th>Complainant Type </th>
-              <th>Complainant Date </th>
+              <th>Complainant for Section </th>
               <th class="text-center">View</th>
-              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody> 
@@ -83,20 +85,9 @@ $(document).ready(function() {
               <td><?php echo $no ?></td>
               <td><?php echo $v_open->CM_NO ?></td>
               <td><?php echo $v_open->CSC_NAME ?></td>
-              <td><?php echo $v_open->REGDATE ?></td>
+              <td><?php echo $v_open->MJ_USER_TYPE_NAME ?></td>
               <td><center><input type="button" class="btn btn-sm btn-warning view_data " value="VIEW" id="<?php echo $v_open->CM_NO; ?>"></center>
               </td>
-              <td>
-                <center>
-                  <input type="button" class="btn btn-sm btn-info assign_data" value="ASSIGN" id="<?php echo $v_open->CM_NO; ?>"><!-- 
-                  <input type="button" class="btn btn-sm btn-info " value="TRANSFER" id="<?php echo $v_open->CM_NO; ?>"> -->
-                </center>
-              </td>
-              <!-- <td>
-                <a href="" class="btn btn-sm btn-info">Assign</a>
-                <a href="" class="btn btn-sm btn-info">CLose</a>
-                <a href="" class="btn btn-sm btn-info">Put on Hold</a>
-              </td> -->
             </tr>
             <?php endforeach; ?>           
           </tbody>
@@ -112,9 +103,9 @@ $(document).ready(function() {
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
+                <th>Complaint for Section</th>
                 <th>Pending With</th>
                 <th class="text-center">View</th>
-                <th class="text-center">Action</th>
               </tr>
               </thead>
               <?php
@@ -126,12 +117,9 @@ $(document).ready(function() {
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_pending->CM_NO ?></td>
                 <td><?php echo $v_pending->CSC_NAME ?></td>
-                <td><?php echo $v_pending->EMPNAME ?></td>              
+                <td><?php echo $v_pending->MJ_USER_TYPE_NAME ?></td>
+                <td><?php echo $v_pending->EMPNAME ?></td>               
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_pending->CM_NO; ?>"></center>
-                </td>
-                <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" disabled id="<?php echo $v_pending->CM_NO; ?>">
-                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -148,10 +136,9 @@ $(document).ready(function() {
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
+                <th>Complainant for Section </th>
                 <th>Pending With</th>
-                <th>No of Unit Assign</th>
                 <th class="text-center">View</th>
-                <th class="text-center">Action</th>
               </tr>
               </thead>
               <?php
@@ -163,13 +150,9 @@ $(document).ready(function() {
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_accept->CM_NO ?></td>
                 <td><?php echo $v_accept->CSC_NAME ?></td>
-                <td><?php echo $v_accept->EMPNAME ?></td>  
-                <td><?php echo $v_accept->NO_UNIT ?></td>            
+                <td><?php echo $v_accept->MJ_USER_TYPE_NAME ?></td>  
+                <td><?php echo $v_accept->EMPNAME ?></td>            
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="View" id="<?php echo $v_accept->CM_NO; ?>"></center>
-                </td>
-                <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm revert_back" value="REVERT BACK" id="<?php echo $v_accept->CM_NO; ?>">
-                  </center>
                 </td>
               </tr>
               <?php endforeach; ?>           
@@ -180,16 +163,15 @@ $(document).ready(function() {
         <div class="tab-pane fade" id="on_hold_comp">
             <h4 class="mt-2">Total Number of On Hold complaint</h4>
             <?php if(isset($hold_comp)) {?>
-            <table id="pending_comp" class="table table-striped table-bordered">
+            <table id="comp_on_hold" class="table table-striped table-bordered">
               <thead>    
               <tr>
                 <th>S.No</th>
                 <th>Complaint No</th>
                 <th>Complainant Type </th>
+                <th>Complainant for Section </th>
                 <th>On Hold With</th>
-                <th>Hold Location</th>
                 <th class="text-center">View</th>
-                <th class="text-center">Action</th>
               </tr>
               </thead>
               <?php
@@ -201,14 +183,10 @@ $(document).ready(function() {
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_hold->CM_NO ?></td>
                 <td><?php echo $v_hold->CSC_NAME ?></td>
-                <td><?php echo $v_hold->EMPNAME ?></td>  
-                <td><?php echo $v_hold->CM_COMPLAINT_LOCATION ?></td>            
+                <td><?php echo $v_hold->MJ_USER_TYPE_NAME ?></td> 
+                <td><?php echo $v_hold->EMPNAME ?></td>            
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_hold->CM_NO; ?>"></center>
-                </td>               
-                <td>                  
-                  <center><input type="button" class="btn btn-info btn-sm status_update" value="UPDATE STATUS" disabled id="<?php echo $v_hold->CM_NO; ?>">
-                  </center>
-                </td>
+                </td> 
               </tr>
               <?php endforeach; ?>           
               </tbody>
@@ -223,9 +201,9 @@ $(document).ready(function() {
               <tr>
                 <th>S.No</th>
                 <th>Complaint No</th>
-                <th>Complainant Type </th>
+                <th>Complainant Type </th>                
+                <th>Complainant for Section </th>
                 <th>Closed By</th>
-                <th>No of Unit Assign</th>
                 <th class="text-center">View</th>
               </tr>
               </thead>
@@ -237,9 +215,9 @@ $(document).ready(function() {
               <tr>
                 <td><?php echo $no ?></td>
                 <td><?php echo $v_closed->CM_NO ?></td>
-                <td><?php echo $v_closed->CSC_NAME ?></td>
-                <td><?php echo $v_closed->EMPNAME ?></td>  
-                <td><?php echo $v_closed->NO_UNIT ?></td>            
+                <td><?php echo $v_closed->CSC_NAME ?></td>  
+                <td><?php echo $v_closed->MJ_USER_TYPE_NAME ?></td>
+                <td><?php echo $v_closed->EMPNAME ?></td>            
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_closed->CM_NO; ?>"></center>
                 </td>               
               </tr>
@@ -258,6 +236,7 @@ $(document).ready(function() {
                 <th>Complaint No</th>
                 <th>Complaint Type</th>
                 <th>Complaint Department </th>
+                <th>Complaint Attended by Section </th>
                 <th class="text-center">View</th>
               </tr>
               </thead>
@@ -272,6 +251,7 @@ $(document).ready(function() {
                 <td><?php echo $v_tot->CM_NO ?></td>
                 <td><?php echo $v_tot->CSC_NAME ?></td>
                 <td><?php echo $v_tot->DEP_DESC ?></td>
+                <td><?php echo $v_tot->MJ_USER_TYPE_NAME ?></td>
                 <td><center><input type="button" class="btn btn-warning btn-sm view_data" value="VIEW" id="<?php echo $v_tot->CM_NO; ?>"></center>
                 </td>                
               </tr>

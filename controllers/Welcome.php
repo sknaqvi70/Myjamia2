@@ -47,6 +47,8 @@ class Welcome extends CI_Controller {
 		        	$data['message'] = 'Your account has expired! Pl. contact FTK-CIT.';
 		        elseif ($AccountStatus == 'DNE') //Does not exists
 		        	$data['message'] = 'Invalid login/password. Pl. try again!';
+		        elseif ($AccountStatus == 'S') //S for stop added by raquib
+		        	$data['message'] = 'Your account has Stoped! Pl. contact FTK-CIT.';
 		        else
 		        	$data['message'] = 'Please enter your login name and password carefully!';
 		                    

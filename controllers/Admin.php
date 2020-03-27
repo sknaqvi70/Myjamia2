@@ -43,7 +43,18 @@ class Admin extends CI_Controller {
 				$Current_year = $this->input->post('CM_YEAR');
 			}*/
 			$DepId 				= $_SESSION['admindepid'];
+			$data['DepDesc']	= $this->admin->getDeptName($DepId);
 			$UserType			= $_SESSION['usertype'];
+			if ($UserType == 16) {
+			$cc_no 				=$this->admin->fetch_cc_no($UserType, $DepId);
+			$data['open']		=$this->admin->getOpenCompDept($cc_no);
+			$data['pending_at']	=$this->admin->getPendingForAcpt($cc_no);
+			$data['pending']	=$this->admin->getPendingCompDept($cc_no);
+			$data['hold']		=$this->admin->getHoldCompDept($cc_no);
+			$data['closed']		=$this->admin->getClosedCompByDept($cc_no);
+		 	$data['total']		=$this->admin->getTotalComplaintDept($cc_no);
+			$this->load->view('admin/welcomeSuperAdmin', $data);	
+			}else{
 			$cc_no 				=$this->admin->fetch_cc_no($UserType, $DepId);
 			$data['open']		=$this->admin->getOpenComplaint($cc_no, $UserType);
 			$data['pending_at']	=$this->admin->getPendingAcceptance($cc_no, $UserType);
@@ -51,16 +62,31 @@ class Admin extends CI_Controller {
 			$data['hold']		=$this->admin->getHoldComplaint($cc_no, $UserType);
 			$data['closed']		=$this->admin->getClosedComplaint($cc_no, $UserType);
 	 		$data['total']		=$this->admin->getTotalComplaint($cc_no, $UserType);
-		$this->load->view('admin/welcomeAdmin', $data);	
+			$this->load->view('admin/welcomeAdmin', $data);	
+			}
 		}else{
 			$UserId 					= $_SESSION['login'];
 			$data['pending_comp']		= $this->admin->getPendingForAccept($UserId);
 			$data['accepted_comp']		= $this->admin->getAcceptedComplaint($UserId);
 			$data['closed_comp']		= $this->admin->fetchClosedComplaint($UserId);
 	 		$data['total_assigned']		= $this->admin->getTotalAssign($UserId);
-		$this->load->view('admin/welcomeHR', $data);
+			$this->load->view('admin/welcomeHR', $data);
 		}
 		
+	}
+
+	//this function is used for complaint status of departmental wise
+	public function ComplaintStatusDep(){
+		$DepId 				= $_SESSION['admindepid'];
+		$UserType			= $_SESSION['usertype'];
+		$cc_no 				=$this->admin->fetch_cc_no($UserType,$DepId);
+		$data['open_no_comp']		=$this->admin->getOpenComplaintDep($cc_no);
+        $data['pending_for_accept']	=$this->admin->getPendingAtEngineerDep($cc_no);
+        $data['pending_no_comp']	=$this->admin->getPendingComplaintsDep($cc_no);
+        $data['hold_comp']			=$this->admin->getHoldComplaintsDep($cc_no);
+        $data['closed_no_comp']		=$this->admin->getClosedComplaintsDep($cc_no);
+		$data['tot_no_comp']		=$this->admin->getTotalNoComplaintsDep($cc_no);
+		$this->load->view('admin/ComplaintStatusDep', $data);
 	}
 
 	public function complaintStatus(){
