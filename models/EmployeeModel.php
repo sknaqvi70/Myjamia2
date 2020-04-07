@@ -55,6 +55,9 @@ class EmployeeModel extends CI_Model {
 	}
 
 	public function salary_info($UserId,$EmpDepid,$end_date,$month,$year){
+		$dateFormate 		= "DD-MM-YYYY";
+		$printDateFormate 	= "DAY, DD-Mon-YYYY HH:MI:SS am";
+		$printdate	=date('d-m-Y');
 		$array_edh_amt = array('2', '3');   		
 		
 		$this->db->select('EMP.EMP_ID, EMP_NAME(EMP_ID) NAME, DSG.DSG_DESC
@@ -63,7 +66,7 @@ class EmployeeModel extends CI_Model {
 		 	               DEPARTMENT, EMP.EMP_AGENCY, EDH.EDH_STATUS,EDH. 
 		 	               EDH_PAYSCALE , EDH.EDH_ACC_NO,EDH.EDH_PF_NO,EDH.EDH_DNI,
 		 	               EDH.EDH_JOINING_TYPE STATUS,EMP.EMP_TITLE,EMP.EMP_PAN, 
-		 	               OFA_DESC,EDH.EDH_DATE,EMP_PF_NO');
+		 	               OFA_DESC,EDH.EDH_DATE,EMP_PF_NO,TO_CHAR(TO_DATE('."'$printdate'".', '."'$dateFormate'".'), '."'$printDateFormate'".') PRINTDATE');
 		$this->db->from('EMP_MST EMP');
 		$this->db->join('EMP_EARN_DED_HIST EDH', 'EDH.EDH_EMP_ID = EMP.EMP_ID');
 		$this->db->join('DSG_MST DSG', 'DSG.DSG_ID = EDH.EDH_DSG_ID');
@@ -117,10 +120,11 @@ class EmployeeModel extends CI_Model {
                 <td valign="top" align="left" colspan="3">'.ucwords(strtolower("$v_sdtl->DEPARTMENT")).'<br><br>'.($v_sdtl->EMP_PF_NO).'</td>
               </tr>
             </tbody>
-              ';
-		 	} 
-		$output .= 'Note:</table><br>';
-
+            </table><br>
+			<footer>
+            Copyright &copy; Jamia Millia Islamia, Printed On : ('.$v_sdtl->PRINTDATE.') 
+        	</footer>';
+        }
 		return $output;/*
 		return $query->result();*/
 

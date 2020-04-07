@@ -287,7 +287,7 @@ class Welcome extends CI_Controller {
 			foreach($AdminUserData as $audata):
 			$UserName= $audata->ADMINNAME;
     		$AdminDepId= $audata->DEPID;
-    		//$EmpDepDesc= $audata->DEP_DESC;
+    		$AdminDepDesc= $audata->DEP_NAME;
 			endforeach;
 
 
@@ -308,8 +308,8 @@ class Welcome extends CI_Controller {
         	'depdesc'	=>	$DepDesc,
         	'empdepid'	=>	$EmpDepId,
         	'empdepdesc'=>	$EmpDepDesc,
-        	'admindepid'=>	$AdminDepId/*,
-        	'contdepid'	=>	$ContDepId*/
+        	'admindepid'=>	$AdminDepId,
+        	'admindepdesc'=>$AdminDepDesc
 		);
 
 		$this->session->set_userdata($sessionData);

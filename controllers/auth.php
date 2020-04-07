@@ -53,7 +53,7 @@ class Auth extends CI_Controller {
 		$this->session->unset_userdata('empdepid');
 		$this->session->unset_userdata('empdepdesc');
 		$this->session->unset_userdata('admindepid');
-		//$this->session->unset_userdata('contdepid');
+		$this->session->unset_userdata('admindepdesc');
 
 
 		$data['message'] = 'Thanks for using MyJamia Portal!';

@@ -341,6 +341,88 @@ class Complaint extends CI_Controller {
 		}
 	}
 
+	//this function used for print complaint report
+	public function ComplaintReport(){
+		$this->load->model('AdminModel', 'admin');
+		$DepId 				= $_SESSION['admindepid'];
+		$UserType			= $_SESSION['usertype'];
+		$cc_no 				=$this->admin->fetch_cc_no($UserType,$DepId);
+		$data['comp']	=$this->CM->getComplaints($cc_no, $UserType);
+		
+		$this->load->view('auth/complaintReport', $data);
+
+	}
+
+	//
+	public function getComplaintDtlForPrint(){
+		$this->load->library('Pdf');
+		$UserType			= $_SESSION['usertype'];
+		$DepDesc			= $_SESSION['admindepdesc'];
+		if ($this->uri->segment(3)) {
+			$COM_NO			=substr($this->uri->segment(3),0,3);
+			$TicketNo 		=substr($this->uri->segment(3),3);;
+			$UserTypeDesc	=$this->CM->getUserTypeName($UserType);
+
+			$html_content = '<!DOCTYPE html><html>
+			<head>
+				<style>
+				#logoimage {
+ 					float: left ;
+				}
+				#headertext {
+  					float: left ;
+				}
+				#headercontainer {
+  					width: 400px ;
+  					max-width: 100% ;
+  					margin-left: auto ;
+  					margin-right: auto ;
+				}
+				#headercontainerlogo {
+  					max-width: 100% ;
+  					margin-left: auto ;
+  					margin-right: auto ;
+				}
+				footer {
+                position: fixed; 
+                bottom: -60px; 
+                left: 0px; 
+                right: 0px;
+                height: 50px; 
+
+                /** Extra personal styles **/
+                color: black;
+                text-align: center;
+                line-height: 35px;
+            	}
+				</style>
+			</head>
+			<body>
+			<div class="container-fluid" id="listdown">
+			<div class="col-md-8 ">
+			<div id="headercontainerlogo">
+				<img id="logoimage" src="'.__DIR__.'/../assets/images/appllogo1.png" alt="" style="width: 80px; height: 80px;">
+			</div>
+			<div id="headercontainer">
+					<ul id="headertext">
+					<font size="20px" font-family:Calibri;">'.ucwords(strtolower($DepDesc)).'</font><br>
+					<font size="20px" font-family:Calibri;">'.$UserTypeDesc.' Complaint Form</font>
+					</ul>
+					<br style="clear: both;">
+			</div>';
+		$html_content .= $this->CM->getComplaintDetails($COM_NO,$TicketNo);
+		$html_content .= $this->CM->getComplaintHistory($COM_NO);
+		$html_content .= $this->CM->getComplaintAttended($COM_NO,$TicketNo);
+		$html_content .='</div></div></body></html>';
+			$this->pdf->loadHtml($html_content);
+            $this->pdf->render();
+            ob_end_clean();
+            ob_start();
+
+            $this->pdf->stream("Complaint Form".".pdf",array('Attachment' =>0));
+		}
+
+	}
 	
 }
 ?>

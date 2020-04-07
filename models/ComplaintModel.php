@@ -632,4 +632,257 @@ class ComplaintModel extends CI_Model {
 		$output .= '</table>';
 		return $output; 
 	}
+
+		//this function is use for fetch details of complaint section wise for print
+	public function getComplaints($cc_no, $UserType){ 
+		$dateFormate 	= "DAY, DD-Mon-YYYY HH:MI:SS am";         			
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME,A.CM_COMPLAINT_TEXT,CMM_DESC EMPNAME,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE,MJ_CAD_ID');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B','A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('COMPANY_MST F', 'C.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('B.CSC_USER_TYPE', $UserType);
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME,
+		A.CM_COMPLAINT_TEXT,CMM_DESC,A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,MJ_CAD_ID');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('SUM(MJ_CAD_CM_NO_UNIT) NO_UNIT,A.CM_NO, DEP_DESC, EMP_NAME(A.CM_EMP_ID) NAME,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_NAME(EMP_ID) EMPNAME,				A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,TO_CHAR(CM_COMPLAINT_CLOSE_DATE, '."'$dateFormate'".') CLOSEDDATE,MJ_CAD_ID');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B','A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_COMPLAINT_ASSIGN_DTL C', 'A.CM_NO= C.MJ_CAD_CM_NO ');
+		$this->db->join('DEP_MST D', 'A.CM_DEP_ID= D.DEP_ID ');
+		$this->db->join('EMP_MST E', 'C.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.CM_COMPLAINT_CATEGORY', $cc_no);
+		$this->db->where('B.CSC_USER_TYPE', $UserType);
+		$this->db->group_by('A.CM_NO, DEP_DESC, A.CM_EMP_ID,CSC_NAME, A.CM_COMPLAINT_TEXT,EMP_ID,
+			A.CM_COMPLAINT_LOCATION,A.CM_COMPLAINT_CONTACT_PERSON,A.CM_COMPLAINT_CONTACT_MOBILE,A.CM_COMPLAINT_CONTACT_EMAIL,CM_COMPLAINT_DATE,CM_COMPLAINT_CLOSE_DATE,MJ_CAD_ID');
+		//$this->db->order_by('CM_COMPLAINT_DATE', 'DESC');
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		return $data->result();			
+	}
+
+	//this function is used to get complaint section desc from mj_user_type table
+	public function getUserTypeName($UserType){
+		$this->db->select('MJ_USER_TYPE_NAME');
+		$this->db->where('MJ_USER_TYPE_ID',$UserType);
+		$query = $this->db->get('MJ_USER_TYPE');
+  		$row = $query->row();
+		if (isset($row))
+		     return $row->MJ_USER_TYPE_NAME;
+	}
+
+	//
+	public function getComplaintDetails($COM_NO,$TicketNo){
+		$dateFormate 	= "DD-Mon-YYYY HH:MI:SS am";
+		$where = "CM_EMP_ID IS NOT NULL";         			
+		$this->db->select('CM_NO, "DEP_DESC", EMP_NAME(A.CM_EMP_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT,CM_COMPLAINT_LOCATION,CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,CM_NO_UNIT,CM_EMP_ID COMPLAINT_USER_ID');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		//$this->db->join('MJ_COMPLAINT_ASSIGN_DTL M', 'M.MJ_CAD_CM_NO=A.CM_NO');
+		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');	
+		$this->db->where('A.CM_NO',$COM_NO);
+		$this->db->where($where);
+		//$this->db->where($IsNoNull);
+		$query1 = $this->db->get_compiled_select();	
+
+		//for Student 
+		$where = "CM_STU_ID IS NOT NULL";
+		$this->db->select('CM_NO, "DEP_DESC", STU_NAME(A.CM_STU_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,CM_NO_UNIT,CM_STU_ID COMPLAINT_USER_ID');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		//$this->db->join('MJ_COMPLAINT_ASSIGN_DTL M', 'M.MJ_CAD_CM_NO=A.CM_NO');
+		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');	
+		$this->db->where('A.CM_NO',$COM_NO);
+		$this->db->where($where);
+		//$this->db->where($IsNoNull);
+		$query2 = $this->db->get_compiled_select();
+
+		//for contrator and profession staff
+		$where = "CM_CMM_ID IS NOT NULL";
+		$this->db->select('CM_NO, "DEP_DESC", CMM_DESC NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT, CM_COMPLAINT_LOCATION, CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,CM_NO_UNIT,A.CM_CMM_ID COMPLAINT_USER_ID');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		//$this->db->join('MJ_COMPLAINT_ASSIGN_DTL M', 'M.MJ_CAD_CM_NO=A.CM_NO');
+		$this->db->join('COMPANY_MST C', 'A.CM_CMM_ID = C.CMM_ID');
+		$this->db->join('DEP_MST C', 'A.CM_DEP_ID= C.DEP_ID ');	
+		$this->db->where('A.CM_NO',$COM_NO);
+		$this->db->where($where);
+		//$this->db->where($IsNoNull);
+		$query3 = $this->db->get_compiled_select();
+
+		$data = $this->db->query($query1 . ' UNION ' . $query2 . ' UNION ' . $query3);
+
+		$output = '<table class="table table-striped table-hover" width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;border: 1px solid;">';
+		 	foreach($data->result() as $v_cdtl){
+		 	$output .='<tbody>
+              <tr>
+                <td valign="top" height="20" align="left"><strong>Complaint No: </strong></td>
+                <td valign="top" align="left"><b>'.$COM_NO.'</b></td>
+                <td valign="top" align="left"><strong>Ticket No: </strong></td>
+                <td valign="top" align="left">'.$TicketNo.'</td>
+                <td valign="top" align="left"><strong>Complaint Reg. Date: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->REGDATE.'</td>
+              </tr>              
+              <tr>                
+                <td valign="top" height="20" align="left"><strong>Name Of Complainent: </strong></td>
+                <td valign="top" align="left">'.ucwords(strtoupper("$v_cdtl->CM_COMPLAINT_CONTACT_PERSON")).
+                '</td>
+                <td valign="top" align="left"><strong>Email Id: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CM_COMPLAINT_CONTACT_EMAIL.
+                '</td>
+          		<td valign="top" align="left"><strong>Mobile No: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CM_COMPLAINT_CONTACT_MOBILE.'
+                </td>                
+              </tr>
+              <tr>                
+                <td valign="top" height="20"align="left"><strong>Complaint Type.: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CC_NAME.
+                '</td>
+                <td valign="top" align="left"><strong>Complaint Sub Type: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CSC_NAME.
+                '</td>
+          		<td valign="top" align="left"><strong>No. of Faulty Equipment/Service Unit: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CM_NO_UNIT.
+                '</td>                
+              </tr>              
+              <tr>                
+                <td valign="top" height="20"align="left"><strong>Description of problem: </strong></td>
+                <td valign="top" align="left">'.ucwords(strtolower("$v_cdtl->CM_COMPLAINT_TEXT")).
+                '</td>
+                <td valign="top" align="left"><strong>Complaint Department: </strong></td>
+                <td valign="top" align="left">'.ucwords(strtoupper("$v_cdtl->DEP_DESC")).
+                '</td>
+          		<td valign="top" align="left"><strong>Complaint Location: </strong></td>
+                <td valign="top" align="left">'.$v_cdtl->CM_COMPLAINT_LOCATION.
+                '</td>                
+              </tr>
+            </tbody>';
+		 	} 
+		$output .= '</table><font size="16"><strong>Ticket History:</strong></font>';
+
+		return $output;
+	}
+
+	//
+	public function getComplaintHistory($COM_NO){
+		$orderBy = "MJ_CA_ID ASC";	
+		$dateFormate 	= "DD-Mon-YYYY HH:MI:SS am";
+		$where = "CM_EMP_ID IS NOT NULL";         			
+		$this->db->select('MJ_CA_ID,CM_NO,CC_NAME,CSC_NAME,CM_COMPLAINT_TEXT,MJ_CA_REMARKS,
+			MJ_CA_ACTION,CM_COMPLAINT_DATE,	CM_COMPLAINT_CLOSE_DATE,TO_CHAR(MJ_CA_ACTION_DATE, '."'$dateFormate'".') ACTIONDATE');
+		$this->db->from('COMPLAINT_MST A');
+		$this->db->join('COMPLAINT_CATEGORY D', 'A.CM_COMPLAINT_CATEGORY=D.CC_NO');
+		$this->db->join('COMPLAINT_SUB_CATEGORY B', 'A.CM_COMPLAINT_SUB_CATEGORY=B.CSC_NO');
+		$this->db->join('MJ_COMPLAINT_ACTION_DTL C', 'A.CM_NO = C.MJ_CA_CM_NO');
+		$this->db->where('C.MJ_CA_CM_NO',$COM_NO);
+		$this->db->where($where);
+		$this->db->order_by($orderBy);
+		$query = $this->db->get();	
+		
+		$output .= '<table class="table table-striped table-bordered table-hover " width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;
+  			border: 1px solid;">';
+  		
+  		$output .='<thead>    
+            		<tr>
+              			<th>S.No</th>
+              			<th>Remarks</th>
+              			<th>Action Date</th>
+              			<th>Complaint Status</th>
+            		</tr>
+            	</thead>';
+		 	$no = 0;
+            foreach($query->result() as $v_csdtl):
+            $no++;
+		 	$output .='<tbody>
+		 		 <tr>
+              		<td>'.$no.'</td>
+              		<td>'.$v_csdtl->MJ_CA_REMARKS.'</td>
+              		<td>'.$v_csdtl->ACTIONDATE.'</td>
+              		<td>'.$v_csdtl->MJ_CA_ACTION.'</td>
+            	</tr>                 
+                </tbody>
+              ';
+		 	endforeach;
+		$output .= '</table>';
+		return $output;
+
+	}
+
+	//
+	public function getComplaintAttended($COM_NO,$TicketNo){
+		$dateFormate 		= "DD-MM-YYYY";
+		$printDateFormate 	= "DAY, DD-Mon-YYYY HH:MI:SS am";
+		$printdate	=date('d-m-Y');
+		$this->db->select('CMM_DESC EMPNAME,TO_CHAR(TO_DATE('."'$printdate'".', '."'$dateFormate'".'), '."'$printDateFormate'".') PRINTDATE,MJ_CAD_COMPLAINT_STATUS,MJ_CAD_REMARKS');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('COMPANY_MST F', 'A.MJ_CAD_CMM_ID= F.CMM_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $COM_NO);
+		$this->db->where('A.MJ_CAD_ID', $TicketNo);
+		$query1 = $this->db->get_compiled_select();
+
+		$this->db->select('EMP_NAME(A.MJ_CAD_EMP_ID) EMPNAME,TO_CHAR(TO_DATE('."'$printdate'".', '."'$dateFormate'".'), '."'$printDateFormate'".') PRINTDATE,MJ_CAD_COMPLAINT_STATUS,MJ_CAD_REMARKS');
+		$this->db->from('MJ_COMPLAINT_ASSIGN_DTL A');
+		$this->db->join('EMP_MST E', 'A.MJ_CAD_EMP_ID= E.EMP_ID ');
+		$this->db->where('A.MJ_CAD_CM_NO', $COM_NO);
+		$this->db->where('A.MJ_CAD_ID', $TicketNo);
+		$query2 = $this->db->get_compiled_select();
+		$data = $this->db->query($query1 . ' UNION ' . $query2);
+		foreach($data->result() as $v_csdtl){
+			if ($v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Closed' || $v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Put On Hold') {
+				$output .= '<table class="table table-striped table-bordered table-hover " width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;
+  					border: 1px solid;">
+  				<tr>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				<tr>
+  					<td>Whether Ticket is Closed/Put on Hold : </td>
+  					<td>Yes</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				<tr>
+					<td>Reson Is :</td>
+					<td colspan="2">'.$v_csdtl->MJ_CAD_REMARKS.'</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				</table>';
+			}else{
+				$output .= '<br><br>Whether Ticket is Closed/Put on Hold (Yes/No):  ............................. <br>
+				Comment :
+					<textarea rows="10"cols="200"></textarea>';
+			}
+		}
+		$output .= '<br><br><br><br><br><br>';
+  		foreach($data->result() as $v_csdtl):
+  		$output .='( .......................................... )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		( .......................................... )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		( .......................................... )<br>';
+       
+		$output .='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Signature with&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		Signature of Section Head&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		Sign. of Ticket Attended By <br>';
+		$output .='( Name, Date & Office Stamp )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		( Name & Date ) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		('.$v_csdtl->EMPNAME.')
+		<br><br> 
+
+			<footer>
+            Copyright &copy; Jamia Millia Islamia, Printed On : ('.$v_csdtl->PRINTDATE.') 
+        	</footer>';
+		endforeach;
+		return $output;
+	}
 }

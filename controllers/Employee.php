@@ -79,6 +79,18 @@ class Employee extends CI_Controller {
   					margin-left: auto ;
   					margin-right: auto ;
 				}
+				footer {
+                position: fixed; 
+                bottom: -60px; 
+                left: 0px; 
+                right: 0px;
+                height: 50px; 
+
+                /** Extra personal styles **/
+                color: black;
+                text-align: center;
+                line-height: 35px;
+            	}
 				</style>
 			</head>
 			<body>

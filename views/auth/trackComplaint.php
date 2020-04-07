@@ -4,10 +4,11 @@
       <!--------- Start Complaint Registration --------->
       <div class="panel panel-info">
         <div class="panel-heading" style="text-align: center;"><h4>Track Complaint Status</h4></div>
-          <div class="panel-body table-responsive">
+          <div class="panel-body table-responsive">          
           <?php if(isset($comp_status)) {?>
           <!-- this table is used for fee details display -->
             <table class="table table-striped table-bordered table-hover" align="center" style="font-size:15px; font-family:Calibri;">
+            <font color="red" size="5"> Click on Complaint Number to get Complaint Details</font><br><br>
             <thead>    
             <tr>
               <th>S.No</th>

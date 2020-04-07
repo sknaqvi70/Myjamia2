@@ -253,11 +253,13 @@ class UserModel extends CI_MODEL {
 	//This function fectches User ( User Type 6,7,8,9) Name added by raquib
 	public function getAdminName($UserId) {
 
-		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_POST_DEP DEPID');
+		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_POST_DEP DEPID,D.DEP_DESC DEP_NAME');		
+		$this->db->join('DEP_MST D', 'A.EMP_POST_DEP= D.DEP_ID ');
 		$this->db->where('EMP_ID','EMP\\'.$UserId);		 
-		$query1 = $this->db->get_compiled_select('EMP_MST');
+		$query1 = $this->db->get_compiled_select('EMP_MST A');
 		    		
-		$this->db->select('CMM_DESC ADMINNAME,CMM_DEP_ID DEPID');
+		$this->db->select('CMM_DESC ADMINNAME,CMM_DEP_ID DEPID,D.DEP_DESC DEP_NAME');
+		$this->db->join('DEP_MST D', 'A.CMM_DEP_ID= D.DEP_ID ');
 		$this->db->where('CMM_ID',$UserId);		 
 		$query2 = $this->db->get_compiled_select('COMPANY_MST A');
   		    		
