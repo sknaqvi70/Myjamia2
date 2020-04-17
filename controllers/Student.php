@@ -13,8 +13,9 @@ class Student extends CI_Controller {
 	}
 	//this function used for to view profile
 	public function profile(){
-		$UserId= $_SESSION['login'];
-		$data['stu_dtl']=$this->stu->stu_info($UserId);
+		$UserId				= $_SESSION['login'];
+		$data['stu_dtl']	=$this->stu->stu_info($UserId);
+		$data['filePath']	=$this->stu->filePath();
 		$this->load->view('stu/profile', $data);
 	}
 	//this function used for fetch details of program fee paid to display
@@ -22,6 +23,34 @@ class Student extends CI_Controller {
 		$UserId= $_SESSION['login'];
 		$data['stu_fee_dtl']=$this->stu->getFeeReceipt($UserId);		
 		$this->load->view('stu/feereciept', $data);
+	}
+	public function getImage(){
+		$img = $_GET['i'];
+		$ext = substr($img, -4);
+		switch ($ext) {
+  			case 'JFIF':
+    			$mime = 'image/JFIF';
+    			break;
+  			case 'jpg':
+    			$mime = 'image/jpeg';
+    			break;
+  			case 'gif':
+    			$mime = 'image/gif';
+    			break;
+  			case 'png':
+    			$mime = 'image/png';
+    			break;
+  			default: $mime = false;
+		}
+		if ($mime) {
+  			header('Content-type: '.$mime);
+			header('Content-length: '.filesize($img));
+			$file = @fopen($img, 'rb');
+			if ($file) {
+  				fpassthru($file);
+  				exit; 
+			}
+		}
 	}
 
 	//this function used for to fetch fee paid to view in details

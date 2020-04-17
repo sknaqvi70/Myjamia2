@@ -7,8 +7,9 @@ class EmployeeModel extends CI_Model {
 		$this->load->database();		
 	}
 	//this function used for to view profile information
-	public function emp_info($UserId){	          			
-		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME, EMP_DOB,EMP_RET_DATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID,EMP_BLOOD_GROUP,EMP_PIC');
+	public function emp_info($UserId){	
+		$dateFormate 	= "DD-Mon-YYYY";          			
+		$this->db->select('EMP_ID, EMP_TITLE,EMP_NAME(EMP_ID) NAME,TO_CHAR(EMP_DOB, '."'$dateFormate'".') EMPDOB,TO_CHAR(EMP_RET_DATE, '."'$dateFormate'".') EMPRETDATE, EMP_GENDER, EMP_SPOUSE, EMP_FATHER,EMP_MOTHER,DEP_DESC ,OFA_DESC,desig(EMP_ID) EMP_DESIGNATION, A.EMP_PERMANENT_ADD.MAIL EMAIL,A.EMP_PERMANENT_ADD.ADDRLINE1 P_ADD1,A.EMP_PERMANENT_ADD.ADDRLINE2 P_ADD2,A.EMP_PERMANENT_ADD.DISTRICT P_CITY, E.GEM_DESC P_STATE,A.EMP_PERMANENT_ADD.PIN P_PINCODE,A.EMP_PERMANENT_ADD.RES_PHNO P_MOBILE,A.EMP_TEMPORARY_ADD.ADDRLINE1 C_ADD1,A.EMP_TEMPORARY_ADD.ADDRLINE2 C_ADD2, A.EMP_TEMPORARY_ADD.DISTRICT C_CITY,F.GEM_DESC C_STATE,   A.EMP_TEMPORARY_ADD.PIN C_PINCODE, A.EMP_TEMPORARY_ADD.RES_PHNO C_MOBILE,EMP_NATIONALITY,EMP_EMAIL_ID,EMP_BLOOD_GROUP,EMP_PIC');
 		$this->db->from('EMP_MST A');
 		$this->db->join('DEP_MST C', 'A.EMP_DEPARTMENT= C.DEP_ID ');
 		$this->db->join('OFF_FAC_MST D', 'C.DEP_OFA_ID=D.OFA_ID ');		
@@ -20,14 +21,52 @@ class EmployeeModel extends CI_Model {
 		return $query->result();			
 	}
 
+	//this function is used for fetch education details for the employee
+	public function emp_edu_dtl($UserId){
+		$this->db->select('EMQ_EMP_ID,EMQ_QUA_ID ,EMQ_DESC,EMQ_QIP,EMQ_YR_FROM,
+			EMQ_YR_TO, EMQ_GRADE_PCT,EMQ_PCT,EMQ_UNIV_BRD,QUA_EDUCATION');		
+		$this->db->join('QUA_MST C', 'A.EMQ_QUA_ID= C.QUA_ID ');
+		$this->db->where(['EMQ_EMP_ID'=>'EMP\\'.$UserId]);
+		$this->db->order_by('EMQ_YR_TO', 'DESC');
+		$query = $this->db->get('EMP_QUAL A');
+		return $query->result();
+
+	}
+
+	//this function is used to fetch employee family details
+	public function emp_fam_dtl($UserId){
+		$dateFormate 	= "DD-Mon-YYYY";          			
+		$this->db->select('FAM_MEM_ID,FAM_EMP_ID,FAM_MEM_NAME,FAM_RELATIONSHIP,FAM_GENDER,FAM_MARITAL_STATUS,TO_CHAR(FAM_DOB, '."'$dateFormate'".') FAMDOB,FAM_DEPENDENT,FAM_NOMINEE,FAM_CPF,FAM_GPF,FAM_PENSION,FAM_ACCT_NO,FAM_BANK_NAME,FAM_INCOME,FAM_STATUS,FAM_REMARKS');
+		$this->db->where(['FAM_EMP_ID'=>'EMP\\'.$UserId]);
+		$this->db->order_by('FAM_MEM_ID', 'ASC');
+		$query = $this->db->get('FAM_DTL');
+
+		return $query->result();
+
+	}
+
+	//this funtion is used for fetch bank details of employee
+	public function emp_bank_dtl($UserId){
+		$this->db->select('EMP_ID, EMP_BANK_NAME,EMP_BRANCH ,EMP_ACC_TYPE,
+			EMP_ACC_NO,EMP_BANK_ADDRESS');
+		$this->db->where(['EMP_ID'=>'EMP\\'.$UserId]);
+		$query = $this->db->get('EMP_MST');
+
+		return $query->result();
+
+	}
+
 	//this function is used to fetch employee pic from database
 	public function getEmpPic($UserId){
 		$empid='EMP\\'.$UserId;
-		$response=$this->db->query("SELECT EIC_PICS FROM emp_id_card
-					WHERE EIC_ISS_DATE=(SELECT MAX(EIC_ISS_DATE) FROM emp_id_card
+		$response=$this->db->query("SELECT EIC_PICS FROM EMP_ID_CARD
+					WHERE EIC_ISS_DATE=(SELECT MAX(EIC_ISS_DATE) FROM EMP_ID_CARD
 					WHERE EIC_EMP_ID='$empid')
-					AND EIC_EMP_ID='$empid'")->result();
-		return $response;
+					AND EIC_EMP_ID='$empid'");
+		if($response->num_rows() > 0) 
+				return $response->row()->EIC_PICS;
+			else
+				return "No Employee Image to show"; 
 	}
 
 	public function getSalYear($UserId){

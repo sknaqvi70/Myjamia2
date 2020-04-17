@@ -14,19 +14,31 @@ class Employee extends CI_Controller {
 	//this function used for to view profile
 	public function profile(){
 		$UserId= $_SESSION['login'];
-		$data['emp_dtl']=$this->emp->emp_info($UserId);	
-		$showrow=$this->emp->getEmpPic($UserId);/*
-		
-		if(!$showrow){
+		$data['emp_dtl']=$this->emp->emp_info($UserId);
+		$data['edu_dtl']=$this->emp->emp_edu_dtl($UserId);
+		$data['fam_dtl']=$this->emp->emp_fam_dtl($UserId);
+		$data['bank_dtl']=$this->emp->emp_bank_dtl($UserId);
+		$data['showrow'] =$this->emp->getEmpPic($UserId);
+
+
+		/*if(!$showrow){
 			return 'No Image';
 		}else{
-			$image=$showrow->load();
-			header("Content-type: image/BMP");
-			print $image;
+			//$image=$showrow->load();
+			header("Content-type: image/jpeg");
+			print $showrow;
 		}
-		exit();*/
+		exit();*/ 
 		$this->load->view('emp/profile', $data);
 	}
+
+	/*public function getImage(){		
+		$UserId 		= $_GET['id'];
+		echo " User Id".$UserId;
+		$showrow =$this->emp->getEmpPic($UserId);
+		print $showrow;
+
+	}*/
 
 	//slary slip
 	public function salary_slip(){

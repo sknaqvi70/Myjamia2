@@ -835,7 +835,7 @@ class ComplaintModel extends CI_Model {
 		$query2 = $this->db->get_compiled_select();
 		$data = $this->db->query($query1 . ' UNION ' . $query2);
 		foreach($data->result() as $v_csdtl){
-			if ($v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Closed' || $v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Put On Hold') {
+			if ($v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Closed') {
 				$output .= '<table class="table table-striped table-bordered table-hover " width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;
   					border: 1px solid;">
   				<tr>
@@ -844,12 +844,12 @@ class ComplaintModel extends CI_Model {
   					<td>&nbsp;</td>
   				</tr>
   				<tr>
-  					<td>Whether Ticket is Closed/Put on Hold : </td>
-  					<td>Yes</td>
+  					<td>Whether Ticket is Closed/Put on Hold (Yes/No): </td>
+  					<td>Yes - ('.$v_csdtl->MJ_CAD_COMPLAINT_STATUS.')</td>
   					<td>&nbsp;</td>
   				</tr>
   				<tr>
-					<td>Reson Is :</td>
+					<td>Comments :</td>
 					<td colspan="2">'.$v_csdtl->MJ_CAD_REMARKS.'</td>
 					<td>&nbsp;</td>
 				</tr>
@@ -859,6 +859,34 @@ class ComplaintModel extends CI_Model {
   					<td>&nbsp;</td>
   				</tr>
   				</table>';
+			}elseif ($v_csdtl->MJ_CAD_COMPLAINT_STATUS == 'Put On Hold') {
+				$output .= '<table class="table table-striped table-bordered table-hover " width="550" align="center" style="font-size:14px; font-family:Calibri; border-radius: 10px;
+  					border: 1px solid;">
+  				<tr>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				<tr>
+  					<td>Whether Ticket is Closed/Put on Hold (Yes/No): </td>
+  					<td>Yes - ('.$v_csdtl->MJ_CAD_COMPLAINT_STATUS.')</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				<tr>
+					<td>Comments :</td>
+					<td colspan="2">'.$v_csdtl->MJ_CAD_REMARKS.'</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  					<td>&nbsp;</td>
+  				</tr>
+  				</table>';
+  				$output .= '<br>Whether Ticket is Closed (Yes/No):  ............................. <br>
+				Comment :
+					<textarea rows="10"cols="200"></textarea>';
+
 			}else{
 				$output .= '<br><br>Whether Ticket is Closed/Put on Hold (Yes/No):  ............................. <br>
 				Comment :

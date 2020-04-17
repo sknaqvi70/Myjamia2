@@ -9,10 +9,10 @@
           <tbody>
             <tr>
               <td rowspan='5'>
-              <?php $filePath='\\\\'."10.2.0.41\mis_stu_photo".'\\'.$v_sdtl->STU_ID.".JFIF"; ?> 
-            
-              <img class="media-object img-thumbnail user-img" style="width: 150px;"
-              src="<?php echo $filePath ?>" /> 
+              <?php
+              $img = $filePath.'\\'.$v_sdtl->STU_ID.".JFIF";
+                echo '<img src="getImage?i=' . urlencode($img) . '"class="media-object img-thumbnail user-img" style="width: 150px; height: 180px;">';
+              ?>
               </td>
             </tr>
             <tr>
@@ -60,11 +60,11 @@
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Date of Birth </span></td>
-              <td colspan="2"> <?php echo strtoupper("$v_sdtl->STU_DOB") ?> </td>
+              <td colspan="2"> <?php echo $v_sdtl->STUDOB ?> </td>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Date of Addmision </span></td>
-              <td colspan="2"><?php echo $v_sdtl->STU_DOA ?></td>
+              <td colspan="2"><?php echo $v_sdtl->STUDOA ?></td>
             </tr>
             
             <tr>

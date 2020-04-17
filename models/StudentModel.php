@@ -8,7 +8,8 @@ class StudentModel extends CI_Model {
 	}
 	//this function used for to view profile information
 	public function stu_info($UserId){	          			
-		$this->db->select('A.STU_ID,STU_NAME(A.STU_ID) NAME,A.STU_FATHER_NAME,A.STU_MOTHER_NAME,A.STU_HUSBAND_NAME,A.STU_SEX,A.STU_SES_ID,A.STU_BLOOD_GR,A.STU_DOB,A.STU_DOA,A.STU_COMMU_ADDR.MAIL EMAIL,A.STU_PER_ADDR.ADDRLINE1 P_ADD1,A.STU_PER_ADDR.ADDRLINE2 P_ADD2,A.STU_PER_ADDR.DISTRICT P_CITY,E.GEM_DESC P_STATE,A.STU_PER_ADDR.PIN P_PINCODE,A.STU_PER_ADDR.RES_PHNO P_MOBILE,A.STU_COMMU_ADDR.ADDRLINE1 C_ADD1,A.STU_COMMU_ADDR.ADDRLINE2 C_ADD2,A.STU_COMMU_ADDR.DISTRICT C_CITY,F.GEM_DESC C_STATE,A.STU_COMMU_ADDR.PIN C_PINCODE,A.STU_COMMU_ADDR.RES_PHNO C_MOBILE,ltrim(rtrim(a.stu_nationality)) STU_NATIONALITY,course_name(A.STU_SSM_ID) COURSE,SUBSTR(A.STU_SSM_ID,1,8) SSM_ID,A.STU_SSM_ID ,C.DEP_DESC,A.STU_DEPT,D.OFA_DESC');
+		$dateFormate 	= "DD-Mon-YYYY";          			
+		$this->db->select('A.STU_ID,STU_NAME(A.STU_ID) NAME,A.STU_FATHER_NAME,A.STU_MOTHER_NAME,A.STU_HUSBAND_NAME,A.STU_SEX,A.STU_SES_ID,A.STU_BLOOD_GR,TO_CHAR(A.STU_DOB, '."'$dateFormate'".') STUDOB,TO_CHAR(A.STU_DOA, '."'$dateFormate'".') STUDOA,A.STU_COMMU_ADDR.MAIL EMAIL,A.STU_PER_ADDR.ADDRLINE1 P_ADD1,A.STU_PER_ADDR.ADDRLINE2 P_ADD2,A.STU_PER_ADDR.DISTRICT P_CITY,E.GEM_DESC P_STATE,A.STU_PER_ADDR.PIN P_PINCODE,A.STU_PER_ADDR.RES_PHNO P_MOBILE,A.STU_COMMU_ADDR.ADDRLINE1 C_ADD1,A.STU_COMMU_ADDR.ADDRLINE2 C_ADD2,A.STU_COMMU_ADDR.DISTRICT C_CITY,F.GEM_DESC C_STATE,A.STU_COMMU_ADDR.PIN C_PINCODE,A.STU_COMMU_ADDR.RES_PHNO C_MOBILE,ltrim(rtrim(a.stu_nationality)) STU_NATIONALITY,course_name(A.STU_SSM_ID) COURSE,SUBSTR(A.STU_SSM_ID,1,8) SSM_ID,A.STU_SSM_ID ,C.DEP_DESC,A.STU_DEPT,D.OFA_DESC');
 		$this->db->from('STU_MST A');
 		$this->db->join('MJ_USER_MST B', 'B.MJ_ID_NO=A.STU_ID');
 		$this->db->join('DEP_MST C', 'A.STU_DEPT= C.DEP_ID ');
@@ -20,6 +21,17 @@ class StudentModel extends CI_Model {
 		$this->db->where('STU_ADMIN_WITHDRAWAL','N');
 		$query = $this->db->get();		
 		return $query->result();			
+	}
+
+	//this function is used to fetch file path of student photo
+	public function filePath(){
+		$this->db->select('PRM_VALUE');
+		$this->db->where('PRM_ID', '1114');
+		$query = $this->db->get('PARAM_TAB');
+		if($query->num_rows() > 0) 
+				return $query->row()->PRM_VALUE;
+			else
+				return '0'; //Error
 	}
 	//this function for fetch details of fee paid to download fee receipts
 	public function getFeeReceipt($UserId)	{
