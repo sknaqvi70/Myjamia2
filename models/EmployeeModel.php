@@ -70,10 +70,13 @@ class EmployeeModel extends CI_Model {
 	}
 
 	public function getSalYear($UserId){
+		$cr_yr 	= date('Y');
+		$where 	="EXTRACT( YEAR FROM EDH_DATE) !=".$cr_yr;
 		$this->db->distinct('EXTRACT( YEAR FROM EDH_DATE)');
 		$this->db->select('EXTRACT( YEAR FROM EDH_DATE) YEAR');
 		$this->db->where(['EDH_EMP_ID'=>'EMP\\'.$UserId]);
 		$this->db->where('EDH_EDM_ID','O006');
+		$this->db->where($where);
 		$this->db->order_by('YEAR', 'DESC');
 		$query = $this->db->get('EMP_EARN_DED_HIST');
 

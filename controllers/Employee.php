@@ -19,29 +19,22 @@ class Employee extends CI_Controller {
 		$data['fam_dtl']=$this->emp->emp_fam_dtl($UserId);
 		$data['bank_dtl']=$this->emp->emp_bank_dtl($UserId);
 		$data['showrow'] =$this->emp->getEmpPic($UserId);
-
-
-		/*if(!$showrow){
-			return 'No Image';
-		}else{
-			//$image=$showrow->load();
-			header("Content-type: image/jpeg");
-			print $showrow;
-		}
-		exit();*/ 
 		$this->load->view('emp/profile', $data);
 	}
 
-	/*public function getImage(){		
-		$UserId 		= $_GET['id'];
-		echo " User Id".$UserId;
-		$showrow =$this->emp->getEmpPic($UserId);
-		print $showrow;
-
-	}*/
-
-	//slary slip
+	//slary slip current year
 	public function salary_slip(){
+		$UserId					= $_SESSION['login'];
+		$c_year					= date('Y');
+		$data['currentyear'] 	= $c_year;
+		$data['selectedyear'] 	= $c_year;
+		$data['month']			=$this->emp->getSalMonth($UserId,$c_year);		
+					
+		$this->load->view('emp/salary_slip', $data);
+	}
+
+	//slary slip current year
+	public function salary_slip_archive(){
 		$UserId= $_SESSION['login'];
 		$data['year']=$this->emp->getSalYear($UserId);		
 		$this->load->view('emp/salary_slip', $data);
