@@ -175,6 +175,35 @@
               </div>
             </div>
           </div>";
+        if (isset($_SESSION['userprev'])) {
+                 
+        foreach ($_SESSION['menuprev'] as $menuItem) {      
+        
+        if ($menuItem->MJ_MENU_ORDER == 1) {
+          $Parent_Menu_ID =  $menuItem->MJ_MENU_PARENT_ID;
+          echo "<div class='panel-group text-left' id='accordion'>
+                <div class='panel panel-default'>
+                 <div class='panel-heading'>
+                  <h4 class='panel-title'>
+                    <a data-toggle='collapse' data-parent='#accordion' href='#collapse$i'>
+                    <Strong>". $menuItem->MJ_MENU_TEXT."</Strong></a>
+                  </h4>
+                </div>
+
+                <div id='collapse$i' class='panel-collapse collapse in'>
+                  <div class='panel-body'>";
+          }
+        else { //URL added by raquib
+          echo "<a href=".base_url().$menuItem->MJ_MENU_URL."><p>".$menuItem->MJ_MENU_TEXT."</p></a>";
+        } 
+        
+        }
+        echo  "</div>
+              </div>
+              </div>
+            </div>";
+        }
         ?>
+
 
     </div>

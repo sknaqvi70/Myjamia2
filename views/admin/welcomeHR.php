@@ -87,6 +87,7 @@
         <div id="chartContainer" style="height: 370px; width: 100%;"></div>
         <script src="<?= base_url(); ?>application/assets/js/canvasjs.min.js"></script>
         </div>  
+        
 
     </div>        
 </div>

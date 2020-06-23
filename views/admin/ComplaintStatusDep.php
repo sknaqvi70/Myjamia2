@@ -46,7 +46,7 @@ $(document).ready(function() {
             <a href="#open_no_comp" class="nav-link" data-toggle="tab">Open Complaints</a>
           </li>
           <li class="nav-item">
-            <a href="#pending_for_accept" class="nav-link" data-toggle="tab">Pending for Accept</a>
+            <a href="#pending_for_accept" class="nav-link" data-toggle="tab">Pending Acceptance</a>
           </li>
           <li class="nav-item">
             <a href="#pending_no_comp" class="nav-link" data-toggle="tab">Pending with Engineer</a>

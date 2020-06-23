@@ -43,7 +43,7 @@ $(document).ready(function() {
       <div class="bs-example">
         <ul class="nav nav-tabs" id="myTab">
           <li class="nav-item">
-            <a href="#pending_accept" class="nav-link" data-toggle="tab">Pending For Acceptance</a>
+            <a href="#pending_accept" class="nav-link" data-toggle="tab">Pending Acceptance</a>
           </li>
           <li class="nav-item">
             <a href="#accepted_comp" class="nav-link" data-toggle="tab">Accepted Complaints</a>

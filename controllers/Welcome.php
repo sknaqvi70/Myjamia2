@@ -253,8 +253,11 @@ class Welcome extends CI_Controller {
 		//echo "Usertype".$UserType;
 
 		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
-		$UserEmail =  $this->UM->getEmail($UserID, $User); //added by raquib
-
+		$LoginDtl=  $this->UM->getLoginDtl($UserID, $User); //added by raquib
+		foreach($LoginDtl as $lstl):
+			$UserEmail=$lstl->MJ_REG_EMAIL;
+    		$UserPrev= $lstl->MJ_USER_ROLE_TP;
+			endforeach;
 		// this if condition added by raquib
 		if ($UserType == 1 || $UserType == 4) {//User is student and Alimni
 			$StuUserData =  $this->UM->getStuData($UserID);
@@ -294,15 +297,18 @@ class Welcome extends CI_Controller {
 		}
 		$this->load->model('MenuModel');
 		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
+		$MenuPrev =  $this->MenuModel->getMenuPrev($UserType);
 
 		$sessionData = array(
 			'user'		=> 	$User,
 			'login'		=> 	$UserID,
         	'username'  => 	$UserName,
         	'useremail' => 	$UserEmail,
+        	'userprev'	=>	$UserPrev,
         	'usertype'	=>	$UserType,
         	'userrole'	=>	$UserRole,
         	'menu' 		=> 	$UserMenu,
+        	'menuprev'	=>	$MenuPrev,
         	'ssmid'		=>	$SsmId,
         	'depid'		=>	$DepId,
         	'depdesc'	=>	$DepDesc,

@@ -30,7 +30,7 @@ class ComplaintModel extends CI_Model {
 	//this function is use to fetch complaint category
 	public function getComplaintCat($UserType){
     	$response = array();
-    	$where="MJ_CSC_NO is NULL";
+    	$where="MJ_CSC_NO is NULL AND CC_NO = 1";
      	// Select record
 		$this->db->order_by('CC_NAME', 'ASC');          			
 		$this->db->select('CC_NO, CC_NAME');

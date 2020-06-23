@@ -113,7 +113,7 @@ class Complaint extends CI_Controller {
 					redirect('Complaint/complaintRegistration');					
 					
 				}
-				}
+			}
 	}
 
 	public function ComplaintRegisteredOnCall(){
@@ -274,10 +274,10 @@ class Complaint extends CI_Controller {
 						</tr>
 						</table>';
 		if ($FtsNo) {
-			$emailContaint .="You may track your complaint in MIS using File Number :'.$FtsNo.'<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JMI</b>	
+			$emailContaint .="You may track your complaint in MIS using File Number :'.$FtsNo.'<br>Any Complaint or suggestion may be sent to the <a href='mailto:admin.myjamia@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JMI</b>	
 			</body></html>";
 		}else{
-		$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:skanqvi@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b>	
+		$emailContaint .="<br>Any Complaint or suggestion may be sent to the <a href='mailto:admin.myjamia@jmi.ac.in'>Additional Director, FTK-CIT, JMI</a>.<br><br><br><br><b>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b>	
 			</body></html>";
 		}
 		

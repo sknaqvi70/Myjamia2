@@ -44,9 +44,11 @@ class Auth extends CI_Controller {
 		$this->session->unset_userdata('login');
 		$this->session->unset_userdata('username');
 		$this->session->unset_userdata('useremail');
+		$this->session->unset_userdata('userprev');
 		$this->session->unset_userdata('usertype');
 		$this->session->unset_userdata('userrole');
 		$this->session->unset_userdata('menu');
+		$this->session->unset_userdata('menuprev');
 		$this->session->unset_userdata('ssmid');
 		$this->session->unset_userdata('depid');
 		$this->session->unset_userdata('depdesc');

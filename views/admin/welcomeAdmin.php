@@ -29,7 +29,7 @@
             <a class="btn btn-danger" href="<?php echo base_url() ?>Admin/complaintStatus#on_hold_comp">
                 <span   style="font-size: 30px;"></span>
                 <strong><font size="8"><?php echo $pending_at ?></font></strong> 
-                <br>&nbsp;&nbsp;<font size="4">Pending For Acceptance</font>
+                <br>&nbsp;&nbsp;<font size="4">Pending Acceptance</font>
             </a>
             <?php } ?>
             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -71,7 +71,7 @@
         <?php
             $dataPoints = array(
             array("label"=> "Open Complaints", "y"=> $open),
-            array("label"=> "Pending for Acceptance", "y"=> $pending_at),
+            array("label"=> "Pending Acceptance", "y"=> $pending_at),
             array("label"=> "Closed Complaints", "y"=> $closed),
             array("label"=> "Pending Complaints at Engineer", "y"=> $pending),
             array("label"=> "On Hold Complaints", "y"=> $hold),

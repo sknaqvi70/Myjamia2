@@ -190,16 +190,17 @@ class UserModel extends CI_MODEL {
 	}
 	//Get User Profile. The function fetches User Email from 
 	//the database. added by raquib
-	public function getEmail($UserId, $User) {
+	public function getLoginDtl($UserId, $User) {
 
-		$this->db->select('MJ_REG_EMAIL');
+		$this->db->select('MJ_REG_EMAIL,MJ_USER_ROLE_TP');
 		$this->db->from('MJ_USER_MST');
 		$this->db->where('MJ_USER_LOGIN',$User);
 		$this->db->where('MJ_ID_NO',$UserId);
 		
 		$query = $this->db->get();
+		
 		if($query->num_rows() > 0) 
-				return $query->row()->MJ_REG_EMAIL;
+				return $query->result();
 			else
 				return '-1'; //Error	
 	}
