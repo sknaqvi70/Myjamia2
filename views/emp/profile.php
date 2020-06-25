@@ -15,9 +15,8 @@
                   $image->readimageblob($showrow);
                   $image->setImageFormat("png");
                   echo '<img src="data:image/png;charset=utf-8;base64,' .  base64_encode($image->getimageblob())  . '" style="width: 150px; height: 180px;" />';
-                ?><!-- 
-                <img src="<?php echo 'data:image/tiff;charset=utf-8;base64,' . base64_encode($showrow) ?>"  style="width: 150px; height: 180px;" /> 
-             -->  </td>
+                ?>
+              </td>
             </tr>
             <tr>
               <td><span style=" font-weight: bold;">Faculty:</span></td>

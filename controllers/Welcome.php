@@ -29,7 +29,7 @@ class Welcome extends CI_Controller {
 
 		if ($this->input->post('frm_Btn_Submit') == 'Sign in') {
 			
-			$AccountStatus = $this->Check_User_Authorization(); 
+			$AccountStatus = $this->Check_User_Authorization();
 			
 			if ($AccountStatus == 'OK') {
 	            //Authorised User
@@ -237,8 +237,17 @@ class Welcome extends CI_Controller {
 	                	$UserName = $this->input->post('frm_MJ_User_Login');
 	                	$Password = $this->input->post('frm_MJ_User_Password');
 	                	$this->load->model('UserModel', 'UM');
+	                	$User = substr($UserName, 1,1);
+						if (ord($User) >= 65 && ord($User) <= 90 ) {
 
-	                	return $this->UM->isUserAuthorised($UserName, $Password);
+	                		return $this->UM->isEmpAuthorised($UserName, $Password);
+
+	                	} else {
+	                		
+	                		return $this->UM->isUserAuthorised($UserName, $Password);
+
+	                	}
+
 	                }
 	}
 			
@@ -277,15 +286,7 @@ class Welcome extends CI_Controller {
 			endforeach;
 
 		}
-		/*elseif ($UserType == 3) {//User is Contractual added by Raquib
-			$ContEmp = $this->UM->getContEmpName($UserID);
-			foreach($ContEmp as $cedata):
-			$UserName= $cedata->CONTNAME;
-    		$ContDepId= $cedata->CONTDEPID;
-    		//$EmpDepDesc= $audata->DEP_DESC;
-			endforeach;
-
-		}*/else{ //added by raquib
+		else{ //added by raquib
 			$AdminUserData = $this->UM->getAdminName($UserID);
 			foreach($AdminUserData as $audata):
 			$UserName= $audata->ADMINNAME;

@@ -10,7 +10,7 @@
             <tr>
               <td rowspan='5'>
               <?php
-              $img = $filePath.'\\'.$v_sdtl->STU_ID.".JFIF";
+                $img = $filePath.'\\'.$v_sdtl->STU_ID.".JFIF";
                 echo '<img src="getImage?i=' . urlencode($img) . '"class="media-object img-thumbnail user-img" style="width: 150px; height: 180px;">';
               ?>
               </td>

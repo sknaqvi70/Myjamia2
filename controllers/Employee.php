@@ -116,8 +116,8 @@ class Employee extends CI_Controller {
 			$html_content .='</div></div></body></html>';
 			$this->pdf->loadHtml($html_content);
             $this->pdf->render();
-            //$password =$UserId.'@'.$empDob;
-            $password =$this->emp->loginPwd($UserId);
+            $password =$empDob;
+            //$password =$this->emp->loginPwd($UserId);
             $this->pdf->get_canvas()->get_cpdf()->setEncryption($password, $password);
             ob_end_clean();
             ob_start();
