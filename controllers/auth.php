@@ -52,8 +52,6 @@ class Auth extends CI_Controller {
 		$this->session->unset_userdata('ssmid');
 		$this->session->unset_userdata('depid');
 		$this->session->unset_userdata('depdesc');
-		$this->session->unset_userdata('empdepid');
-		$this->session->unset_userdata('empdepdesc');
 		$this->session->unset_userdata('admindepid');
 		$this->session->unset_userdata('admindepdesc');
 
@@ -102,21 +100,44 @@ class Auth extends CI_Controller {
 	        	//Validation Passes
 	        	//Check Old Password
 	        	$this->load->model('UserModel','UM');
-	        	if($this->UM->isUserAuthorised($_SESSION['user'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
-	        		//If User is authorised, update password
-	        		$this->UM->updatePassword($_SESSION['user'], $this->input->post('frm_New_Password_1'));
+	        	$User = $_SESSION['user'];
+	        	
+	        	$Usr = substr($User, 1,1);
+				if (ord($Usr) >= 65 && ord($Usr) <= 90 ) {
+					if($this->UM->isEmpAuthorised($_SESSION['user'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
+		        		//If User is authorised, update password
+		        		$this->UM->updateEmpPassword($User, $this->input->post('frm_New_Password_1'));
 
-		        	$array = array(
-		        		'success'					=>	true,
-		        		'message' 					=>	'Password successfully changed.'
-		        	);
-	      		}
-	      		else {
-	      			$array = array(
-		        	'error'							=> 	true,
-		        	'message' 						=>	'Incorrect Password!'
-		       		);
-	      		}
+			        	$array = array(
+			        		'success'					=>	true,
+			        		'message' 					=>	'Password successfully changed.'
+			        	);
+		      		}
+		      		else {
+		      			$array = array(
+			        	'error'							=> 	true,
+			        	'message' 						=>	'Incorrect Password!'
+			       		);
+		      		}
+				}
+				else{
+		        	if($this->UM->isUserAuthorised($_SESSION['user'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
+		        		//If User is authorised, update password
+		        		$this->UM->updatePassword($_SESSION['user'], $this->input->post('frm_New_Password_1'));
+
+			        	$array = array(
+			        		'success'					=>	true,
+			        		'message' 					=>	'Password successfully changed.'
+			        	);
+		      		}
+		      		else {
+		      			$array = array(
+			        	'error'							=> 	true,
+			        	'message' 						=>	'Incorrect Password!'
+			       		);
+		      		}
+		      	}
+
 	        }
 	        
 	        echo json_encode($array);	

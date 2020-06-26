@@ -259,16 +259,27 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserID =  $this->UM->getUser($User); //added by raquib
 		$UserType =  $this->UM->getUserType($UserID, $User);
+		echo "UserType".$UserType;
 		//echo "Usertype".$UserType;
 
 		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
 		$LoginDtl=  $this->UM->getLoginDtl($UserID, $User); //added by raquib
-		foreach($LoginDtl as $lstl):
-			$UserEmail=$lstl->MJ_REG_EMAIL;
+		if (count($LoginDtl) >0) {
+			foreach($LoginDtl as $lstl):
     		$UserPrev= $lstl->MJ_USER_ROLE_TP;
 			endforeach;
+		}
 		// this if condition added by raquib
-		if ($UserType == 1 || $UserType == 4) {//User is student and Alimni
+		if ($UserType == 2 || $UserType == 5) {//User is employee and Pensioner
+			$EmpUserData =  $this->UM->getEmpData($UserID);	
+			foreach($EmpUserData as $eudata):
+			$UserName= $eudata->EMPNAME;
+			$UserEmail = $eudata->EMP_EMAIL_ID;
+    		$DepId= $eudata->EMP_POST_DEP;
+    		$DepDesc= $eudata->DEP_DESC;
+			endforeach;
+
+		} elseif ($UserType == 1 || $UserType == 4) {//User is student and Alimni
 			$StuUserData =  $this->UM->getStuData($UserID);
 			foreach($StuUserData as $sudata):
 			$UserName=$sudata->STUNAME;
@@ -276,26 +287,16 @@ class Welcome extends CI_Controller {
     		$DepId= $sudata->STU_DEPT;
     		$DepDesc=$sudata->DEPTNAME;
 			endforeach;
-		}
-		elseif ($UserType == 2 || $UserType == 5) {//User is employee and Pensioner
-			$EmpUserData =  $this->UM->getEmpData($UserID);
-			foreach($EmpUserData as $eudata):
-			$UserName= $eudata->EMPNAME;
-    		$EmpDepId= $eudata->EMP_POST_DEP;
-    		$EmpDepDesc= $eudata->DEP_DESC;
-			endforeach;
-
-		}
-		else{ //added by raquib
+		} else { //added by raquib
 			$AdminUserData = $this->UM->getAdminName($UserID);
 			foreach($AdminUserData as $audata):
 			$UserName= $audata->ADMINNAME;
+			$UserEmail = $audata->EMAILID;
     		$AdminDepId= $audata->DEPID;
     		$AdminDepDesc= $audata->DEP_NAME;
 			endforeach;
-
-
 		}
+		
 		$this->load->model('MenuModel');
 		$UserMenu =  $this->MenuModel->getUserMenu($UserType);
 		$MenuPrev =  $this->MenuModel->getMenuPrev($UserType);
@@ -313,8 +314,6 @@ class Welcome extends CI_Controller {
         	'ssmid'		=>	$SsmId,
         	'depid'		=>	$DepId,
         	'depdesc'	=>	$DepDesc,
-        	'empdepid'	=>	$EmpDepId,
-        	'empdepdesc'=>	$EmpDepDesc,
         	'admindepid'=>	$AdminDepId,
         	'admindepdesc'=>$AdminDepDesc
 		);

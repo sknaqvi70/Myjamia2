@@ -149,36 +149,40 @@ class UserModel extends CI_MODEL {
 	//the database. Added By Raquib
 	public function getUser($User) {
 
-		$this->db->select('MJ_ID_NO');
-		$this->db->from('MJ_USER_MST');
-		$this->db->where('MJ_USER_LOGIN',$User);		
-		$query = $this->db->get();
-		if($query->num_rows() > 0) 
-				return $query->row()->MJ_ID_NO;
-			else
-				return '-1'; //Error	
+		$Usr = substr($User, 1,1);
+		if (ord($Usr) >= 65 && ord($Usr) <= 90 ) {
+			return $User;
+		} else {
+			$this->db->select('MJ_ID_NO');
+			$this->db->from('MJ_USER_MST');
+			$this->db->where('MJ_USER_LOGIN',$User);		
+			$query = $this->db->get();
+			if($query->num_rows() > 0) 
+					return $query->row()->MJ_ID_NO;
+				else
+					return '-1'; //Error	
+		}
 	}
 
 	//Get User Profile. The function fetches UserName, UserType from 
 	//the database. 
 	public function getUserType($UserId, $User) {
-
-		$this->db->select('MJ_USER_TYPE');
-		$this->db->from('MJ_USER_MST');
-		$this->db->where('MJ_USER_LOGIN',$User);
-		$this->db->where('MJ_ID_NO',$UserId);	//added by raquib		
-		$query = $this->db->get();
-		
-		if($query->num_rows() > 0) 
-		{
-			$Usr = substr($User, 1,1);
-			if (ord($Usr) >= 65 && ord($Usr) <= 90 ) {
-				return '2';
-			} else {
-				return $query->row()->MJ_USER_TYPE;
-			}
+		$Usr = substr($User, 1,1);
+		if (ord($Usr) >= 65 && ord($Usr) <= 90 ) {
+			return '2';
 		} else {
-			return '-1'; //Error
+			$this->db->select('MJ_USER_TYPE');
+			$this->db->from('MJ_USER_MST');
+			$this->db->where('MJ_USER_LOGIN',$User);
+			$this->db->where('MJ_ID_NO',$UserId);	//added by raquib		
+			$query = $this->db->get();			
+			if($query->num_rows() > 0) 
+			{
+				return $query->row()->MJ_USER_TYPE;
+			
+			} else {
+				return '-1'; //Error
+			}
 		}	
 	}
 	//Get User Profile. The function fetches UserRole from MJ_User_Type Table
@@ -200,7 +204,7 @@ class UserModel extends CI_MODEL {
 	//the database. added by raquib
 	public function getLoginDtl($UserId, $User) {
 
-		$this->db->select('MJ_REG_EMAIL,MJ_USER_ROLE_TP');
+		$this->db->select('MJ_USER_ROLE_TP');
 		$this->db->from('MJ_USER_MST');
 		$this->db->where('MJ_USER_LOGIN',$User);
 		$this->db->where('MJ_ID_NO',$UserId);
@@ -262,12 +266,12 @@ class UserModel extends CI_MODEL {
 	//This function fectches User ( User Type 6,7,8,9) Name added by raquib
 	public function getAdminName($UserId) {
 
-		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,EMP_POST_DEP DEPID,D.DEP_DESC DEP_NAME');		
+		$this->db->select('EMP_NAME(EMP_ID) ADMINNAME,A.EMP_EMAIL_ID EMAILID,EMP_POST_DEP DEPID,D.DEP_DESC DEP_NAME');		
 		$this->db->join('DEP_MST D', 'A.EMP_POST_DEP= D.DEP_ID ');
 		$this->db->where('EMP_ID','EMP\\'.$UserId);		 
 		$query1 = $this->db->get_compiled_select('EMP_MST A');
 		    		
-		$this->db->select('CMM_DESC ADMINNAME,CMM_DEP_ID DEPID,D.DEP_DESC DEP_NAME');
+		$this->db->select('CMM_DESC ADMINNAME,A.CMM_ADDR.MAIL EMAILID,CMM_DEP_ID DEPID,D.DEP_DESC DEP_NAME');
 		$this->db->join('DEP_MST D', 'A.CMM_DEP_ID= D.DEP_ID ');
 		$this->db->where('CMM_ID',$UserId);		 
 		$query2 = $this->db->get_compiled_select('COMPANY_MST A');
@@ -355,6 +359,24 @@ class UserModel extends CI_MODEL {
 	}
 
 	//This function Updates User Password
+	public function updateEmpPassword($UID, $Password){
+
+		$i_pwd = strtoupper($Password);
+		$sql = "Select Encrypt_for_CI('" . $i_pwd ."') ENCRYPT_PASSWORD from dual";
+		$query = $this->db->query($sql);
+		$result = $query->result();
+		$o_pwd = "";
+       	foreach ($result as $record)
+       	$o_pwd .= $record->ENCRYPT_PASSWORD;
+
+		$this->db->set('PASSWORD', $o_pwd);
+		$this->db->where('USR', $UID);
+		$this->db->update('USER_PRIVS');
+
+		//return $this->db->last_query();
+	}
+
+	//This function Updates User Password
 	public function updatePassword($UID, $Password){
 
 		//Find User Type
@@ -383,7 +405,7 @@ class UserModel extends CI_MODEL {
 
 	// this function is used for fetch employee data from database added by raquib
 	public function getEmpData($UserId){	          			
-		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,A.EMP_POST_DEP,C.DEP_DESC');
+		$this->db->select('EMP_NAME(EMP_ID) EMPNAME,A.EMP_EMAIL_ID,A.EMP_POST_DEP,C.DEP_DESC');
 		$this->db->from('EMP_MST A');
 		$this->db->join('DEP_MST C', 'A.EMP_POST_DEP= C.DEP_ID ');
 		$this->db->where(['A.EMP_ID'=>'EMP\\'.$UserId]);
