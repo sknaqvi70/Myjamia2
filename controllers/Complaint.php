@@ -282,14 +282,6 @@ class Complaint extends CI_Controller {
 		}
 		
 
-		$config['protocol']			='smtp';
-		$config['smtp_host']		='ssl://smtp.googlemail.com';
-		$config['smtp_port']		='465';
-		$config['smtp_timeout']		='60';
-
-		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
-		$config['smtp_pass']		='Comp!@#123';
-
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
 		$config['mailtype']			='html';

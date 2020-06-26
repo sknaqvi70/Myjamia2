@@ -256,14 +256,6 @@ class Admin extends CI_Controller {
 			</body></html>";
 		}
 
-		$config['protocol']			='smtp';
-		$config['smtp_host']		='ssl://smtp.googlemail.com';
-		$config['smtp_port']		='465';
-		$config['smtp_timeout']		='60';
-
-		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
-		$config['smtp_pass']		='Comp!@#123';
-
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
 		$config['mailtype']			='html';
@@ -438,14 +430,6 @@ class Admin extends CI_Controller {
 			</body></html>";
 		}
 
-		$config['protocol']			='smtp';
-		$config['smtp_host']		='ssl://smtp.googlemail.com';
-		$config['smtp_port']		='465';
-		$config['smtp_timeout']		='60';
-
-		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
-		$config['smtp_pass']		='Comp!@#123';
-
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
 		$config['mailtype']			='html';
@@ -485,14 +469,6 @@ class Admin extends CI_Controller {
 		$emailContaint .="<br><br><br>FTK-Centre for Information Technology,<br>JAMIA MILLIA ISLAMIA</b></body></html>";
 		
 		//added by raquib
-		$config['protocol']			='smtp';
-		$config['smtp_host']		='ssl://smtp.googlemail.com';
-		$config['smtp_port']		='465';
-		$config['smtp_timeout']		='60';
-
-		$config['smtp_user']		='admin.myjamia@jmi.ac.in';
-		$config['smtp_pass']		='Comp!@#123';
-
 		$config['charset']			='utf-8';
 		$config['newline']			="\r\n";
 		$config['mailtype']			='html';
