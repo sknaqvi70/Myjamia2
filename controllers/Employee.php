@@ -63,7 +63,7 @@ class Employee extends CI_Controller {
 				$year = substr($value, 1);
 			}
 			$UserId= $_SESSION['login'];
-			$EmpDepid= $_SESSION['empdepid'];
+			$EmpDepid= $_SESSION['depid'];
 			$start_date='01-'.$month.'-'.$year;
 			$last_day= date('t',strtotime($start_date));
 			$end_date=$last_day.'-'.$month.'-'.$year;
@@ -122,8 +122,40 @@ class Employee extends CI_Controller {
             ob_end_clean();
             ob_start();
 
-            $this->pdf->stream("".$UserId."'_PaySlip_'".$month."-".$year.".pdf",array('Attachment' =>1));
+            $this->pdf->stream("".$UserId."'_PaySlip_'".$month."-".$year.".pdf",array('Attachment' =>0));
 		}
+	}
+
+	public function getEarnLeaveBalance()
+	{
+		$data['fromperiod'] = $this->emp->getFromPeriod();
+		$this->load->view('emp/earnLeaveBalance',$data);
+	}
+
+	public function getToPeriod()
+	{
+		$from_date = $this->input->post('v_from');    
+    	$data = $this->emp->getToPeriod($from_date);        
+    	echo json_encode($data);
+	}
+
+	public function getDetailsEarnLeaveBalance(){
+		$UserId= $_SESSION['login'];
+		$from_date = $this->input->post('v_from');
+		$to_date = $this->input->post('v_to');
+
+		$EarnLeaveEmpDtl = $this->emp->getEarnLeaveEmpDtl($from_date, $UserId);
+		$EnCashEmpDtl = $this->emp->getEnCashEmpDtl($UserId);
+		$LeaveTakenDtl = $this->emp->getLeaveTakenDtl($UserId,$from_date,$to_date);
+
+		$dataArray = array(
+    				'getEarnLeaveEmpDtl' => $EarnLeaveEmpDtl,
+    				'getEnCashEmpDtl' 	 => $EnCashEmpDtl,
+    				'getLeaveTakenDtl' 	 => $LeaveTakenDtl
+					);
+
+		echo json_encode($dataArray);
+		
 	}
 }
 ?>

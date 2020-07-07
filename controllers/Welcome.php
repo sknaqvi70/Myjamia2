@@ -259,7 +259,7 @@ class Welcome extends CI_Controller {
 		$this->load->model('UserModel', 'UM');
 		$UserID =  $this->UM->getUser($User); //added by raquib
 		$UserType =  $this->UM->getUserType($UserID, $User);
-		echo "UserType".$UserType;
+	
 		//echo "Usertype".$UserType;
 
 		$UserRole =  $this->UM->getUserRole($UserType); // added by raquib		
@@ -268,7 +268,9 @@ class Welcome extends CI_Controller {
 			foreach($LoginDtl as $lstl):
     		$UserPrev= $lstl->MJ_USER_ROLE_TP;
 			endforeach;
+
 		}
+
 		// this if condition added by raquib
 		if ($UserType == 2 || $UserType == 5) {//User is employee and Pensioner
 			$EmpUserData =  $this->UM->getEmpData($UserID);	

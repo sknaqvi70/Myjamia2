@@ -85,14 +85,15 @@ class EmployeeModel extends CI_Model {
 
 	public function getSalMonth($UserId,$year){
 		$where = "EXTRACT( YEAR FROM EDH_DATE)='$year'";
+		$last_date = "EDH_DATE NOT IN (SELECT  DISTINCT EDH_DATE FROM EMP_EARN_DED_HIST WHERE TO_CHAR(EDH_DATE,'DD-MM-YYYY') =TO_CHAR(LAST_DAY(SYSDATE),'DD-MM-YYYY')AND TO_CHAR((SYSDATE),'DD')<=TO_CHAR(LAST_DAY(SYSDATE),'DD'))";
 		$this->db->distinct('EXTRACT( MONTH FROM EDH_DATE) MONTH');
 		$this->db->select('EXTRACT( MONTH FROM EDH_DATE) MONTH');
 		$this->db->where(['EDH_EMP_ID'=>'EMP\\'.$UserId]);
 		$this->db->where('EDH_EDM_ID','O006');
 		$this->db->where($where);
+		$this->db->where($last_date);
 		$this->db->order_by('MONTH', 'ASC');
 		$query = $this->db->get('EMP_EARN_DED_HIST');
-
 		return $query->result();
 	}
 
@@ -360,8 +361,98 @@ class EmployeeModel extends CI_Model {
 				return $query->row()->PWD;
 			else
 				return '0'; //Error
-		
 
+
+	}
+
+	public function getFromPeriod(){
+		$response = array();
+		$this->db->order_by('FROM_DATE', 'ASC');          			
+		$this->db->select('FROM_DATE');
+		$this->db->from('EARN_LEAVE_PERIOD');
+		$query = $this->db->get();				
+    	$response = $query->result_array();
+    	return $response;
+
+	}
+
+	public function getToPeriod($from_date){
+
+		$this->db->order_by('TO_DATE', 'ASC');          			
+		$this->db->select('TO_DATE');
+		$this->db->from('EARN_LEAVE_PERIOD');
+		$this->db->where('FROM_DATE', $from_date);
+		$query = $this->db->get();				
+    	$response = $query->result();
+    	return $response;
+
+	}
+
+	public function getEarnLeaveEmpDtl($from_date, $UserId){
+		$empid='EMP\\'.$UserId;
+		$fromdate = "LV_OP_BAL_DATE=TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY')";
+		$this->db->select('LV_EMP_ID, EMP_NAME(LV_EMP_ID) NAME,LV_OP_BAL');
+		$this->db->from('LVS_STATUS');
+		$this->db->where('LV_EMP_ID', $empid);
+		$this->db->where($fromdate);
+		$query = $this->db->get();				
+    	$response = $query->result();
+    	return $response;
+
+	}
+
+	public function getEnCashEmpDtl($UserId){
+		$empid='EMP\\'.$UserId;
+		$this->db->select('ENC_EMP_ID,SUM(ENC_LEAVE_NO)  SUM_ENC_LV');
+		$this->db->from('ENCASH_DTL');
+		$this->db->where('ENC_EMP_ID', $empid);
+		$this->db->group_by('ENC_EMP_ID');
+		$query = $this->db->get();				
+    	$response = $query->result();
+    	return $response;
+
+	}
+
+	public function getLeaveTakenDtl($UserId,$from_date,$to_date){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT LVD_EMP_ID,LVD_LVM_TYPE,LVD_FROM_DATE,
+					LVD_TO_DATE,LVD_NOOFDAYS LVD_NOOFDAYS,LVD_APPLY_DATE 
+  					FROM lve_dtl
+					WHERE LVD_EMP_ID='$empid'  and 
+					LVD_APPLY_DATE BETWEEN TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY') 
+					AND TO_CHAR(TO_DATE('$to_date','DD-MM-YY'),'DD-MON-YYYY')
+					AND LVD_LVM_TYPE IN('EL','EOL')
+			UNION
+			SELECT ENC_EMP_ID,ENC_LVM_TYPE||'-ENCASHMENT',NULL,
+					NULL,ENC_LEAVE_NO,ENC_DATE
+					FROM encash_dtl
+					WHERE ENC_EMP_ID='$empid'
+					AND ENC_DATE BETWEEN TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY') 
+					AND TO_CHAR(TO_DATE('$to_date','DD-MM-YY'),'DD-MON-YYYY')
+			UNION
+			SELECT LVB_EMP_ID,LVB_LVM_TYPE||'-ADJUSTMENT',
+				   LVB_FROM_DATE,LVB_TO_DATE,LVB_BALANCE, LVB_DATE
+					FROM LVE_NETBAL
+					WHERE LVB_EMP_ID='$empid'
+					AND LVB_DATE BETWEEN TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY') 
+					AND TO_CHAR(TO_DATE('$to_date','DD-MM-YY'),'DD-MON-YYYY')
+					AND LVB_LVM_TYPE IN('EL','EOL')
+			UNION
+			SELECT VOC_EMP_ID,VOC_TYPE||'-WINTER',NULL,NULL,VOC_EOL,VOC_ORDER_DATE
+					FROM EMP_VOC_EOL_CREDIT
+					WHERE VOC_EMP_ID='$empid'
+					and VOC_ORDER_DATE BETWEEN TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY') 
+					AND TO_CHAR(TO_DATE('$to_date','DD-MM-YY'),'DD-MON-YYYY')
+					AND VOC_TYPE in('W')
+			UNION
+			SELECT VOC_EMP_ID,VOC_TYPE||'-SUMMER',NULL,NULL,VOC_EOL,VOC_ORDER_DATE
+					FROM EMP_VOC_EOL_CREDIT
+					WHERE VOC_EMP_ID='$empid'
+					and VOC_ORDER_DATE BETWEEN TO_CHAR(TO_DATE('$from_date','DD-MM-YY'),'DD-MON-YYYY') 
+					AND TO_CHAR(TO_DATE('$to_date','DD-MM-YY'),'DD-MON-YYYY')
+					AND VOC_TYPE='S'
+			ORDER BY 6")->result();
+		return $response;
 
 	}
 }

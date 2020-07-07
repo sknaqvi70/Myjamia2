@@ -677,7 +677,7 @@ class ComplaintModel extends CI_Model {
 
 	//
 	public function getComplaintDetails($COM_NO,$TicketNo){
-		$dateFormate 	= "DD-Mon-YYYY HH:MI:SS am";
+		$dateFormate 	= "DD-Mon-YYYY";
 		$where = "CM_EMP_ID IS NOT NULL";         			
 		$this->db->select('CM_NO, "DEP_DESC", EMP_NAME(A.CM_EMP_ID) NAME,"CC_NAME","CSC_NAME", CM_COMPLAINT_TEXT,CM_COMPLAINT_LOCATION,CM_COMPLAINT_CONTACT_PERSON,CM_COMPLAINT_CONTACT_MOBILE, CM_COMPLAINT_CONTACT_EMAIL, CM_COMPLAINT_FTS_NO, CM_COMPLAINT_STATUS,TO_CHAR(CM_COMPLAINT_DATE, '."'$dateFormate'".') REGDATE,CM_NO_UNIT,CM_EMP_ID COMPLAINT_USER_ID');
 		$this->db->from('COMPLAINT_MST A');
@@ -883,31 +883,24 @@ class ComplaintModel extends CI_Model {
   					<td>&nbsp;</td>
   				</tr>
   				</table>';
-  				$output .= '<br>Whether Ticket is Closed (Yes/No):  ............................. <br>
+  				$output .= 'Whether Ticket is Closed (Yes/No):  ............................. <br>
 				Comment :
-					<textarea rows="10"cols="200"></textarea>';
+					<textarea rows="7"cols="200"></textarea>';
 
 			}else{
 				$output .= '<br><br>Whether Ticket is Closed/Put on Hold (Yes/No):  ............................. <br>
 				Comment :
-					<textarea rows="10"cols="200"></textarea>';
+					<textarea rows="7"cols="200"></textarea>';
 			}
 		}
-		$output .= '<br><br><br><br><br><br>';
+		$output .= '<br><br>';
   		foreach($data->result() as $v_csdtl):
-  		$output .='( .......................................... )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  		( .......................................... )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  		( .......................................... )<br>';
+  		$output .='<table align="right"><tr><td>( .......................................... )</td></tr><tr><td>User Signature with </td></tr><tr><td>( Name, Date & Office Stamp )</td></tr></table><br><br><br><br>';
        
-		$output .='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Signature with&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		Signature of Section Head&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		Sign. of Ticket Attended By <br>';
-		$output .='( Name, Date & Office Stamp )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		( Name & Date ) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		('.$v_csdtl->EMPNAME.')
-		<br><br> 
-
-			<footer>
+		$output .='<table align="center"<tr><td>------------------------------------------- For Office Use ----------------------------------------</td></tr></table><br><br>';
+		$output .='<table align="center"><tr><td>( .......................................... )</td><td>&nbsp;&nbsp;</td><td>( .......................................... )</td></tr><tr><td>Signature of Section Head </td>&nbsp;&nbsp;<td></td><td>Sign. of Ticket Attended By</td></tr></table>
+		<br><br> ';
+		$output .='<footer>
             Copyright &copy; Jamia Millia Islamia, Printed On : ('.$v_csdtl->PRINTDATE.') 
         	</footer>';
 		endforeach;

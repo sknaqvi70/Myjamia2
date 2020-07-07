@@ -106,12 +106,19 @@ class Auth extends CI_Controller {
 				if (ord($Usr) >= 65 && ord($Usr) <= 90 ) {
 					if($this->UM->isEmpAuthorised($_SESSION['user'], $this->input->post('frm_MJ_User_Password')) == 'OK') {
 		        		//If User is authorised, update password
-		        		$this->UM->updateEmpPassword($User, $this->input->post('frm_New_Password_1'));
+		        		if($this->UM->updateEmpPassword($User, $this->input->post('frm_New_Password_1')) == 'OK') {
 
 			        	$array = array(
 			        		'success'					=>	true,
 			        		'message' 					=>	'Password successfully changed.'
 			        	);
+			        	}
+			        	else {
+			      			$array = array(
+				        	'error'							=> 	true,
+				        	'message' 						=>	'Password not updated!'
+				       		);
+				       	}
 		      		}
 		      		else {
 		      			$array = array(

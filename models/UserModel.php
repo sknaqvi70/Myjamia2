@@ -77,19 +77,34 @@ class UserModel extends CI_MODEL {
 			$query = $this->db->get('MJ_USER_REGISTRATION');
 
 			if($query->num_rows() == 1) {
-				$data = array(
-					'MJ_USERID'					=> 	$this->getNewUserId(),	
-		 			'MJ_USER_TYPE'				=>	$query->row()->MJ_UR_USER_TYPE,		
-		 			'MJ_USER_LOGIN'				=>	$UID,
-					'MJ_USER_PASSWORD'			=>	$Password,
-					'MJ_ID_NO'					=>	$UID,
-					'MJ_REG_EMAIL'				=>	$query->row()->MJ_USER_EMAIL,
-					//'MJ_USER_REG_DATE'	
-					//'MJ_USER_EXPIRY_DATE'
-					'MJ_USER_ACCOUNT_STATUS'	=>	'A' //Active
-					);
-				$this->db->insert('MJ_USER_MST', $data);
-				return 'OK';
+				$User = substr($UID, 1,1);
+				if (ord($User) >= 65 && ord($User) <= 90 ) {
+					$data = array(
+						'USR'		=>	$UID,
+						'PASSWORD'	=>	$Password,
+						'USR_INFO'	=> 	'',
+						'MANAGER'	=> 	'',
+						'EMP_ID'	=>	'EMP\\'.$UID,
+						);
+					print_r($data);
+					$this->db->insert('USER_PRIVS', $data);
+					return 'OK';
+				}
+				else{
+					$data = array(
+						'MJ_USERID'					=> 	$this->getNewUserId(),	
+			 			'MJ_USER_TYPE'				=>	$query->row()->MJ_UR_USER_TYPE,		
+			 			'MJ_USER_LOGIN'				=>	$UID,
+						'MJ_USER_PASSWORD'			=>	$Password,
+						'MJ_ID_NO'					=>	$UID,
+						'MJ_REG_EMAIL'				=>	$query->row()->MJ_USER_EMAIL,
+						//'MJ_USER_REG_DATE'	
+						//'MJ_USER_EXPIRY_DATE'
+						'MJ_USER_ACCOUNT_STATUS'	=>	'A' //Active
+						);
+					$this->db->insert('MJ_USER_MST', $data);
+					return 'OK';
+				}
 			}
 			else
 				return 'Failed';
@@ -362,18 +377,13 @@ class UserModel extends CI_MODEL {
 	public function updateEmpPassword($UID, $Password){
 
 		$i_pwd = strtoupper($Password);
-		$sql = "Select Encrypt_for_CI('" . $i_pwd ."') ENCRYPT_PASSWORD from dual";
+		$sql = "Select Update_PWD_For_CI('" . $UID ."','" . $i_pwd ."') UPDATED_PASSWORD from dual";
 		$query = $this->db->query($sql);
-		$result = $query->result();
-		$o_pwd = "";
-       	foreach ($result as $record)
-       	$o_pwd .= $record->ENCRYPT_PASSWORD;
-
-		$this->db->set('PASSWORD', $o_pwd);
-		$this->db->where('USR', $UID);
-		$this->db->update('USER_PRIVS');
-
-		//return $this->db->last_query();
+		if($query->num_rows() > 0) {
+			return 'OK';
+		}
+		else
+			return 'DNU'; //Do Not Update
 	}
 
 	//This function Updates User Password
