@@ -157,5 +157,44 @@ class Employee extends CI_Controller {
 		echo json_encode($dataArray);
 		
 	}
+
+	public function getPFAccountStatement(){
+		$UserId= $_SESSION['login'];
+		$data['pfyear'] = $this->emp->getPFYear($UserId);
+		$this->load->view('emp/providentFundBalance',$data);
+
+	}
+
+	public function getToPFPeriod(){
+		$from_year = $this->input->post('v_fromYear');    
+    	$data = $this->emp->getToPFPeriod($from_year);        
+    	echo json_encode($data);
+
+	}
+
+	public function getPFAccountStatementSummary(){
+		$UserId= $_SESSION['login'];
+		$EmpDeptId = $_SESSION['depid'];
+		$from_year = $this->input->post('v_fromYear');
+		$to_year = $this->input->post('v_toYear');
+
+		$EmpGPFDtl = $this->emp->getGPFAccountStatementSummary($from_year, $UserId, $EmpDeptId);
+		$TotalGPF = $this->emp->getTotalGPF($from_year, $UserId);
+		$ClosingGPF = $this->emp->getClosingGPF($from_year, $UserId);
+
+		$EmpCPFDtl = $this->emp->getCPFAccountStatementSummary($from_year, $UserId, $EmpDeptId);
+		$ClosingEmployeeCPF = $this->emp->getClosingEmployeeCPF($from_year, $UserId);
+
+		$dataArray = array(
+    				'getGPFAccountStatementSummary' => $EmpGPFDtl,
+    				'getTotalGPF' 	=> $TotalGPF,
+    				'getClosingGPF' => $ClosingGPF,
+    				'getCPFAccountStatementSummary' => $EmpCPFDtl,
+    				'getClosingEmployeeCPF' 	=> $ClosingEmployeeCPF
+					);
+
+		echo json_encode($dataArray);
+
+	}
 }
 ?>

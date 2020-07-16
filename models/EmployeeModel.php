@@ -455,4 +455,104 @@ class EmployeeModel extends CI_Model {
 		return $response;
 
 	}
+
+	public function getPFYear($UserId){
+		$empid='EMP\\'.$UserId;
+		$response = array();
+		$this->db->order_by('PFO_YEAR', 'ASC');          			
+		$this->db->select('PFO_YEAR');
+		$this->db->from('PF_OPENG');
+		$this->db->where('PFO_EMP_ID', $empid);
+		$query = $this->db->get();				
+    	$response = $query->result_array();
+    	return $response;
+
+	}
+
+	public function getToPFPeriod($from_year){
+		$select = "to_number('$from_year'+1) TO_YEAR";
+		$this->db->select($select);
+		$this->db->from('DUAL');
+		$query = $this->db->get();				
+    	$response = $query->result();
+    	return $response;
+
+	}
+
+	public function getGPFAccountStatementSummary($from_year, $UserId, $EmpDeptId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT Dep_desc,DSG_DESC,EMP_ID,emp_title||' '||UPPER(EMP_NAME(EMP_ID)) EMP_NAME,NVL(EMP_PF_NO, '----') EMP_PF_NO, EMP_PF_TYPE,
+			PFO_OPENG_PF PF_OPENG,NVL(PFO_YR_WDL_PF,0)+NVL(PFO_YR_WDL_PF_FINAL,0)+NVL(PFO_YR_WDL_OUTS_PF,0)+NVL(PFO_YR_WDL_OUTS_PF_FINAL,0) WITHDRAWAL,
+			Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0) RECOVERED,
+			0  INTEREST, PFO_OPENG_CPF,PFO_INT_TOT_PF
+			FROM EMP_MST, DSG_MST, PF_OPENG,DEP_MST
+			WHERE 
+			  PFO_EMP_ID = EMP_ID AND
+			  PFO_YEAR = '$from_year' AND
+			  DSG_ID  = EMP_DESIGNATION AND
+			  EMP_STATUS='C' AND
+			  DEP_ID=EMP_POST_DEP   AND
+			  EMP_POST_DEP = '$EmpDeptId' AND
+			  EMP_ID = '$empid'
+			 	AND EMP_PF_TYPE = 'G'
+			 	AND ((NVL(PFO_OPENG_PF,0)+NVL((Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0)),0)+NVL(PFO_INT_TOT_PF,0))-NVL((NVL(PFO_YR_WDL_PF,0)+NVL(PFO_YR_WDL_PF_FINAL,0)+NVL(PFO_YR_WDL_OUTS_PF,0)+NVL(PFO_YR_WDL_OUTS_PF_FINAL,0)),0)) <>0 
+			ORDER BY 1")->result();
+		return $response;		
+	}
+
+	public function getTotalGPF($from_year, $UserId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT NVL(PFO_OPENG_PF,0)+NVL((Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0)),0)+NVL(PFO_INT_TOT_PF,0) TOTAL 
+			from PF_OPENG
+			where PFO_YEAR = '$from_year' AND PFO_EMP_ID = '$empid' 
+			")->result();
+		return $response;	
+	}
+
+	public function getClosingGPF($from_year, $UserId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT nvl((PFO_OPENG_PF+(Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0))+PFO_INT_TOT_PF),0)
+			-nvl((NVL(PFO_YR_WDL_PF,0)+NVL(PFO_YR_WDL_PF_FINAL,0)+NVL(PFO_YR_WDL_OUTS_PF,0)+NVL(PFO_YR_WDL_OUTS_PF_FINAL,0)),0) CLOSING_BALANCE 
+			from PF_OPENG
+			where PFO_EMP_ID = '$empid' AND
+			PFO_YEAR = '$from_year'")->result();
+		return $response;	
+	}
+
+	public function getCPFAccountStatementSummary($from_year, $UserId, $EmpDeptId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT Dep_desc,DSG_DESC,EMP_ID,
+			emp_title||''||UPPER(EMP_NAME(EMP_ID)) EMP_NAME,NVL(EMP_PF_NO, '----') EMP_PF_NO,EMP_PF_TYPE,PFO_OPENG_PF PF_OPENG,
+		  Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0) RECOVERED,
+		  NVL(PFO_YR_WDL_PF,0) + NVL(PFO_YR_WDL_PF_FINAL,0) + NVL(PFO_YR_WDL_OUTS_PF,0) + NVL(PFO_YR_WDL_OUTS_PF_FINAL,0) WITHDRAWAL,
+		  0  INTEREST,PFO_OPENG_CPF,PFO_INT_TOT_PF,
+		  nvl(PFO_YR_DEP_CPF,0)+nvl(PFO_YR_DEP_OUTS_CPF,0) Deposits_cpf,
+		  NVL(PFO_YR_WDL_CPF,0)+NVL(PFO_YR_WDL_OUTS_CPF,0) With_cpf,
+		  PFO_INT_TOT_CPF,PFO_CLOSG_CPF,0  PFO_OPENG_CINTT
+		FROM EMP_MST, DSG_MST, PF_OPENG,dep_mst
+		WHERE 
+		  PFO_EMP_ID = EMP_ID AND
+		  PFO_YEAR = '$from_year' AND
+		  EMP_DESIGNATION = DSG_ID AND
+		  EMP_POST_DEP=DEP_ID AND 
+		  EMP_POST_DEP = '$EmpDeptId' AND
+		  EMP_ID = '$empid'
+		AND EMP_PF_TYPE= 'C'
+		ORDER BY 2")->result();
+		return $response;
+		
+	}
+
+	public function getClosingEmployeeCPF($from_year, $UserId){
+		$empid='EMP\\'.$UserId;
+		$response=$this->db->query("SELECT nvl((PFO_OPENG_PF+(Nvl(Pfo_Yr_Dep_Pf,0) + Nvl(Pfo_Yr_Ref_Pf,0) + Nvl(PFO_YR_DEP_OUTS_PF,0) + Nvl(PFO_YR_REF_OUTS_PF,0))+PFO_INT_TOT_PF),0)
+			-NVL(PFO_YR_WDL_PF,0) + NVL(PFO_YR_WDL_PF_FINAL,0) + NVL(PFO_YR_WDL_OUTS_PF,0) + NVL(PFO_YR_WDL_OUTS_PF_FINAL,0) CLOSING_BALANCE_EMPLOYEE 
+			from PF_OPENG
+			where PFO_EMP_ID = '$empid' AND
+			PFO_YEAR = '$from_year'")->result();
+		return $response;
+	}
+
+
+
 }

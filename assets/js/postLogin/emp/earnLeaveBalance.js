@@ -124,7 +124,7 @@ EarnLeaveProgram.renderLeaveTakenDtlHTML = function(objResponse) {
 				v_leaveTakenDtlList_data += '<td valign="top" align="left">'+ dataList["LVD_TO_DATE"] +'</td>';
 				v_leaveTakenDtlList_data += '<td valign="top" align="left">' + dataList["LVD_NOOFDAYS"] + '</td>';
 				v_leaveTakenDtlList_data += '<td valign="top" align="left">' + dataList["LVD_APPLY_DATE"] + '</td>';
-				v_leaveTakenDtlList_data += '<td valign="top" align="left">306</td>';
+				v_leaveTakenDtlList_data += '<td valign="top" align="left"></td>';
 				v_leaveTakenDtlList_data += '</tr>';
 			}
 			v_leaveTakenDtlList_data += '<tr>';
